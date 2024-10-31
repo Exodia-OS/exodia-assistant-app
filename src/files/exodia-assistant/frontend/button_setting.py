@@ -65,7 +65,7 @@ class SettingWindow(QMainWindow):
         self.close_button.setGeometry(850, 110, 80, 80)  # Positioned above the toggle button
         self.close_button.setStyleSheet("""
             QPushButton {
-                background-color: #1F1F1F;
+                background-color: #0E1218;
                 color: #00B0C8;
                 font-size: 30px;
                 font-weight: bold;
@@ -110,7 +110,7 @@ class SettingWindow(QMainWindow):
             self.toggle_button.setText('OFF')
             self.toggle_button.setStyleSheet("""
                 QPushButton {
-                    background-color: #121212;
+                    background-color: #151A21;
                     color: white;
                     font-size: 24px;
                     font-weight: bold;
@@ -141,7 +141,7 @@ class SettingWindow(QMainWindow):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
 
-        painter.setBrush(QBrush(QColor("#1F1F1F")))
+        painter.setBrush(QBrush(QColor("#0E1218")))
         painter.drawRect(self.rect())
 
         border_points = [
