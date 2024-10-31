@@ -31,12 +31,12 @@ On_Blue='\033[44m'  On_Purple='\033[45m' On_Cyan='\033[46m'  On_White='\033[47m'
 
 ## Installing python Packages ##
 post_install() {
-
-	source /usr/local/share/pip/bin/activate
 	
 	echo -e ${Green}"\n[*] Installing python Packages.\n" ${RESET_COLOR}
 
 	cd /usr/share/exodia/exodia-assistant
+
+	source /usr/local/share/pip/bin/activate
 
 	DIR=$(pwd)
 
