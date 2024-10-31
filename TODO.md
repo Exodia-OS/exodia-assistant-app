@@ -1,6 +1,7 @@
 # To Do
 - button Setting
-  - Chang Profile Photo
+  - Change Profile Photo
   - ![](./imgs/Profile.png)
+  - change sddm Profile Photo
 - update Tips
 - update Setting
