@@ -2,7 +2,31 @@ import os
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QBrush, QColor, QFont, QFontDatabase, QPen, QPolygon, QRegion
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QApplication
-import sys
+
+def createButtonMask():
+    button_points = [
+        QPoint(200, 0),        # Top right
+        QPoint(240, 30),       # Bottom right
+        QPoint(240, 100),      # Bottom right curve
+        QPoint(30, 100),       # Bottom left curve
+        QPoint(0, 70),         # Bottom left
+        QPoint(0, 0),         # Top left
+    ]
+    polygon = QPolygon(button_points)
+    return QRegion(polygon)
+
+def createCloseButtonMask():
+    button_points = [
+        QPoint(200, 0),        # Top right
+        QPoint(240, 50),       # Bottom right
+        QPoint(200, 100),      # Bottom right curve
+        QPoint(40, 100),       # Bottom left curve
+        QPoint(0, 50),         # Bottom left
+        QPoint(40, 0),         # Top left
+    ]
+    polygon = QPolygon(button_points)
+    return QRegion(polygon)
+
 
 class SettingWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -15,6 +39,7 @@ class SettingWindow(QMainWindow):
         self.initUI()
 
     def initUI(self):
+        # self.setGeometry(x, y, width, height)
         self.setGeometry(300, 100, 1140, 640)
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
@@ -62,37 +87,27 @@ class SettingWindow(QMainWindow):
     def addCloseButton(self):
 
         self.close_button = QPushButton('X', self)
-        self.close_button.setGeometry(850, 110, 80, 80)  # Positioned above the toggle button
+        #            self.setGeometry(x, y, width, height)
+        self.close_button.setGeometry(889, 115, 30, 30)  # Positioned above the toggle button
         self.close_button.setStyleSheet("""
             QPushButton {
                 background-color: #0E1218;
                 color: #00B0C8;
                 font-size: 30px;
                 font-weight: bold;
-                border-radius: 30px;
+                border-radius: 0px;
             }
         """)
-        self.close_button.setMask(self.createButtonMask())  # Use the same mask for custom shape
+        # # Use the same mask for custom shape
+        # self.close_button.setMask(createCloseButtonMask())
         self.close_button.clicked.connect(self.close)
 
     def addToggleButton(self):
         self.toggle_button = QPushButton('', self)  # Initialize without text
         self.toggle_button.setGeometry(450, 200, 240, 100)
         self.updateToggleButtonStyle()
-        self.toggle_button.setMask(self.createButtonMask())
+        self.toggle_button.setMask(createButtonMask())
         self.toggle_button.clicked.connect(self.toggleAutoStart)
-
-    def createButtonMask(self):
-        button_points = [
-            QPoint(200, 0),        # Top right
-            QPoint(240, 50),       # Bottom right
-            QPoint(200, 100),      # Bottom right curve
-            QPoint(40, 100),       # Bottom left curve
-            QPoint(0, 50),         # Bottom left
-            QPoint(40, 0),         # Top left
-        ]
-        polygon = QPolygon(button_points)
-        return QRegion(polygon)
 
     def updateToggleButtonStyle(self):
         if self.is_auto_start:
@@ -103,7 +118,7 @@ class SettingWindow(QMainWindow):
                     color: white;
                     font-size: 24px;
                     font-weight: bold;
-                    border-radius: 30px;
+                    border-radius: 0px;
                 }
             """)
         else:
@@ -114,7 +129,7 @@ class SettingWindow(QMainWindow):
                     color: white;
                     font-size: 24px;
                     font-weight: bold;
-                    border-radius: 30px;
+                    border-radius: 0px;
                 }
             """)
 
@@ -145,7 +160,7 @@ class SettingWindow(QMainWindow):
         painter.drawRect(self.rect())
 
         border_points = [
-            QPoint(910, 100),   # Top center
+            QPoint(910, 100),  # Top center
             QPoint(940, 130),  # Top right
             QPoint(940, 440),  # Middle right
             QPoint(230, 440),  # Bottom center

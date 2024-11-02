@@ -11,9 +11,6 @@ from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QColor, QBrush, QRegion, QPolygon, QPen  # Corrected import for QPolygon
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QScrollArea
 
-from frontend.buttons.welcome_button import WelcomeButton
-from frontend.buttons.setting_button import SettingButton
-
 class InternalWindow(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)

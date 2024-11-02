@@ -9,11 +9,10 @@
 
 import os
 from PyQt5.QtCore import Qt, QPoint, QRect
-from PyQt5.QtGui import QPainter, QBrush, QPolygon, QColor, QRegion, QFont, QFontDatabase, QPixmap, QPainterPath, QLinearGradient, QPen
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QWidget, QApplication
+from PyQt5.QtGui import QPainter, QBrush, QPolygon, QColor, QRegion, QFont, QFontDatabase, QPainterPath, QLinearGradient, QPen
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QWidget
 from frontend.internal_window import InternalWindow
 from frontend.add_logo import AddLogo
-from frontend.custom_button import CustomButton  # Import the button panel
 from frontend.custom_button import CustomButtonPanel  # Import the button panel
 from Xlib import X, display
 from Xlib.Xatom import STRING
