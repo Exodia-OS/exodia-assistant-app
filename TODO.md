@@ -5,6 +5,7 @@
   - change sddm Profile Photo
     - ![](./imgs/sddm-Profile.png)
   - copy text
+  - add Logos
   
 - update Tips
   - PGP signature Error
@@ -16,3 +17,7 @@
   - setup Polybar Modules
   
 - update Setting
+  - create themes
+  - change appearance
+  - fix bugs
+  - 
