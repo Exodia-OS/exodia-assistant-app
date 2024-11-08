@@ -1,11 +1,7 @@
 # To Do
 - button Setting
-  - Change Profile Photo
-    - ![](./imgs/Profile.png)
-  - change sddm Profile Photo
-    - ![](./imgs/sddm-Profile.png)
-  - copy text
-  - add Logos
+  - selectable and copyable text [✔]
+  - add Logs
   
 - update Tips
   - PGP signature Error
@@ -20,4 +16,7 @@
   - create themes
   - change appearance
   - fix bugs
-  - 
+  - Change Profile Photo
+    - ![](./imgs/Profile.png)
+  - change sddm Profile Photo
+    - ![](./imgs/sddm-Profile.png)
