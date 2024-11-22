@@ -7,11 +7,10 @@
 #                                   #
 #####################################
 
-import sys
 import os
 from PyQt5.QtCore import Qt, QPoint, QRect
 from PyQt5.QtGui import QPainter, QColor, QRegion, QPolygon, QPen, QFont, QFontDatabase
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout
 
 class CustomButton(QPushButton):
     def __init__(self, text, points, x, y, width, height, callback, color="#0E1218", border_color="#00B0C8", border_thickness=5, parent=None):
@@ -19,17 +18,31 @@ class CustomButton(QPushButton):
         self.currently_pressed_button = None
         self.predator_font = None
         self.callback = callback  # Store the callback function
-
         self.setFixedSize(200, 100)
-        self.polygon = QPolygon(points)
+
+        # Store the original polygon points
+        self.original_points = QPolygon(points)
+
+        # Define the reduced points
+        self.reduced_points = QPolygon([
+            QPoint(300, 20),
+            QPoint(300, 80),
+            QPoint(50, 80),
+            QPoint(50, 45),
+            QPoint(80, 20)
+        ])
+
         self.color = color
         self.border_color = border_color
         self.border_thickness = border_thickness
         self.setGeometry(QRect(x, y, width, height))
         self.setAttribute(Qt.WA_TranslucentBackground)
-        self.setMask(QRegion(self.polygon))
+        self.setMask(QRegion(self.original_points))
 
         self.loadPredatorFont()
+
+        # Define an offset to move the text when the button is pressed
+        self.text_offset_x = 0
 
     def loadPredatorFont(self):
         font_path = os.path.join(os.path.dirname(__file__), '../Fonts', 'Squares-Bold.otf')
@@ -47,24 +60,29 @@ class CustomButton(QPushButton):
         if self.parent().currently_pressed_button == self:
             background_color = QColor("#00B0C8")
             text_color = QColor("white")
+            self.text_offset_x = 65 # Offset the text to the right when the button is pressed
         else:
             background_color = QColor(self.color)
             text_color = QColor("#acacac")
+            self.text_offset_x = 0  # Reset the text offset when not pressed
 
         painter.setBrush(background_color)
         painter.setPen(Qt.NoPen)
-        painter.drawPolygon(self.polygon)
+        painter.drawPolygon(self.original_points if self.parent().currently_pressed_button != self else self.reduced_points)
 
         pen = QPen(QColor(self.border_color))
         pen.setWidth(self.border_thickness)
         painter.setPen(pen)
-        painter.drawPolygon(self.polygon)
+        painter.drawPolygon(self.original_points if self.parent().currently_pressed_button != self else self.reduced_points)
 
         pen = QPen(text_color)
         painter.setPen(pen)
         if self.predator_font:
             painter.setFont(self.predator_font)
-        painter.drawText(self.rect(), Qt.AlignCenter, self.text())
+
+        # Use the offset to position the text within the button's shape
+        rect_with_offset = self.rect().adjusted(self.text_offset_x, 0, 0, 0)
+        painter.drawText(rect_with_offset, Qt.AlignCenter, self.text())
 
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
@@ -121,7 +139,7 @@ class CustomButtonPanel(QWidget):
             },
             # Tips Button
             {
-                'text': 'Tips',
+                'text': 'Tips & Fix',
                 'points': [
                     QPoint(300, 20),
                     QPoint(300, 80),
