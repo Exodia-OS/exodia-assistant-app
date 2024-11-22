@@ -241,9 +241,36 @@ class ButtonContent:
 
             # Create a back button
             back_button = QPushButton("Back")
-            setupButton(back_button, self.predator_font.family())
+
+            # Apply the Predator font directly to the button
+            predator_font = self.predator_font  # Ensure self.predator_font is loaded correctly
+            back_button.setFont(predator_font)
+
+            # Set the size of the button
             back_button.setFixedSize(100, 40)
+
+            # Set the background color and style
+            back_button.setStyleSheet(
+                """
+                QPushButton {
+                    background-color: #006C7A;  /* Normal background color */
+                    color: white;              /* Text color */
+                    border: none;              /* Remove border */
+                    font-size: 18px;           /* Font size */
+                }
+                QPushButton:hover {
+                    background-color: #004F59;  /* Background color on hover */
+                }
+                QPushButton:pressed {
+                    background-color: #00343C;  /* Background color when pressed */
+                }
+                """
+            )
+
+            # Connect the button to the showButtons function
             back_button.clicked.connect(showButtons)
+
+
 
             # Add the back button to the layout
             top_layout = QHBoxLayout()
@@ -274,7 +301,7 @@ class ButtonContent:
 
             # Create a widget to hold the content (which will be scrollable)
             scroll_content = QWidget()
-            scroll_content.setStyleSheet("background-color: #00B0C8; border-size: 2px;")  # Transparent background and no border
+            scroll_content.setStyleSheet("background-color: #006c7a;")  # Transparent background and no border
             scroll_area.setWidget(scroll_content)
 
             # Create a layout for the scrollable content
@@ -291,7 +318,7 @@ class ButtonContent:
                     background-color: #1E1E1E;  /* Set background color to dark gray */
                 }
                 QScrollBar:vertical {
-                    background: #222;  /* Background color of the vertical scrollbar */
+                    background: #151A21;  /* Background color of the vertical scrollbar */
                     width: 10px;       /* Width of the scrollbar */
                     margin: 0 0 0 0;   /* Margin around the scrollbar */
                 }
@@ -310,7 +337,7 @@ class ButtonContent:
             # Create QLabel for the content, To be selectable and copyable
             content_label.setFont(self.predator_font)  # Apply Predator font
             content_label.setStyleSheet(
-                f"color: #00B0C8; font-size: 18px; background-color: #0E1218; padding: 10px;"
+                f"color: #00B0C8; font-size: 18px; background-color: #151A21; padding: 10px;"
                 f"font-family: '{self.predator_font.family()}';"
             )
             content_label.setTextInteractionFlags(Qt.TextSelectableByMouse)

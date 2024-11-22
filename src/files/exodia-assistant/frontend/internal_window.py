@@ -23,14 +23,14 @@ class InternalWindow(QWidget):
         self.polygon = self.createCustomMask()  # Store the polygon used for the mask
         self.content_label = QLabel(self)
         self.content_label.setGeometry(self.rect())
-        self.content_label.setStyleSheet("color: white; font-size: 20px; padding: 10px;")
+        self.content_label.setStyleSheet("color: white; font-size: 20px; padding: 0px;")
 
         # Load and apply Predator font
         self.loadPredatorFont()
 
         # Create the scroll area
         scroll_area = QScrollArea(self)
-        scroll_area.setGeometry(20, 20, 1100, 600)  # Set scroll area size within the internal window
+        scroll_area.setGeometry(10, 20, 1100, 600)  # Set scroll area size within the internal window
         # scroll_area.setGeometry(self.rect())  # Set the scroll area to the full size of the window
         scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -46,7 +46,7 @@ class InternalWindow(QWidget):
 
         # Content label that will be scrollable
         self.content_label = QLabel(scroll_content)
-        self.content_label.setStyleSheet("color: #0E1218; font-size: 20px; padding: 10px;")
+        self.content_label.setStyleSheet("color: #0E1218; font-size: 20px; padding: 0px;")
         self.content_label.setWordWrap(True)  # Allow the text to wrap
 
         layout.addWidget(self.content_label)  # Add the label to the layout
@@ -96,8 +96,9 @@ class InternalWindow(QWidget):
             QPoint(1110, 0),   # Top center, 1
             QPoint(1140, 30),  # Top right, 2
             QPoint(1140, 640), # Middle right, 3
-            QPoint(30, 640),   # Bottom center, 4
-            QPoint(0, 610),    # Bottom left, 5
+            QPoint(0, 640),   # Bottom center, 4
+            # QPoint(30, 640),   # Bottom center, 4
+            # QPoint(0, 610),    # Bottom left, 5
             QPoint(0, 0)     # Middle left, 6
         ]
 
