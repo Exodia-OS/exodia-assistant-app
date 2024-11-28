@@ -16,6 +16,7 @@
 - update Setting
   - create themes
   - change appearance
+  - Install Themes (official and community)
   - fix bugs
   - Change Profile Photo
     - ![](./imgs/Profile.png)
