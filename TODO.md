@@ -2,6 +2,7 @@
 - button Setting
   - selectable and copyable text [✔]
   - add Logs
+  - add search in `Fix & Tips`
   
 - update Tips
   - PGP signature Error

@@ -213,6 +213,7 @@ class ButtonContent:
                 ("Create Your Own Theme", "Create-Your-Own-Theme.html"),
                 ("Setup Custom Monitors Config", "Setup-Custom-Monitors-Config.html"),
                 ("Setup Polybar Modules", "Setup-Polybar-Modules.html"),
+                ("Fix Cava Module", "Fix-Cava-Module.html"),
             ]
 
             # Create a layout to organize buttons
