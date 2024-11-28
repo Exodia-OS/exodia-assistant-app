@@ -55,13 +55,13 @@ class InternalWindow(QWidget):
         scroll_area.setStyleSheet("""
             QScrollArea { border: none; }
             QScrollBar:vertical {
-                background: #222;  /* Background color of the vertical scrollbar */
+                background: #151A21;  /* Background color of the vertical scrollbar */
                 width: 10px;       /* Width of the scrollbar */
                 margin: 0 0 0 0;   /* Margin around the scrollbar */
             }
             QScrollBar::handle:vertical {
                 background: #00B0C8;  /* Color of the scrollbar handle */
-                border-radius: 5px;    /* Rounded corners for the scrollbar handle */
+                border-radius: 0px;    /* Rounded corners for the scrollbar handle */
             }
             QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
                 background: none;      /* Hide the add and subtract buttons */

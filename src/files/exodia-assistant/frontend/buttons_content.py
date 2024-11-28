@@ -324,13 +324,13 @@ class ButtonContent:
                 }
                 QScrollBar::handle:vertical {
                     background: #00B0C8;  /* Color of the scrollbar handle */
-                    border-radius: 5px;    /* Rounded corners for the scrollbar handle */
+                    border-radius: 0px;    /* Rounded corners for the scrollbar handle */
                 }
                 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
-                    background: none;      /* Hide the add and subtract buttons */
+                    background: #00B0C8;      /* Hide the add and subtract buttons */
                 }
                 QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
-                    background: none;      /* Hide the add and subtract page areas */
+                    background: #151A21;      /* Hide the add and subtract page areas */
                 }
             """)
 
