@@ -22,3 +22,15 @@
     - ![](./imgs/Profile.png)
   - change sddm Profile Photo
     - ![](./imgs/sddm-Profile.png)
+
+___
+
+- Background, Themes, Icons: Customize your visual experience effortlessly.
+- Polybar: Easily configure your Polybar settings.
+- RGB Keyboard: Control RGB settings for Predator Edition laptops.
+- Picom Config: Tailor your Picom configuration.
+- Keybinding: Set and modify keybindings easily.
+- BSPWM Configurations: Manage BSPWM configurations and appearance settings.
+- Auto-Start: Automatically start Exodia Assistant on boot.
+- Auto-Update: Keep your BSPWM configuration up to date with Exodia OS repositories.
+- And More: Stay tuned for additional features!  
