@@ -265,6 +265,10 @@ class ButtonContent:
                 ("Setup Custom Monitors Config", "Setup-Custom-Monitors-Config.html"),
                 ("Setup Polybar Modules", "Setup-Polybar-Modules.html"),
                 ("Fix Cava Module", "Fix-Cava-Module.html"),
+                ("Pacman Tips", "pacman-tips.html"),
+                ("unable to lock database", "unable-to-lock-database.html"),
+                ("Change Theme And Icons", "change-theme-and-icons.html"),
+                ("BSPWM Themes", "bspwm-themes.html"),
                 ("Change Font", "Change-Fonts.html")
             ]
 
