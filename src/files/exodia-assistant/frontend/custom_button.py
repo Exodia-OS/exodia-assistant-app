@@ -139,7 +139,7 @@ class CustomButtonPanel(QWidget):
             },
             # Tips Button
             {
-                'text': 'Tips & Fix',
+                'text': 'Wiki',
                 'points': [
                     QPoint(300, 20),
                     QPoint(300, 80),
@@ -148,7 +148,7 @@ class CustomButtonPanel(QWidget):
                     QPoint(30, 20)
                 ],
                 'x': 50, 'y': 270, 'width': 200, 'height': 100,
-                'callback': parent.displayTipsContent
+                'callback': parent.displayWikiContent
             },
             # Setting Button
             {

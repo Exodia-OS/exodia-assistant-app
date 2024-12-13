@@ -182,8 +182,8 @@ class CustomShapeWindow(QMainWindow):
     def displayKeybindingContent(self):
         self.button_content.displayKeybindingContent() # Call the method from ButtonContent
 
-    def displayTipsContent(self):
-        self.button_content.displayTipsContent() # Call the method from ButtonContent
+    def displayWikiContent(self):
+        self.button_content.displayWikiContent() # Call the method from ButtonContent
 
     def displaySettingContent(self):
         self.button_content.displaySettingContent() # Call the method from ButtonContent
