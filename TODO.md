@@ -1,4 +1,6 @@
 # To Do
+
+- add Dashboard Tap
 - button Setting
   - selectable and copyable text [✔]
   - add Logs
