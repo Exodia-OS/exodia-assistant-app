@@ -4,7 +4,8 @@
 - button Setting
   - selectable and copyable text [✔]
   - add Logs
-  - add search in `Fix & Tips`
+  - add search in `Fix & Tips` [✔]
+  - add your role (DevOps, Software Engineer, Pentester, etc)
   
 - update Tips
   - PGP signature Error
