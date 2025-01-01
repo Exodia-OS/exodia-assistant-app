@@ -9,7 +9,8 @@
 
 import os
 from PyQt5.QtCore import Qt, QPoint, QRect
-from PyQt5.QtGui import QPainter, QBrush, QPolygon, QColor, QRegion, QFont, QFontDatabase, QPainterPath, QLinearGradient, QPen
+from PyQt5.QtGui import QPainter, QBrush, QPolygon, QColor, QRegion, QFont, QFontDatabase, QPainterPath, \
+    QLinearGradient, QPen
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QWidget
 from frontend.internal_window import InternalWindow
 from frontend.add_logo import AddLogo
@@ -18,6 +19,7 @@ from Xlib import X, display
 from Xlib.Xatom import STRING
 from frontend.buttons_content import ButtonContent  # Import the ButtonContent class
 from frontend.button_setting import SettingWindow
+
 
 # Function to set WM_CLASS for the window
 def set_wm_class(win_id, instance_name, class_name):
@@ -29,18 +31,20 @@ def set_wm_class(win_id, instance_name, class_name):
     window.change_property(wm_class_atom, STRING, 8, value)
     disp.flush()
 
+
 # Function to create a mask for the custom window shape
 def createMask():
     points = [
-        QPoint(1450, 0),     # Top right corner, 1
-        QPoint(1500, 50),    # Right top-middle, a bit down, 2
-        QPoint(1500, 800),   # Bottom right corner, 3
-        QPoint(50, 800),     # Bottom left-middle, 4
-        QPoint(0, 750),      # Bottom left corner, 5
-        QPoint(0, 0)        # Top left corner, 6
+        QPoint(1450, 0),  # Top right corner, 1
+        QPoint(1500, 50),  # Right top-middle, a bit down, 2
+        QPoint(1500, 800),  # Bottom right corner, 3
+        QPoint(50, 800),  # Bottom left-middle, 4
+        QPoint(0, 750),  # Bottom left corner, 5
+        QPoint(0, 0)  # Top left corner, 6
     ]
     polygon = QPolygon(points)
     return QRegion(polygon)
+
 
 # Main CustomShapeWindow class
 class CustomShapeWindow(QMainWindow):
@@ -106,7 +110,6 @@ class CustomShapeWindow(QMainWindow):
         except Exception as e:
             print(f"Error initializing SettingWindow: {e}")
 
-
     def loadPredatorFont(self):
 
         # Load the font from the Fonts directory
@@ -141,7 +144,7 @@ class CustomShapeWindow(QMainWindow):
         # Set the geometry (position and size) of the internal window
         # self.setGeometry(x, y, width, height)
         self.settings_button.setGeometry(0, 10, 40, 40)
-        self.settings_button.clicked.connect(self.openSettings) # Connect button to openSettings method
+        self.settings_button.clicked.connect(self.openSettings)  # Connect button to openSettings method
         self.settings_button.setFont(self.button_font)
 
         self.minimize_button = QPushButton('—', button_widget)
@@ -180,16 +183,19 @@ class CustomShapeWindow(QMainWindow):
         self.button_content.displayWelcomeContent()  # Call the method from ButtonContent
 
     def displayKeybindingContent(self):
-        self.button_content.displayKeybindingContent() # Call the method from ButtonContent
+        self.button_content.displayKeybindingContent()  # Call the method from ButtonContent
 
     def displayWikiContent(self):
-        self.button_content.displayWikiContent() # Call the method from ButtonContent
+        self.button_content.displayWikiContent()  # Call the method from ButtonContent
 
     def displaySettingContent(self):
-        self.button_content.displaySettingContent() # Call the method from ButtonContent
+        self.button_content.displaySettingContent()  # Call the method from ButtonContent
+
+    def displayRoleContent(self):
+        self.button_content.displayRoleContent()  # Call the method from RoleContent
 
     def displayDevelopersContent(self):
-        self.button_content.displayDevelopersContent() # Call the method from ButtonContent
+        self.button_content.displayDevelopersContent()  # Call the method from ButtonContent
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -201,7 +207,7 @@ class CustomShapeWindow(QMainWindow):
 
         # Draw the logo in the top left corner, slightly moved to the right
         if self.logo_pixmap:
-            painter.drawPixmap(60, 20, self.logo_pixmap) # Adjust position as needed
+            painter.drawPixmap(60, 20, self.logo_pixmap)  # Adjust position as needed
 
         # Set the custom font if loaded
         if hasattr(self, 'predator_font'):
@@ -209,13 +215,13 @@ class CustomShapeWindow(QMainWindow):
 
         # Define the polygon for the outer border
         border_points = [
-            QPoint(1450, 0),     # Top right corner, 1
-            QPoint(1500, 50),    # Right top-middle, a bit down, 2
-            QPoint(1500, 800),   # Bottom right corner, 3
-            QPoint(50, 800),     # Bottom left-middle, 4
-            QPoint(0, 750),      # Bottom left corner, 5
-            QPoint(0, 0)        # Top left corner, 6
-            ]
+            QPoint(1450, 0),  # Top right corner, 1
+            QPoint(1500, 50),  # Right top-middle, a bit down, 2
+            QPoint(1500, 800),  # Bottom right corner, 3
+            QPoint(50, 800),  # Bottom left-middle, 4
+            QPoint(0, 750),  # Bottom left corner, 5
+            QPoint(0, 0)  # Top left corner, 6
+        ]
         border_polygon = QPolygon(border_points)
 
         # Draw the outer border of the main window
@@ -266,4 +272,3 @@ class CustomShapeWindow(QMainWindow):
         gradient_pen = QPen(QColor("#00B0C8"))
         painter.setPen(gradient_pen)
         painter.drawText(QRect(x_pos, y_pos, text_width, text_height), Qt.AlignCenter, text)
-

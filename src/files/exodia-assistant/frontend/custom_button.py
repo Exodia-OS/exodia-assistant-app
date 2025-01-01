@@ -12,8 +12,10 @@ from PyQt5.QtCore import Qt, QPoint, QRect
 from PyQt5.QtGui import QPainter, QColor, QRegion, QPolygon, QPen, QFont, QFontDatabase
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout
 
+
 class CustomButton(QPushButton):
-    def __init__(self, text, points, x, y, width, height, callback, color="#0E1218", border_color="#00B0C8", border_thickness=5, parent=None):
+    def __init__(self, text, points, x, y, width, height, callback, color="#0E1218", border_color="#00B0C8",
+                 border_thickness=5, parent=None):
         super().__init__(text, parent)
         self.currently_pressed_button = None
         self.predator_font = None
@@ -60,7 +62,7 @@ class CustomButton(QPushButton):
         if self.parent().currently_pressed_button == self:
             background_color = QColor("#00B0C8")
             text_color = QColor("white")
-            self.text_offset_x = 65 # Offset the text to the right when the button is pressed
+            self.text_offset_x = 65  # Offset the text to the right when the button is pressed
         else:
             background_color = QColor(self.color)
             text_color = QColor("#acacac")
@@ -68,12 +70,14 @@ class CustomButton(QPushButton):
 
         painter.setBrush(background_color)
         painter.setPen(Qt.NoPen)
-        painter.drawPolygon(self.original_points if self.parent().currently_pressed_button != self else self.reduced_points)
+        painter.drawPolygon(
+            self.original_points if self.parent().currently_pressed_button != self else self.reduced_points)
 
         pen = QPen(QColor(self.border_color))
         pen.setWidth(self.border_thickness)
         painter.setPen(pen)
-        painter.drawPolygon(self.original_points if self.parent().currently_pressed_button != self else self.reduced_points)
+        painter.drawPolygon(
+            self.original_points if self.parent().currently_pressed_button != self else self.reduced_points)
 
         pen = QPen(text_color)
         painter.setPen(pen)
@@ -94,11 +98,11 @@ class CustomButtonPanel(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         # self.setFixedSize(width, height)
-        self.setFixedSize(200, 400)  # Adjust the size of the main window as needed
+        self.setFixedSize(200, 480)  # Adjust the size of the main window as needed
         # Set the geometry (position and size) of the internal window
         # self.setGeometry(x, y, width, height)
         self.setGeometry(100, 200, 400, 400)
-        self.setAttribute(Qt.WA_TranslucentBackground) # Make the background transparent
+        self.setAttribute(Qt.WA_TranslucentBackground)  # Make the background transparent
 
         # Initialize the currently pressed button
         self.currently_pressed_button = None
@@ -111,7 +115,7 @@ class CustomButtonPanel(QWidget):
 
         # Define the shape points, positions, and sizes for each button
         buttons_config = [
-            # Welcome Button
+            # Welcome, Button
             {
                 'text': 'Welcome',
                 'points': [
@@ -132,7 +136,7 @@ class CustomButtonPanel(QWidget):
                     QPoint(300, 80),
                     QPoint(0, 80),
                     QPoint(0, 45),
-                    QPoint(30, 20)
+                    QPoint(0, 20)
                 ],
                 'x': 50, 'y': 160, 'width': 200, 'height': 100,
                 'callback': parent.displayKeybindingContent
@@ -145,7 +149,7 @@ class CustomButtonPanel(QWidget):
                     QPoint(300, 80),
                     QPoint(0, 80),
                     QPoint(0, 45),
-                    QPoint(30, 20)
+                    QPoint(0, 20)
                 ],
                 'x': 50, 'y': 270, 'width': 200, 'height': 100,
                 'callback': parent.displayWikiContent
@@ -158,10 +162,23 @@ class CustomButtonPanel(QWidget):
                     QPoint(300, 80),
                     QPoint(0, 80),
                     QPoint(0, 45),
-                    QPoint(30, 20)
+                    QPoint(0, 20)
                 ],
                 'x': 50, 'y': 380, 'width': 200, 'height': 100,
                 'callback': parent.displaySettingContent
+            },
+            # Role Button
+            {
+                'text': 'Role',
+                'points': [
+                    QPoint(300, 20),
+                    QPoint(300, 80),
+                    QPoint(0, 80),
+                    QPoint(0, 45),
+                    QPoint(0, 20)
+                ],
+                'x': 50, 'y': 380, 'width': 200, 'height': 100,
+                'callback': parent.displayRoleContent
             },
             # Developers Button
             {
@@ -169,9 +186,9 @@ class CustomButtonPanel(QWidget):
                 'points': [
                     QPoint(300, 20),
                     QPoint(300, 80),
-                    QPoint(0, 80),
-                    QPoint(0, 45),
-                    QPoint(30, 20)
+                    QPoint(30, 80),
+                    QPoint(0, 55),
+                    QPoint(0, 20)
                 ],
                 'x': 50, 'y': 490, 'width': 200, 'height': 100,
                 'callback': parent.displayDevelopersContent

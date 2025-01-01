@@ -139,6 +139,14 @@ class ButtonContent:
         # Update the content of the internal window
         self.internal_window.updateContent(text)
 
+    def displayRoleContent(self):
+
+        self.clearButtons()  # Clear previous buttons
+        # Load and format the HTML content
+        text = loadHTMLContent('./HTML-files', 'displayRoleContent.html', self.predator_font.family())
+        # Update the content of the internal window
+        self.internal_window.updateContent(text)
+
     def displayDevelopersContent(self):
 
         self.clearButtons()  # Clear previous buttons
