@@ -5,6 +5,11 @@
 # Contributing
 
 - Fork the repo
+- install the dependencies
+  - ```bash
+    cd src/files/exodia-assistant/
+    pip install -r libs.txt 
+    ```
 - create a new branch with your **_username_** `dev-${GITHUB-USERNAME}` name (e.g. `dev-mmsaeed509`)
   - ```bash
     git checkout -b dev-mmsaeed509
