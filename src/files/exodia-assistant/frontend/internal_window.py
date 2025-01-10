@@ -12,13 +12,14 @@ from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QColor, QBrush, QRegion, QPolygon, QPen, QFontDatabase, QFont
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QScrollArea
 
+
 class InternalWindow(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         # Set the geometry (position and size) of the internal window
         # self.setGeometry(x, y, width, height)
         self.predator_font = None
-        self.setGeometry(300, 100, 1140, 640)
+        self.setGeometry(300, 100, 1240, 740)
         self.setAttribute(Qt.WA_TranslucentBackground)  # Make the background transparent
         self.polygon = self.createCustomMask()  # Store the polygon used for the mask
         self.content_label = QLabel(self)
@@ -30,7 +31,7 @@ class InternalWindow(QWidget):
 
         # Create the scroll area
         scroll_area = QScrollArea(self)
-        scroll_area.setGeometry(10, 20, 1100, 600)  # Set scroll area size within the internal window
+        scroll_area.setGeometry(10, 20, 1200, 700)  # Set scroll area size within the internal window
         # scroll_area.setGeometry(self.rect())  # Set the scroll area to the full size of the window
         scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -93,13 +94,13 @@ class InternalWindow(QWidget):
     def createCustomMask(self):
         # Define points for an 8-sided polygon
         points = [
-            QPoint(1110, 0),   # Top center, 1
-            QPoint(1140, 30),  # Top right, 2
-            QPoint(1140, 640), # Middle right, 3
-            QPoint(0, 640),   # Bottom center, 4
+            QPoint(1210, 0),  # Top center, 1
+            QPoint(1240, 30),  # Top right, 2
+            QPoint(1240, 740),  # Middle right, 3
+            QPoint(0, 740),  # Bottom center, 4
             # QPoint(30, 640),   # Bottom center, 4
             # QPoint(0, 610),    # Bottom left, 5
-            QPoint(0, 0)     # Middle left, 6
+            QPoint(0, 0)  # Middle left, 6
         ]
 
         polygon = QPolygon(points)

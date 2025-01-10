@@ -98,10 +98,10 @@ class CustomButtonPanel(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         # self.setFixedSize(width, height)
-        self.setFixedSize(200, 480)  # Adjust the size of the main window as needed
+        self.setFixedSize(200, 570)  # Adjust the size of the main window as needed
         # Set the geometry (position and size) of the internal window
         # self.setGeometry(x, y, width, height)
-        self.setGeometry(100, 200, 400, 400)
+        self.setGeometry(100, 220, 400, 600)
         self.setAttribute(Qt.WA_TranslucentBackground)  # Make the background transparent
 
         # Initialize the currently pressed button
@@ -127,6 +127,19 @@ class CustomButtonPanel(QWidget):
                 ],
                 'x': 50, 'y': 50, 'width': 200, 'height': 100,
                 'callback': parent.displayWelcomeContent  # Set the callback function
+            },
+            # News Button
+            {
+                'text': 'News',
+                'points': [
+                    QPoint(300, 20),
+                    QPoint(300, 80),
+                    QPoint(0, 80),
+                    QPoint(0, 45),
+                    QPoint(0, 20)
+                ],
+                'x': 50, 'y': 160, 'width': 200, 'height': 100,
+                'callback': parent.displayNewsContent
             },
             # Keybinding Button
             {

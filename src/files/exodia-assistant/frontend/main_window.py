@@ -35,11 +35,11 @@ def set_wm_class(win_id, instance_name, class_name):
 # Function to create a mask for the custom window shape
 def createMask():
     points = [
-        QPoint(1450, 0),  # Top right corner, 1
-        QPoint(1500, 50),  # Right top-middle, a bit down, 2
-        QPoint(1500, 800),  # Bottom right corner, 3
-        QPoint(50, 800),  # Bottom left-middle, 4
-        QPoint(0, 750),  # Bottom left corner, 5
+        QPoint(1550, 0),  # Top right corner, 1
+        QPoint(1600, 50),  # Right top-middle, a bit down, 2
+        QPoint(1600, 900),  # Bottom right corner, 3
+        QPoint(50, 900),  # Bottom left-middle, 4
+        QPoint(0, 850),  # Bottom left corner, 5
         QPoint(0, 0)  # Top left corner, 6
     ]
     polygon = QPolygon(points)
@@ -65,7 +65,7 @@ class CustomShapeWindow(QMainWindow):
 
     def initUI(self):
         # Set window size
-        self.setFixedSize(1500, 800)  # Adjust size as needed
+        self.setFixedSize(1600, 900)  # Adjust size as needed
         # Set window flags to remove the title bar and make it frameless
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         # Make the window transparent
@@ -182,6 +182,9 @@ class CustomShapeWindow(QMainWindow):
     def displayWelcomeContent(self):
         self.button_content.displayWelcomeContent()  # Call the method from ButtonContent
 
+    def displayNewsContent(self):
+        self.button_content.displayNewsContent()  # Call the method from ButtonContent
+
     def displayKeybindingContent(self):
         self.button_content.displayKeybindingContent()  # Call the method from ButtonContent
 
@@ -215,11 +218,11 @@ class CustomShapeWindow(QMainWindow):
 
         # Define the polygon for the outer border
         border_points = [
-            QPoint(1450, 0),  # Top right corner, 1
-            QPoint(1500, 50),  # Right top-middle, a bit down, 2
-            QPoint(1500, 800),  # Bottom right corner, 3
-            QPoint(50, 800),  # Bottom left-middle, 4
-            QPoint(0, 750),  # Bottom left corner, 5
+            QPoint(1550, 0),  # Top right corner, 1
+            QPoint(1600, 50),  # Right top-middle, a bit down, 2
+            QPoint(1600, 900),  # Bottom right corner, 3
+            QPoint(50, 900),  # Bottom left-middle, 4
+            QPoint(0, 850),  # Bottom left corner, 5
             QPoint(0, 0)  # Top left corner, 6
         ]
         border_polygon = QPolygon(border_points)
