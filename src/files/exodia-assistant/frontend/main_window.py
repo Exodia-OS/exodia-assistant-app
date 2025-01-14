@@ -91,7 +91,7 @@ class CustomShapeWindow(QMainWindow):
         # Initialize ButtonContent
         self.button_content = ButtonContent(self.internal_window)
         # Display the welcome content when the app opens
-        self.displayWelcomeContent()
+        self.displayNewsContent()
         # Set window size and other configurations...
         self.addButtons()
 

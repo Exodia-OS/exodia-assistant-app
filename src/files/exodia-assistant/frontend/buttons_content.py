@@ -112,12 +112,7 @@ class ButtonContent:
 
     def displayWelcomeContent(self):
         # Clear previous buttons
-        if not self.internal_window.layout():
-            self.internal_window.setLayout(QVBoxLayout())
-            self.clearButtons()
-        else:
-            self.clearButtons()
-
+        self.clearButtons()
         # Load and format the HTML content
         text = loadHTMLContent('./HTML-files', 'displayWelcomeContent.html', self.predator_font.family())
 
@@ -126,10 +121,18 @@ class ButtonContent:
 
     def displayNewsContent(self):
         # Clear previous buttons
-        self.clearButtons()
+        if not self.internal_window.layout():
+            self.internal_window.setLayout(QVBoxLayout())
+            self.clearButtons()
+        else:
+            self.clearButtons()
 
         # URL to the raw News.html file in the GitHub repository
         news_url = "https://raw.githubusercontent.com/Exodia-OS/exodia-assistant-news/refs/heads/master/News.html"
+
+        # Load and format the HTML content
+        local_news = loadHTMLContent('./HTML-files', 'News.html', self.predator_font.family())
+
 
         try:
             # Fetch the content of News.html from the GitHub repository
@@ -151,9 +154,11 @@ class ButtonContent:
             <div style="color: red; text-align: center; font-size: 18px; padding: 20px;">
                 Error: Failed to fetch news content.<br>
                 Details: {str(e)}
+                <br> <br> <br>
+                check your internet connection.
             </div>
             """
-            self.internal_window.updateContent(error_message)
+            self.internal_window.updateContent(local_news)
 
     def displayKeybindingContent(self):
 
