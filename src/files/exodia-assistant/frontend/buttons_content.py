@@ -133,7 +133,6 @@ class ButtonContent:
         # Load and format the HTML content
         local_news = loadHTMLContent('./HTML-files', 'News.html', self.predator_font.family())
 
-
         try:
             # Fetch the content of News.html from the GitHub repository
             response = requests.get(news_url)
