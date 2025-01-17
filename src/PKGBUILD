@@ -3,7 +3,7 @@
 #
 
 pkgname=exodia-assistant
-pkgver=2.8
+pkgver=2.9
 pkgrel=9
 pkgdesc="Assistant Manager for Exodia OS"
 url="https://github.com/Exodia-OS/exodia-apps"
@@ -15,7 +15,7 @@ groups=('exodia-apps')
 conflicts=('exodia-help')
 provides=("${pkgname}")
 options=(!strip !emptydirs)
-# install=${pkgname}.install
+install=${pkgname}.install
 
 prepare() {
 
