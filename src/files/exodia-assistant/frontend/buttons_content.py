@@ -12,7 +12,22 @@ import os
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPolygon, QRegion
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QScrollArea, QLineEdit
-import requests
+from urllib.request import urlopen
+from urllib.error import URLError, HTTPError
+
+
+def createCustomButtonMaskKeybinding():
+    """Creates a custom QRegion mask for buttons."""
+    button_points = [
+        QPoint(200, 0),  # Top right
+        QPoint(240, 30),  # Bottom right
+        QPoint(240, 100),  # Bottom right curve
+        QPoint(30, 100),  # Bottom left curve
+        QPoint(0, 70),  # Bottom left
+        QPoint(0, 0),  # Top left
+    ]
+    polygon = QPolygon(button_points)
+    return QRegion(polygon)
 
 
 def createCustomButtonMask():
@@ -120,6 +135,10 @@ class ButtonContent:
         self.internal_window.updateContent(text)
 
     def displayNewsContent(self):
+        """
+        Displays the news content fetched from a GitHub repository.
+        If the fetch fails, it falls back to a local HTML file.
+        """
         # Clear previous buttons
         if not self.internal_window.layout():
             self.internal_window.setLayout(QVBoxLayout())
@@ -130,42 +149,33 @@ class ButtonContent:
         # URL to the raw News.html file in the GitHub repository
         news_url = "https://raw.githubusercontent.com/Exodia-OS/exodia-assistant-news/refs/heads/master/News.html"
 
-        # Load and format the HTML content
+        # Load and format the local HTML content as a fallback
         local_news = loadHTMLContent('./HTML-files', 'News.html', self.predator_font.family())
 
         try:
-            # Fetch the content of News.html from the GitHub repository
-            response = requests.get(news_url)
-            response.raise_for_status()  # Raise an exception for HTTP errors
+            # Fetch the content of News.html from the GitHub repository using urllib
+            with urlopen(news_url) as response:
+                # Read the response content
+                html_content = response.read().decode('utf-8')
 
-            # Get the HTML content
-            html_content = response.text
+                # Format the HTML content with the predator font
+                formatted_html = f"<div style='font-family: {self.predator_font.family()};'>{html_content}</div>"
 
-            # Format the HTML content with the predator font
-            formatted_html = f"<div style='font-family: {self.predator_font.family()};'>{html_content}</div>"
+                # Update the content of the internal window
+                self.internal_window.updateContent(formatted_html)
 
-            # Update the content of the internal window
-            self.internal_window.updateContent(formatted_html)
-
-        except requests.exceptions.RequestException as e:
+        except (URLError, HTTPError) as e:
             # Handle errors (e.g., network issues, invalid URL, etc.)
             error_message = f"""
             <div style="color: red; text-align: center; font-size: 18px; padding: 20px;">
                 Error: Failed to fetch news content.<br>
                 Details: {str(e)}
                 <br> <br> <br>
-                check your internet connection.
+                Check your internet connection.
             </div>
             """
+            # Fallback to local news content
             self.internal_window.updateContent(local_news)
-
-    def displayKeybindingContent(self):
-
-        self.clearButtons()  # Clear previous buttons
-        # Load and format the HTML content
-        text = loadHTMLContent('./HTML-files', 'displayKeybindingContent.html', self.predator_font.family())
-        # Update the content of the internal window
-        self.internal_window.updateContent(text)
 
     def displaySettingContent(self):
 
@@ -189,6 +199,234 @@ class ButtonContent:
         # Load and format the HTML content
         text = loadHTMLContent('./HTML-files', 'displayDevelopersContent.html', self.predator_font.family())
         # Update the content of the internal window
+        self.internal_window.updateContent(text)
+
+    def displayKeybindingContent(self):
+
+        text = ""
+
+        # Base directory for HTML files
+        html_dir = "./HTML-files/Keybinding"
+
+        def clearLayout():
+            """Clears the layout of the internal window."""
+            while self.internal_window.layout().count():
+                item = self.internal_window.layout().takeAt(0)
+                widget = item.widget()
+                if widget:
+                    widget.deleteLater()
+
+        def createCustomButton(label, html_file):
+            """Creates a custom button widget with word-wrapped text and a custom shape."""
+            button = QPushButton()
+            button.setFixedSize(240, 100)
+            button.setMask(createCustomButtonMaskKeybinding())
+            button.setStyleSheet(
+                f"""
+                QPushButton {{
+                    background-color: #00B0C8;
+                    color: white;
+                    border: none;
+                }}
+                QPushButton:hover {{
+                    background-color: #0086A8;
+                }}
+                QPushButton:pressed {{
+                    background-color: #005F78;
+                }}
+                """
+            )
+
+            text_label = QLabel(label)
+            text_label.setAlignment(Qt.AlignCenter)
+            text_label.setWordWrap(True)
+            text_label.setStyleSheet(
+                f"color: white; font-family: '{self.predator_font.family()}'; font-size: 18px;"
+            )
+
+            layout = QVBoxLayout()
+            layout.addWidget(text_label)
+            layout.setContentsMargins(0, 0, 0, 0)
+            button.setLayout(layout)
+
+            button.clicked.connect(lambda _, file=html_file: showHTML(file))
+            return button
+
+        def showButtons(keyword=None):
+            """Displays the main tip buttons filtered by keyword."""
+            clearLayout()
+
+            # Create the search input field
+            search_input = QLineEdit()
+            search_input.setPlaceholderText("Wiki Search...")
+            search_input.setFixedHeight(40)
+            search_input.setStyleSheet(
+                """
+                QLineEdit {
+                    font-size: 18px;
+                    font-family: Arial;
+                    color: white;
+                    background-color: #151A21;
+                    padding: 5px;
+                    border: 1px solid #00B0C8;
+                    border-radius: 5px;
+                }
+                """
+            )
+
+            # Define button labels and corresponding HTML file names
+            Keybinding_data = [
+                ("BSPWM", "BSPWM.html"),
+                ("DWM", "DWM.html"),
+                ("I3WM", "I3WM.html")
+            ]
+
+            # Create a scrollable widget
+            scroll_widget = QWidget()
+            scroll_widget.setStyleSheet("background: transparent;")  # Make the scroll widget transparent
+            scroll_layout = QVBoxLayout(scroll_widget)
+            scroll_layout.setContentsMargins(0, 0, 0, 0)  # Remove margins for a cleaner look
+
+            # Add buttons to the scrollable widget
+            row_layout = None
+            for index, (label, html_file) in enumerate(Keybinding_data):
+                if index % 3 == 0:
+                    row_layout = QHBoxLayout()
+                    row_layout.setContentsMargins(0, 0, 0, 0)  # Remove margins for a cleaner look
+                    scroll_layout.addLayout(row_layout)
+
+                button = createCustomButton(label, html_file)
+                row_layout.addWidget(button)
+
+            # Add the scrollable widget to a scroll area
+            scroll_area = QScrollArea()
+            scroll_area.setWidgetResizable(True)
+            scroll_area.setWidget(scroll_widget)
+            scroll_area.setStyleSheet("""
+                QScrollArea {
+                    background: transparent;
+                    border: none;
+                }
+                QScrollBar:vertical {
+                    background: transparent;
+                    width: 10px;
+                    margin: 0 0 0 0;
+                }
+                QScrollBar::handle:vertical {
+                    background: #00B0C8;
+                    border-radius: 0px;
+                }
+                QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                    background: transparent;
+                }
+                QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+                    background: transparent;
+                }
+            """)
+
+            # Add the scroll area to the internal window
+            self.internal_window.layout().addWidget(scroll_area)
+
+        def showHTML(html_file):
+            """Displays the content of the selected HTML file."""
+            try:
+                # Clear the existing layout
+                clearLayout()
+
+                # Create a "Back" button to return to the buttons view
+                back_button = QPushButton("Back")
+                back_button.setFont(self.predator_font)
+                back_button.setFixedSize(100, 40)
+                back_button.setStyleSheet(
+                    """
+                    QPushButton {
+                        background-color: #006C7A;
+                        color: white;
+                        border: none;
+                        font-size: 18px;
+                        font-weight: bold;
+                        border-radius: 5px;
+                    }
+                    QPushButton:hover {
+                        background-color: #004F59;
+                    }
+                    QPushButton:pressed {
+                        background-color: #00343C;
+                    }
+                    """
+                )
+                back_button.clicked.connect(showButtons)
+
+                # Add the "Back" button to the top layout
+                top_layout = QHBoxLayout()
+                top_layout.addWidget(back_button, alignment=Qt.AlignLeft)
+
+                top_widget = QWidget()
+                top_widget.setLayout(top_layout)
+                self.internal_window.layout().addWidget(top_widget)
+
+                # Load the HTML content
+                html_content = loadHTMLContent(html_dir, html_file, self.predator_font.family())
+
+                # Use the scroll area from the internal window
+                content_label = QLabel()
+                content_label.setTextFormat(Qt.RichText)
+                content_label.setWordWrap(True)
+                content_label.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
+                content_label.setText(html_content)
+
+                scroll_area = QScrollArea()
+                scroll_area.setGeometry(40, 20, 1100, 600)
+                scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+                scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+                scroll_area.setWidgetResizable(True)
+
+                scroll_content = QWidget()
+                scroll_content.setStyleSheet("background-color: #006c7a;")
+                scroll_area.setWidget(scroll_content)
+
+                layout = QVBoxLayout(scroll_content)
+                layout.addWidget(content_label)
+
+                scroll_area.setStyleSheet("""
+                    QScrollArea { 
+                        border: none;
+                        padding: 0;
+                        background-color: #1E1E1E;
+                    }
+                    QScrollBar:vertical {
+                        background: #151A21;
+                        width: 10px;
+                        margin: 0 0 0 0;
+                    }
+                    QScrollBar::handle:vertical {
+                        background: #00B0C8;
+                        border-radius: 0px;
+                    }
+                    QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                        background: #00B0C8;
+                    }
+                    QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+                        background: #151A21;
+                    }
+                """)
+
+                content_label.setFont(self.predator_font)
+                content_label.setStyleSheet(
+                    f"color: #00B0C8; font-size: 18px; background-color: #151A21; padding: 10px;"
+                    f"font-family: '{self.predator_font.family()}';"
+                )
+                content_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+                self.internal_window.layout().addWidget(scroll_area)
+
+            except Exception as e:
+                # Log the error and display a message
+                print(f"Error loading HTML content: {e}")
+                error_label = QLabel("Error: Unable to load content.")
+                error_label.setStyleSheet("color: red; font-size: 18px;")
+                self.internal_window.layout().addWidget(error_label)
+
+        showButtons()
         self.internal_window.updateContent(text)
 
     def displayWikiContent(self):
@@ -386,6 +624,8 @@ class ButtonContent:
                         color: white;
                         border: none;
                         font-size: 18px;
+                        font-weight: bold;
+                        border-radius: 5px;
                     }
                     QPushButton:hover {
                         background-color: #004F59;
