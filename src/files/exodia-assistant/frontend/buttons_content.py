@@ -9,11 +9,12 @@
 
 from PyQt5.QtGui import QFontDatabase, QFont, QIcon
 import os
-from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtCore import Qt, QPoint, QTimer
 from PyQt5.QtGui import QPolygon, QRegion
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QScrollArea, QLineEdit
 from urllib.request import urlopen
 from urllib.error import URLError, HTTPError
+import threading
 
 
 def createCustomButtonMaskKeybinding():
@@ -152,30 +153,36 @@ class ButtonContent:
         # Load and format the local HTML content as a fallback
         local_news = loadHTMLContent('./HTML-files', 'News.html', self.predator_font.family())
 
-        try:
-            # Fetch the content of News.html from the GitHub repository using urllib
-            with urlopen(news_url) as response:
-                # Read the response content
-                html_content = response.read().decode('utf-8')
+        # Display a progress message
+        self.internal_window.updateContent(
+            "<div style='color: #00B0C8; text-align: center; font-size: 18px;'>Getting The Latest News...</div>")
 
-                # Format the HTML content with the predator font
-                formatted_html = f"<div style='font-family: {self.predator_font.family()};'>{html_content}</div>"
+        # Start a background thread to fetch the news content
+        def fetch_news():
+            try:
+                # Fetch the content of News.html from the GitHub repository using urllib
+                with urlopen(news_url) as response:
+                    # Read the response content
+                    html_content = response.read().decode('utf-8')
 
-                # Update the content of the internal window
-                self.internal_window.updateContent(formatted_html)
+                    # Format the HTML content with the predator font
+                    formatted_html = f"<div style='font-family: {self.predator_font.family()};'>{html_content}</div>"
 
-        except (URLError, HTTPError) as e:
-            # Handle errors (e.g., network issues, invalid URL, etc.)
-            error_message = f"""
-            <div style="color: red; text-align: center; font-size: 18px; padding: 20px;">
-                Error: Failed to fetch news content.<br>
-                Details: {str(e)}
-                <br> <br> <br>
-                Check your internet connection.
-            </div>
-            """
-            # Fallback to local news content
-            self.internal_window.updateContent(local_news)
+                    # Update the content of the internal window
+                    self.internal_window.updateContent(formatted_html)
+
+            except (URLError, HTTPError) as e:
+                # Handle errors (e.g., network issues, invalid URL, etc.)
+                error_message = f"""
+                <div style="color: red; text-align: center; font-size: 18px; padding: 20px;">
+                    Error: Failed to fetch news content.  \\  Details: {str(e)} <br> Check your internet connection.
+                </div>
+                """
+                # Fallback to local news content
+                self.internal_window.updateContent(local_news + error_message)
+
+        # Start the background thread
+        threading.Thread(target=fetch_news).start()
 
     def displaySettingContent(self):
 
