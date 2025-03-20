@@ -3,7 +3,7 @@
 #
 
 pkgname=exodia-assistant
-pkgver=3.1
+pkgver=3.2
 pkgrel=0
 pkgdesc="Assistant Manager for Exodia OS"
 url="https://github.com/Exodia-OS/exodia-apps"
