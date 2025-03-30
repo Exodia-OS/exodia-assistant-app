@@ -14,8 +14,9 @@ from PyQt5.QtGui import QPolygon, QRegion
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QScrollArea, QLineEdit
 from urllib.request import urlopen
 from urllib.error import URLError, HTTPError
+from urllib.request import urlopen, Request
 import threading
-
+import json
 
 def createCustomButtonMaskKeybinding():
     """Creates a custom QRegion mask for buttons."""
@@ -135,10 +136,12 @@ class ButtonContent:
         # Update the content of the internal window
         self.internal_window.updateContent(text)
 
+
     def displayNewsContent(self):
         """
         Displays the news content fetched from a GitHub repository.
-        If the fetch fails, it falls back to a local HTML file.
+        Lists and downloads all files from the GitHub directory and stores them locally.
+        If the fetch fails, it falls back to the local cached version.
         """
         # Clear previous buttons
         if not self.internal_window.layout():
@@ -147,42 +150,93 @@ class ButtonContent:
         else:
             self.clearButtons()
 
-        # URL to the raw News.html file in the GitHub repository
-        news_url = "https://raw.githubusercontent.com/Exodia-OS/exodia-assistant-news/refs/heads/master/News.html"
+        # GitHub API URL to list contents of the src directory
+        github_api_url = "https://api.github.com/repos/Exodia-OS/exodia-assistant-news/contents/src"
+        raw_base_url = "https://raw.githubusercontent.com/Exodia-OS/exodia-assistant-news/master/src/"
+        local_news_dir = os.path.expanduser("/tmp/exodia-assistant/news/")
+        local_news_path = os.path.join(local_news_dir, "News.html")
 
-        # Load and format the local HTML content as a fallback
-        local_news = loadHTMLContent('./HTML-files', 'News.html', self.predator_font.family())
+        # Ensure local directory exists
+        os.makedirs(local_news_dir, exist_ok=True)
 
-        # Display a progress message
+        # Display loading message
         self.internal_window.updateContent(
             "<div style='color: #00B0C8; text-align: center; font-size: 18px;'>Getting The Latest News...</div>")
 
-        # Start a background thread to fetch the news content
-        def fetch_news():
+        def fetch_and_cache_news():
             try:
-                # Fetch the content of News.html from the GitHub repository using urllib
-                with urlopen(news_url) as response:
-                    # Read the response content
-                    html_content = response.read().decode('utf-8')
+                # Create request with User-Agent header (GitHub API requires this)
+                req = Request(github_api_url)
+                req.add_header('User-Agent', 'Exodia-OS-Assistant')
 
-                    # Format the HTML content with the predator font
+                # Get directory listing
+                with urlopen(req) as response:
+                    directory_contents = json.loads(response.read().decode('utf-8'))
+
+                # Filter for files (ignore subdirectories)
+                files_to_download = [item['name'] for item in directory_contents if item['type'] == 'file']
+
+                if not files_to_download:
+                    raise Exception("No files found in the GitHub directory")
+
+                # Download each file
+                for filename in files_to_download:
+                    try:
+                        file_url = f"{raw_base_url}{filename}"
+                        local_path = os.path.join(local_news_dir, filename)
+
+                        with urlopen(file_url) as response:
+                            content = response.read()
+                            with open(local_path, 'wb') as f:
+                                f.write(content)
+                    except Exception as e:
+                        print(f"Failed to fetch {filename}: {str(e)}")
+                        # Continue with other files even if one fails
+
+                # After downloading, load the News.html if it exists
+                if os.path.exists(local_news_path):
+                    with open(local_news_path, 'r', encoding='utf-8') as f:
+                        html_content = f.read()
+
+                    # Format with predator font
                     formatted_html = f"<div style='font-family: {self.predator_font.family()};'>{html_content}</div>"
-
-                    # Update the content of the internal window
                     self.internal_window.updateContent(formatted_html)
+                else:
+                    # If News.html wasn't found, try to display any HTML file
+                    html_files = [f for f in os.listdir(local_news_dir) if f.lower().endswith('.html')]
+                    if html_files:
+                        with open(os.path.join(local_news_dir, html_files[0]), 'r', encoding='utf-8') as f:
+                            html_content = f.read()
+                        formatted_html = f"<div style='font-family: {self.predator_font.family()};'>{html_content}</div>"
+                        self.internal_window.updateContent(formatted_html)
+                    else:
+                        raise Exception("No HTML files found in the downloaded content")
 
-            except (URLError, HTTPError) as e:
-                # Handle errors (e.g., network issues, invalid URL, etc.)
+            except Exception as e:
+                # Handle any errors
                 error_message = f"""
                 <div style="color: red; text-align: center; font-size: 18px; padding: 20px;">
-                    Error: Failed to fetch news content.  \\  Details: {str(e)} <br> Check your internet connection.
+                    Error: Failed to fetch news content. Details: {str(e)} <br>
+                    Check your internet connection.
                 </div>
                 """
-                # Fallback to local news content
-                self.internal_window.updateContent(local_news + error_message)
+
+                # Try to use local cached version if available
+                if os.path.exists(local_news_path):
+                    try:
+                        with open(local_news_path, 'r', encoding='utf-8') as f:
+                            cached_content = f.read()
+                        formatted_cached = f"<div style='font-family: {self.predator_font.family()};'>" \
+                                           f"{cached_content}</div>"
+                        self.internal_window.updateContent(formatted_cached + error_message)
+                    except Exception as cache_error:
+                        self.internal_window.updateContent(
+                            f"<div style='color: red; text-align: center;'>" f"Failed to load cached news: {str(cache_error)}</div>")
+                else:
+                    self.internal_window.updateContent(error_message)
 
         # Start the background thread
-        threading.Thread(target=fetch_news).start()
+        threading.Thread(target=fetch_and_cache_news, daemon=True).start()
 
     def displaySettingContent(self):
 
