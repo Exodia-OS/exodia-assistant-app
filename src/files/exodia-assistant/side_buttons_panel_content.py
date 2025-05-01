@@ -9,9 +9,9 @@
 
 from PyQt5.QtGui import QFontDatabase, QFont, QIcon
 import os
-from PyQt5.QtCore import Qt, QPoint, QTimer
+from PyQt5.QtCore import Qt, QPoint, QTimer, QPropertyAnimation, QEasingCurve
 from PyQt5.QtGui import QPolygon, QRegion
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QScrollArea, QLineEdit
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QScrollArea, QLineEdit, QFrame
 from urllib.request import urlopen
 from urllib.error import URLError, HTTPError
 from urllib.request import urlopen, Request
@@ -112,6 +112,84 @@ def loadHTMLContent(directory, filename, font_family):
         return html_content.format(font_family)
     else:
         return f"<div style='font-family: {font_family};'>{html_content}</div>"
+
+
+def create_wiki_style_scroll_area(html_content, font, background_color="#0E1218"):
+    """
+    Creates a wiki-style scroll area with smooth scrolling and improved styling.
+
+    Args:
+        html_content (str): The HTML content to display in the scroll area.
+        font (QFont): The font to use for the content.
+        background_color (str): The background color of the content area.
+
+    Returns:
+        QScrollArea: A configured scroll area with the content.
+    """
+    # Create the content label
+    content_label = QLabel()
+    content_label.setTextFormat(Qt.RichText)
+    content_label.setWordWrap(True)
+    content_label.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
+    content_label.setText(html_content)
+    content_label.setFont(font)
+    content_label.setStyleSheet(
+        f"color: #00B0C8; font-size: 18px; background-color: {background_color}; padding: 20px;"
+        f"font-family: '{font.family()}';"
+    )
+    content_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+
+    # Create a frame to hold the content with better styling
+    content_frame = QFrame()
+    content_frame.setStyleSheet(f"background-color: {background_color}; border-radius: 8px;")
+    content_layout = QVBoxLayout(content_frame)
+    content_layout.setContentsMargins(20, 20, 20, 20)  # Add more padding for better readability
+    content_layout.addWidget(content_label)
+
+    # Create the scroll area with improved styling
+    scroll_area = QScrollArea()
+    scroll_area.setGeometry(40, 20, 1100, 600)
+    scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+    scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+    scroll_area.setWidgetResizable(True)
+    scroll_area.setWidget(content_frame)
+
+    # Apply wiki-style styling to the scroll area
+    scroll_area.setStyleSheet("""
+        QScrollArea { 
+            border: none;
+            padding: 0;
+            background-color: #1E1E1E;
+            border-radius: 8px;
+        }
+        QScrollBar:vertical {
+            background: #151A21;
+            width: 12px;
+            margin: 0;
+            border-radius: 6px;
+        }
+        QScrollBar::handle:vertical {
+            background: #00B0C8;
+            min-height: 30px;
+            border-radius: 6px;
+        }
+        QScrollBar::handle:vertical:hover {
+            background: #00C8E0;
+        }
+        QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+            height: 0px;
+            background: none;
+        }
+        QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+            background: #151A21;
+            border-radius: 6px;
+        }
+    """)
+
+    # Enable smooth scrolling with animation
+    scroll_area.verticalScrollBar().setSingleStep(10)  # Smaller step for smoother scrolling
+
+    return scroll_area
 
 
 class ButtonContent:
