@@ -11,7 +11,7 @@ import os
 from PyQt5.QtCore import Qt, QPoint, QRect
 from PyQt5.QtGui import QPainter, QColor, QRegion, QPolygon, QPen, QFont, QFontDatabase
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout
-
+import utils
 
 class CustomButton(QPushButton):
     def __init__(self, text, points, x, y, width, height, callback, color="#0E1218", border_color="#00B0C8",
@@ -41,19 +41,14 @@ class CustomButton(QPushButton):
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setMask(QRegion(self.original_points))
 
-        self.loadPredatorFont()
+        # Use predator font from utils.py
+        self.predator_font = utils.loadPredatorFont()
+        if self.predator_font:
+            # Adjust font size to 12 as it was before
+            self.predator_font.setPointSize(12)
 
         # Define an offset to move the text when the button is pressed
         self.text_offset_x = 0
-
-    def loadPredatorFont(self):
-        font_path = os.path.join(os.path.dirname(__file__), './Fonts', 'Squares-Bold.otf')
-        font_id = QFontDatabase.addApplicationFont(font_path)
-        if font_id == -1:
-            print("Failed to load Predator font.")
-        else:
-            font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
-            self.predator_font = QFont(font_family, 12, QFont.Bold)
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -167,9 +162,9 @@ class CustomButtonPanel(QWidget):
                 'x': 50, 'y': 270, 'width': 200, 'height': 100,
                 'callback': parent.displayWikiContent
             },
-            # Setting Button
+            # Tweaks Button
             {
-                'text': 'Setting',
+                'text': 'Tweaks',
                 'points': [
                     QPoint(300, 20),
                     QPoint(300, 80),
@@ -178,7 +173,7 @@ class CustomButtonPanel(QWidget):
                     QPoint(0, 20)
                 ],
                 'x': 50, 'y': 380, 'width': 200, 'height': 100,
-                'callback': parent.displaySettingContent
+                'callback': parent.displayTweaksContent
             },
             # Role Button
             {

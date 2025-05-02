@@ -9,194 +9,18 @@
 
 from PyQt5.QtGui import QFontDatabase, QFont, QIcon
 import os
-from PyQt5.QtCore import Qt, QPoint, QTimer, QPropertyAnimation, QEasingCurve
-from PyQt5.QtGui import QPolygon, QRegion
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QScrollArea, QLineEdit, QFrame
-from urllib.request import urlopen
-from urllib.error import URLError, HTTPError
 from urllib.request import urlopen, Request
 import threading
 import json
-
-def createCustomButtonMaskKeybinding():
-    """Creates a custom QRegion mask for buttons."""
-    button_points = [
-        QPoint(200, 0),  # Top right
-        QPoint(240, 30),  # Bottom right
-        QPoint(240, 100),  # Bottom right curve
-        QPoint(30, 100),  # Bottom left curve
-        QPoint(0, 70),  # Bottom left
-        QPoint(0, 0),  # Top left
-    ]
-    polygon = QPolygon(button_points)
-    return QRegion(polygon)
-
-
-def createCustomButtonMask():
-    """Creates a custom QRegion mask for buttons."""
-    button_points = [
-        QPoint(200, 0),  # Top right
-        QPoint(240, 30),  # Bottom right
-        QPoint(240, 100),  # Bottom right curve
-        QPoint(30, 100),  # Bottom left curve
-        QPoint(0, 70),  # Bottom left
-        QPoint(0, 0),  # Top left
-    ]
-    polygon = QPolygon(button_points)
-    return QRegion(polygon)
-
-
-def setupButton(button, font_family):
-    """Applies custom styles and mask to the button."""
-    button.setMask(createCustomButtonMask())
-    button.setStyleSheet(f"""
-        QPushButton {{
-            font-family: {font_family};
-            background-color: #00B0C8;
-            color: black;
-            font-size: 18px;
-            font-weight: bold;
-            padding: 5px;
-            border: none;
-        }}
-    """)
-
-
-def loadPredatorFont():
-    # Load the font from the Fonts directory
-    font_path = os.path.join(os.path.dirname(__file__), './Fonts', 'Squares-Bold.otf')
-    font_id = QFontDatabase.addApplicationFont(font_path)
-    if font_id == -1:
-        print("Failed to load predator font.")
-        return None
-    else:
-        font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
-        return QFont(font_family, 30, QFont.Bold)
-
-
-def loadHTMLContent(directory, filename, font_family):
-    """
-    Loads and formats HTML content from a specified file.
-
-    Args:
-        directory (str): The directory containing the HTML file.
-        filename (str): The name of the HTML file.
-        font_family (str): The font family to apply to the content.
-
-    Returns:
-        str: The formatted HTML content.
-    """
-    # Define the path to the HTML file
-    html_file_path = os.path.join(os.path.dirname(__file__), directory, filename)
-
-    try:
-        # Read the content of the HTML file
-        with open(html_file_path, "r", encoding="utf-8") as html_file:
-            html_content = html_file.read()
-    except FileNotFoundError:
-        html_content = """
-        <div style="color: red; text-align: center; font-size: 18px; padding: 20px;">
-            Error: Could not find the content file at <code>{}</code>.
-        </div>
-        """.format(html_file_path)
-    except Exception as e:
-        html_content = """
-        <div style="color: red; text-align: center; font-size: 18px; padding: 20px;">
-            Error: An unexpected error occurred while reading the content file.<br>
-            Details: {}
-        </div>
-        """.format(str(e))
-
-    # Add a placeholder for the font family if it's not already formatted
-    if "{}" in html_content:
-        return html_content.format(font_family)
-    else:
-        return f"<div style='font-family: {font_family};'>{html_content}</div>"
-
-
-def create_wiki_style_scroll_area(html_content, font, background_color="#0E1218"):
-    """
-    Creates a wiki-style scroll area with smooth scrolling and improved styling.
-
-    Args:
-        html_content (str): The HTML content to display in the scroll area.
-        font (QFont): The font to use for the content.
-        background_color (str): The background color of the content area.
-
-    Returns:
-        QScrollArea: A configured scroll area with the content.
-    """
-    # Create the content label
-    content_label = QLabel()
-    content_label.setTextFormat(Qt.RichText)
-    content_label.setWordWrap(True)
-    content_label.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
-    content_label.setText(html_content)
-    content_label.setFont(font)
-    content_label.setStyleSheet(
-        f"color: #00B0C8; font-size: 18px; background-color: {background_color}; padding: 20px;"
-        f"font-family: '{font.family()}';"
-    )
-    content_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
-
-    # Create a frame to hold the content with better styling
-    content_frame = QFrame()
-    content_frame.setStyleSheet(f"background-color: {background_color}; border-radius: 8px;")
-    content_layout = QVBoxLayout(content_frame)
-    content_layout.setContentsMargins(20, 20, 20, 20)  # Add more padding for better readability
-    content_layout.addWidget(content_label)
-
-    # Create the scroll area with improved styling
-    scroll_area = QScrollArea()
-    scroll_area.setGeometry(40, 20, 1100, 600)
-    scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-    scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-    scroll_area.setWidgetResizable(True)
-    scroll_area.setWidget(content_frame)
-
-    # Apply wiki-style styling to the scroll area
-    scroll_area.setStyleSheet("""
-        QScrollArea { 
-            border: none;
-            padding: 0;
-            background-color: #1E1E1E;
-            border-radius: 8px;
-        }
-        QScrollBar:vertical {
-            background: #151A21;
-            width: 12px;
-            margin: 0;
-            border-radius: 6px;
-        }
-        QScrollBar::handle:vertical {
-            background: #00B0C8;
-            min-height: 30px;
-            border-radius: 6px;
-        }
-        QScrollBar::handle:vertical:hover {
-            background: #00C8E0;
-        }
-        QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
-            height: 0px;
-            background: none;
-        }
-        QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
-            background: #151A21;
-            border-radius: 6px;
-        }
-    """)
-
-    # Enable smooth scrolling with animation
-    scroll_area.verticalScrollBar().setSingleStep(10)  # Smaller step for smoother scrolling
-
-    return scroll_area
-
+import utils
 
 class ButtonContent:
 
     def __init__(self, internal_window):
         self.internal_window = internal_window
-        self.predator_font = loadPredatorFont()
+        self.predator_font = utils.loadPredatorFont()
 
     def clearButtons(self):
         # Remove all button widgets from the internal window
@@ -209,18 +33,14 @@ class ButtonContent:
         # Clear previous buttons
         self.clearButtons()
         # Load and format the HTML content
-        text = loadHTMLContent('./HTML-files', 'displayWelcomeContent.html', self.predator_font.family())
+        text = utils.loadHTMLContent('./HTML-files', 'displayWelcomeContent.html', self.predator_font.family())
 
         # Update the content of the internal window
         self.internal_window.updateContent(text)
 
 
     def displayNewsContent(self):
-        """
-        Displays the news content fetched from a GitHub repository.
-        Lists and downloads all files from the GitHub directory and stores them locally.
-        If the fetch fails, it falls back to the local cached version.
-        """
+
         # Clear previous buttons
         if not self.internal_window.layout():
             self.internal_window.setLayout(QVBoxLayout())
@@ -234,7 +54,7 @@ class ButtonContent:
         local_news_dir = os.path.expanduser("/tmp/exodia-assistant/news/")
         local_news_path = os.path.join(local_news_dir, "News.html")
 
-        # Ensure local directory exists
+        # Ensure a local directory exists
         os.makedirs(local_news_dir, exist_ok=True)
 
         # Display loading message
@@ -299,7 +119,7 @@ class ButtonContent:
                 </div>
                 """
 
-                # Try to use local cached version if available
+                # Try to use a local cached version if available
                 if os.path.exists(local_news_path):
                     try:
                         with open(local_news_path, 'r', encoding='utf-8') as f:
@@ -316,11 +136,11 @@ class ButtonContent:
         # Start the background thread
         threading.Thread(target=fetch_and_cache_news, daemon=True).start()
 
-    def displaySettingContent(self):
+    def displayTweaksContent(self):
 
         self.clearButtons()  # Clear previous buttons
         # Load and format the HTML content
-        text = loadHTMLContent('./HTML-files', 'displaySettingContent.html', self.predator_font.family())
+        text = utils.loadHTMLContent('./HTML-files', 'displayTweaksContent.html', self.predator_font.family())
         # Update the content of the internal window
         self.internal_window.updateContent(text)
 
@@ -328,7 +148,7 @@ class ButtonContent:
 
         self.clearButtons()  # Clear previous buttons
         # Load and format the HTML content
-        text = loadHTMLContent('./HTML-files', 'displayRoleContent.html', self.predator_font.family())
+        text = utils.loadHTMLContent('./HTML-files', 'displayRoleContent.html', self.predator_font.family())
         # Update the content of the internal window
         self.internal_window.updateContent(text)
 
@@ -336,14 +156,13 @@ class ButtonContent:
 
         self.clearButtons()  # Clear previous buttons
         # Load and format the HTML content
-        text = loadHTMLContent('./HTML-files', 'displayDevelopersContent.html', self.predator_font.family())
+        text = utils.loadHTMLContent('./HTML-files', 'displayDevelopersContent.html', self.predator_font.family())
         # Update the content of the internal window
         self.internal_window.updateContent(text)
 
     def displayKeybindingContent(self):
 
         text = ""
-
         # Base directory for HTML files
         html_dir = "./HTML-files/Keybinding"
 
@@ -359,7 +178,7 @@ class ButtonContent:
             """Creates a custom button widget with word-wrapped text and a custom shape."""
             button = QPushButton()
             button.setFixedSize(240, 100)
-            button.setMask(createCustomButtonMaskKeybinding())
+            button.setMask(utils.contentButtonMask())
             button.setStyleSheet(
                 f"""
                 QPushButton {{
@@ -505,7 +324,7 @@ class ButtonContent:
                 self.internal_window.layout().addWidget(top_widget)
 
                 # Load the HTML content
-                html_content = loadHTMLContent(html_dir, html_file, self.predator_font.family())
+                html_content = utils.loadHTMLContent(html_dir, html_file, self.predator_font.family())
 
                 # Use the scroll area from the internal window
                 content_label = QLabel()
@@ -585,7 +404,7 @@ class ButtonContent:
             """Creates a custom button widget with word-wrapped text and a custom shape."""
             button = QPushButton()
             button.setFixedSize(240, 100)
-            button.setMask(createCustomButtonMask())
+            button.setMask(utils.contentButtonMask())
             button.setStyleSheet(
                 f"""
                 QPushButton {{
@@ -785,7 +604,7 @@ class ButtonContent:
                 self.internal_window.layout().addWidget(top_widget)
 
                 # Load the HTML content
-                html_content = loadHTMLContent(html_dir, html_file, self.predator_font.family())
+                html_content = utils.loadHTMLContent(html_dir, html_file, self.predator_font.family())
 
                 # Use the scroll area from the internal window
                 content_label = QLabel()

@@ -11,7 +11,7 @@ import os
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QColor, QBrush, QRegion, QPolygon, QPen, QFontDatabase, QFont
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QScrollArea
-
+import utils
 
 class InternalWindow(QWidget):
     def __init__(self, parent=None):
@@ -27,7 +27,11 @@ class InternalWindow(QWidget):
         self.content_label.setStyleSheet("color: white; font-size: 20px; padding: 0px;")
 
         # Load and apply Predator font
-        self.loadPredatorFont()
+        # Use predator font from utils.py
+        self.predator_font = utils.loadPredatorFont()
+        if self.predator_font:
+            # Adjust font size to 12 as it was before
+            self.predator_font.setPointSize(12)
 
         # Create the scroll area
         scroll_area = QScrollArea(self)
@@ -80,16 +84,7 @@ class InternalWindow(QWidget):
         )
         self.content_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
 
-    def loadPredatorFont(self):
 
-        # Load the font from the Fonts directory
-        font_path = os.path.join(os.path.dirname(__file__), './Fonts', 'Squares-Bold.otf')
-        font_id = QFontDatabase.addApplicationFont(font_path)
-        if font_id == -1:
-            print("Failed to load predator font.")
-        else:
-            font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
-            self.predator_font = QFont(font_family, 30, QFont.Bold)
 
     def createCustomMask(self):
         # Define points for an 8-sided polygon

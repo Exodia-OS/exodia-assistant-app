@@ -19,6 +19,7 @@ from profile_pic import ProfilePicture
 from side_buttons_panel import CustomButtonPanel  # Import the button panel
 from side_buttons_panel_content import ButtonContent  # Import the ButtonContent class
 from settings import SettingWindow
+import utils
 
 
 # Function to set WM_CLASS for the window
@@ -70,8 +71,11 @@ class CustomShapeWindow(QMainWindow):
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         # Make the window transparent
         self.setAttribute(Qt.WA_TranslucentBackground)
-        # Load custom fonts
-        self.loadPredatorFont()
+        # Use predator font from utils.py
+        self.predator_font = utils.loadPredatorFont()
+        if self.predator_font:
+            # Adjust font size to 12 as it was before
+            self.predator_font.setPointSize(28)
         # Load buttons fonts
         self.loadButtonFont()
         # Define the custom shape
@@ -108,16 +112,6 @@ class CustomShapeWindow(QMainWindow):
             self.setting_window.show()
         except Exception as e:
             print(f"Error initializing SettingWindow: {e}")
-
-    def loadPredatorFont(self):
-        # Load the font from the Fonts directory
-        font_path = os.path.join(os.path.dirname(__file__), './Fonts', 'Squares-Bold.otf')
-        font_id = QFontDatabase.addApplicationFont(font_path)
-        if font_id == -1:
-            print("Failed to load predator font.")
-        else:
-            font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
-            self.predator_font = QFont(font_family, 30, QFont.Bold)
 
     def loadButtonFont(self):
         # Load the font from the Fonts directory
@@ -186,8 +180,8 @@ class CustomShapeWindow(QMainWindow):
     def displayWikiContent(self):
         self.button_content.displayWikiContent()  # Call the method from ButtonContent
 
-    def displaySettingContent(self):
-        self.button_content.displaySettingContent()  # Call the method from ButtonContent
+    def displayTweaksContent(self):
+        self.button_content.displayTweaksContent()  # Call the method from ButtonContent
 
     def displayRoleContent(self):
         self.button_content.displayRoleContent()  # Call the method from RoleContent
@@ -259,7 +253,7 @@ class CustomShapeWindow(QMainWindow):
         # painter.drawPath(path)  # Draw the trapezoid border
 
         # Center the text horizontally
-        text = "ExodiaOS Assistant"
+        text = "Exodia Assistant"
         text_rect = painter.fontMetrics().boundingRect(text)
         text_width = text_rect.width()
         text_height = text_rect.height()
