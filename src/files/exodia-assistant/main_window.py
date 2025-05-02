@@ -74,7 +74,7 @@ class CustomShapeWindow(QMainWindow):
         # Use predator font from utils.py
         self.predator_font = utils.loadPredatorFont()
         if self.predator_font:
-            # Adjust font size to 12 as it was before
+            # Adjust the font size to 12 as it was before
             self.predator_font.setPointSize(28)
         # Load buttons fonts
         self.loadButtonFont()
@@ -89,7 +89,7 @@ class CustomShapeWindow(QMainWindow):
         self.profile_picture = ProfilePicture(self)  # Changed from AddLogo to ProfilePicture
         self.profile_picture.show()
         # Add the custom button panel
-        self.addButtonPanel()  # Call function to add button panel
+        self.addButtonPanel()  # Call function to add a button panel
         # Set WM_CLASS after the window is shown
         self.set_wm_class()
         # Initialize ButtonContent

@@ -26,6 +26,6 @@ package() {
 
 	(find exodia-assistant -type f -exec install -Dm 644 "{}" "$pkgdir/usr/share/exodia/{}" \;)
 	install -Dm 644 ${srcdir}/exodia-assistant.desktop	   ${pkgdir}/usr/share/applications/exodia-assistant.desktop
-	install -Dm 755 ${srcdir}/${pkgname}/exodia-assistant    ${pkgdir}/usr/local/bin/exodia-assistant
+	install -Dm 755 ${srcdir}/exodia-assistant.sh          ${pkgdir}/usr/local/bin/exodia-assistant
 
 }

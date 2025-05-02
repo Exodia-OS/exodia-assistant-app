@@ -18,7 +18,6 @@ class InternalWindow(QWidget):
         super().__init__(parent)
         # Set the geometry (position and size) of the internal window
         # self.setGeometry(x, y, width, height)
-        self.predator_font = None
         self.setGeometry(300, 100, 1240, 740)
         self.setAttribute(Qt.WA_TranslucentBackground)  # Make the background transparent
         self.polygon = self.createCustomMask()  # Store the polygon used for the mask
@@ -26,16 +25,16 @@ class InternalWindow(QWidget):
         self.content_label.setGeometry(self.rect())
         self.content_label.setStyleSheet("color: white; font-size: 20px; padding: 0px;")
 
-        # Load and apply Predator font
         # Use predator font from utils.py
+        self.predator_font = None
         self.predator_font = utils.loadPredatorFont()
         if self.predator_font:
-            # Adjust font size to 12 as it was before
+            # Adjust the font size to 12 as it was before
             self.predator_font.setPointSize(12)
 
         # Create the scroll area
         scroll_area = QScrollArea(self)
-        scroll_area.setGeometry(10, 20, 1200, 700)  # Set scroll area size within the internal window
+        scroll_area.setGeometry(10, 20, 1210, 710)  # Set scroll area size within the internal window
         # scroll_area.setGeometry(self.rect())  # Set the scroll area to the full size of the window
         scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -93,9 +92,7 @@ class InternalWindow(QWidget):
             QPoint(1240, 30),  # Top right, 2
             QPoint(1240, 740),  # Middle right, 3
             QPoint(0, 740),  # Bottom center, 4
-            # QPoint(30, 640),   # Bottom center, 4
-            # QPoint(0, 610),    # Bottom left, 5
-            QPoint(0, 0)  # Middle left, 6
+            QPoint(0, 0)  # Middle left, 5
         ]
 
         polygon = QPolygon(points)
