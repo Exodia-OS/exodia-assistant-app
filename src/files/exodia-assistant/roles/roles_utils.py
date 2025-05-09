@@ -34,9 +34,13 @@ def get_available_roles():
         return [d for d in os.listdir(roles_dir) if os.path.isdir(os.path.join(roles_dir, d))]
     return []
 
+import os
+import yaml
+
 def save_role_to_yaml(role_name):
-    roles_dir = os.path.dirname(os.path.abspath(__file__))
-    yaml_path = os.path.join(roles_dir, "role.yaml")
+    config_dir = os.path.expanduser("~/.config/exodia-assistant")
+    os.makedirs(config_dir, exist_ok=True)  # Ensure directory exists
+    yaml_path = os.path.join(config_dir, "role.yaml")
 
     data = {"selected_role": role_name}
 
@@ -44,8 +48,7 @@ def save_role_to_yaml(role_name):
         yaml.dump(data, yaml_file, default_flow_style=False)
 
 def load_role_from_yaml():
-    roles_dir = os.path.dirname(os.path.abspath(__file__))
-    yaml_path = os.path.join(roles_dir, "role.yaml")
+    yaml_path = os.path.expanduser("~/.config/exodia-assistant/role.yaml")
 
     if os.path.exists(yaml_path):
         try:
