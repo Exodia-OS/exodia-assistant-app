@@ -1,0 +1,19 @@
+cat 1:
+  - name: Name
+    Status:
+    pkgs: pkg
+
+  - name: Name 2
+    Status:
+    pkgs: pkg-2
+
+
+cat 2:
+  - name: Name 3
+    Status:
+    pkgs: pkg-3
+
+cat 3:
+  - name: Name 4
+    Status:
+    pkgs: pkg-4

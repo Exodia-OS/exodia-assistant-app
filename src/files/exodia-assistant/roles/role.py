@@ -9,7 +9,8 @@
 
 import os, sys
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton, QLabel, QHBoxLayout, QTabWidget, QFrame
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QUrl
+from PyQt5.QtGui import QDesktopServices
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import utils
 from . import roles_utils
@@ -421,19 +422,46 @@ class Role(QWidget):
         content_label.setTextFormat(Qt.RichText)
         content_label.setWordWrap(True)
         content_label.setAlignment(Qt.AlignTop)
-        content_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
-        content_label.setText(f"""
-        <div style="color: #00B0C8; line-height: 1.6; font-size: 18px; font-family: {font_family};">
-            <p>This tab displays the roadmap for your selected role, including:</p>
-            <ul>
-                <li>Learning path</li>
-                <li>Skill progression</li>
-                <li>Career milestones</li>
-                <li>Certification recommendations</li>
-            </ul>
-            <p>Select a role to view its specific roadmap.</p>
-        </div>
-        """)
+        content_label.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.LinksAccessibleByMouse)
+        content_label.linkActivated.connect(self.open_url)
+
+        # Get the selected role from role.yaml
+        selected_role = roles_utils.load_role_from_yaml()
+
+        if selected_role:
+            # Construct the path to the roadmap.html file for the selected role
+            roadmap_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                                       f"profiles/{selected_role}/roadmap.html")
+
+            # Check if the roadmap.html file exists
+            if os.path.exists(roadmap_path):
+                # Load the HTML content from the file
+                with open(roadmap_path, "r", encoding="utf-8") as html_file:
+                    html_content = html_file.read()
+                content_label.setText(html_content)
+            else:
+                # Display an error message if the file doesn't exist
+                content_label.setText(f"""
+                <div style="color: #00B0C8; line-height: 1.6; font-size: 18px; font-family: {font_family};">
+                    <p>Roadmap file not found for the selected role: {selected_role}</p>
+                    <p>Expected path: {roadmap_path}</p>
+                </div>
+                """)
+        else:
+            # Display a message if no role is selected
+            content_label.setText(f"""
+            <div style="color: #00B0C8; line-height: 1.6; font-size: 18px; font-family: {font_family};">
+                <p>This tab displays the roadmap for your selected role, including:</p>
+                <ul>
+                    <li>Learning path</li>
+                    <li>Skill progression</li>
+                    <li>Career milestones</li>
+                    <li>Certification recommendations</li>
+                </ul>
+                <p>Select a role to view its specific roadmap.</p>
+            </div>
+            """)
+
         content_label.setStyleSheet(f"color: #00B0C8; font-size: 18px; font-family: '{font_family}';")
         roadmap_layout.addWidget(content_label)
 
@@ -499,20 +527,64 @@ class Role(QWidget):
         content_label.setTextFormat(Qt.RichText)
         content_label.setWordWrap(True)
         content_label.setAlignment(Qt.AlignTop)
-        content_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
-        content_label.setText(f"""
-        <div style="color: #00B0C8; line-height: 1.6; font-size: 18px; font-family: {font_family};">
-            <p>This tab provides learning materials for your selected role, including:</p>
-            <ul>
-                <li>Books and publications</li>
-                <li>Online courses</li>
-                <li>Video tutorials</li>
-                <li>Documentation and references</li>
-                <li>Practice exercises</li>
-            </ul>
-            <p>Select a role to view its specific learning materials.</p>
-        </div>
-        """)
+        content_label.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.LinksAccessibleByMouse)
+        content_label.linkActivated.connect(self.open_url)
+
+        # Get the selected role from role.yaml
+        selected_role = roles_utils.load_role_from_yaml()
+
+        if selected_role:
+            # Construct the path to the materials.html file for the selected role
+            materials_html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                                       f"profiles/{selected_role}/materials.html")
+            materials_md_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                                       f"profiles/{selected_role}/materials.md")
+
+            # Check if the materials.html file exists
+            if os.path.exists(materials_html_path):
+                # Load the HTML content from the file
+                with open(materials_html_path, "r", encoding="utf-8") as html_file:
+                    html_content = html_file.read()
+                content_label.setText(html_content)
+            # Check if the materials.md file exists
+            elif os.path.exists(materials_md_path):
+                # Load the MD content from the file
+                with open(materials_md_path, "r", encoding="utf-8") as md_file:
+                    md_content = md_file.read()
+                # Convert MD content to HTML (simple conversion for display)
+                html_content = f"""
+                <div style="color: #00B0C8; line-height: 1.6; font-size: 18px; font-family: {font_family};">
+                    {md_content}
+                </div>
+                """
+                content_label.setText(html_content)
+            else:
+                # Display an error message if neither file exists
+                content_label.setText(f"""
+                <div style="color: #00B0C8; line-height: 1.6; font-size: 18px; font-family: {font_family};">
+                    <p>Materials file not found for the selected role: {selected_role}</p>
+                    <p>Expected paths:</p>
+                    <p>{materials_html_path}</p>
+                    <p>or</p>
+                    <p>{materials_md_path}</p>
+                </div>
+                """)
+        else:
+            # Display a message if no role is selected
+            content_label.setText(f"""
+            <div style="color: #00B0C8; line-height: 1.6; font-size: 18px; font-family: {font_family};">
+                <p>This tab provides learning materials for your selected role, including:</p>
+                <ul>
+                    <li>Books and publications</li>
+                    <li>Online courses</li>
+                    <li>Video tutorials</li>
+                    <li>Documentation and references</li>
+                    <li>Practice exercises</li>
+                </ul>
+                <p>Select a role to view its specific learning materials.</p>
+            </div>
+            """)
+
         content_label.setStyleSheet(f"color: #00B0C8; font-size: 18px; font-family: '{font_family}';")
         materials_layout.addWidget(content_label)
 
@@ -578,6 +650,8 @@ class Role(QWidget):
         content_label.setTextFormat(Qt.RichText)
         content_label.setWordWrap(True)
         content_label.setAlignment(Qt.AlignTop)
+        content_label.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.LinksAccessibleByMouse)
+        content_label.linkActivated.connect(self.open_url)
         content_label.setText(f"""
         <div style="color: #00B0C8; line-height: 1.6; font-size: 18px; font-family: {font_family};">
             <p>This tab provides guidance on setting up your development environment for your selected role, including:</p>
@@ -631,3 +705,12 @@ class Role(QWidget):
         # Always create a new window to ensure it's up to date
         self.role_selection_window = roles_utils.RoleSelectionWindow(predator_font=self.predator_font)
         self.role_selection_window.show()
+
+    def open_url(self, url):
+        """
+        Open a URL in the default web browser.
+
+        Args:
+            url (str): The URL to open
+        """
+        QDesktopServices.openUrl(QUrl(url))

@@ -50,14 +50,19 @@ class Tweaks(QWidget):
 
         # Available tweak categories
         self.categories = [
-            "Themes & Icons", 
-            "Polybar", 
-            "RGB Keyboard", 
-            "Picom Config", 
-            "Keybinding", 
-            "BSPWM Configurations", 
-            "Auto-Start", 
-            "Auto-Update"
+            "Change Themes",
+            "Change Icons",
+            "Change Cursors",
+            "Change Polybar Theme",
+            "Change RGB Keyboard",
+            "Picom Configs",
+            "Keybindings",
+            "BSPWM Tweaks",
+            "DWM Tweaks",
+            "I3WM Tweaks",
+            "Hyprland Tweaks",
+            "Install WMs Themes",
+            "Install WCs Themes"
         ]
 
     def display_tweaks(self, internal_window):
