@@ -101,7 +101,7 @@ class SettingWindow(QMainWindow):
         font_family = self.custom_font.family() if self.custom_font else "Squares-Bold"
         self.close_button.setStyleSheet(f"""
             QPushButton {{
-                background-color: #0E1218;
+                background-color: #151A21;
                 color: #00B0C8;
                 font-family: '{font_family}';
                 font-size: 30px;

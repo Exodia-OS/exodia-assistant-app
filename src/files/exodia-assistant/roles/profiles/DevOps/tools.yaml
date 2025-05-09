@@ -1,0 +1,34 @@
+containerization:
+  - name: Docker
+    Status:
+    pkgs: docker
+
+  - name: Docker Compose
+    Status:
+    pkgs: docker-compose
+
+  - name: Podman
+    Status:
+    pkgs: podman
+
+  - name: Podman Compose
+    Status:
+    pkgs: podman-compose
+
+  - name: Podman Desktop
+    Status:
+    pkgs: podman-desktop
+
+  - name: Kubernetes
+    Status:
+    pkgs: kubelet, kubeadm, kubectl
+
+configuration management:
+  - name: Ansible
+    Status:
+    pkgs: ansible
+
+IaaC:
+  - name: Terraform
+    Status:
+    pkgs: terraform

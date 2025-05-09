@@ -73,8 +73,15 @@ Navigate through the different sections using the side panel buttons. Use the se
 
 ## License
 
-This project is licensed under the GPL3 License - see the LICENSE file for details.
+This project is licensed under the GPL3 License—see the LICENSE file for details.
 
 ## Developers
 
 - **Maintainer**: Mahmoud Mohamed (00xWolf) - [GitHub](https://github.com/mmsaeed509)
+
+### AI wrote 60% of this code.
+
+- [Junie AI](https://www.jetbrains.com/junie)
+- [DeepSeek](https://chat.deepseek.com)
+- [KimiAI](https://kimi.moonshot.cn)
+- [ChatGPT](https://chatgpt.com)

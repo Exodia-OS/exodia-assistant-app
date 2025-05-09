@@ -156,48 +156,62 @@ class ButtonContent:
         # Create an instance of the Role class
         role = Role()
 
-        # Load the role content
-        role_content = role.load_role_content(role_name)
+        # For "Create a Role" or "Manage Your Role", pass the internal_window and back_callback to enable the new display method
+        if role_name == "Create a Role" or role_name == "Manage Your Role":
+            # Load the role content with the internal window and back_callback
+            role_content = role.load_role_content(role_name, self.internal_window, self.displayRoleContent)
 
-        # Update the content of the internal window
-        self.internal_window.updateContent(role_content)
+            # If content is empty, it means the display_create_role or display_manage_role method handled the display
+            if not role_content:
+                # Clear the content of the internal window before returning
+                self.internal_window.updateContent("")
+                return
 
-        # Add a back button
-        back_button = QPushButton()
-        back_button.setFixedSize(240, 100)
-        back_button.setMask(utils.contentButtonMask())
-        back_button.setStyleSheet("""
-            QPushButton {
-                background-color: #00B0C8;
-                color: white;
-                border: none;
-            }
-            QPushButton:hover {
-                background-color: #0086A8;
-            }
-            QPushButton:pressed {
-                background-color: #005F78;
-            }
-        """)
+            # Otherwise, update the content of the internal window
+            self.internal_window.updateContent(role_content)
+        else:
+            # Load the role content for other roles
+            role_content = role.load_role_content(role_name)
 
-        # Create a label for the button text with predator font
-        text_label = QLabel("Back to Roles")
-        text_label.setAlignment(Qt.AlignCenter)
-        text_label.setWordWrap(True)
-        text_label.setStyleSheet(
-            f"color: white; font-family: '{self.predator_font.family()}'; font-size: 18px;"
-        )
+            # Update the content of the internal window
+            self.internal_window.updateContent(role_content)
 
-        # Add the label to the button
-        button_layout = QVBoxLayout()
-        button_layout.addWidget(text_label)
-        button_layout.setContentsMargins(0, 0, 0, 0)
-        back_button.setLayout(button_layout)
+            # Add a back button
+            back_button = QPushButton()
+            back_button.setFixedSize(240, 100)
+            back_button.setMask(utils.contentButtonMask())
+            back_button.setStyleSheet("""
+                QPushButton {
+                    background-color: #00B0C8;
+                    color: white;
+                    border: none;
+                }
+                QPushButton:hover {
+                    background-color: #0086A8;
+                }
+                QPushButton:pressed {
+                    background-color: #005F78;
+                }
+            """)
 
-        back_button.clicked.connect(self.displayRoleContent)
+            # Create a label for the button text with predator font
+            text_label = QLabel("Back")
+            text_label.setAlignment(Qt.AlignCenter)
+            text_label.setWordWrap(True)
+            text_label.setStyleSheet(
+                f"color: white; font-family: '{self.predator_font.family()}'; font-size: 18px;"
+            )
 
-        # Add the back button to the internal window
-        self.internal_window.layout().addWidget(back_button)
+            # Add the label to the button
+            button_layout = QVBoxLayout()
+            button_layout.addWidget(text_label)
+            button_layout.setContentsMargins(0, 0, 0, 0)
+            back_button.setLayout(button_layout)
+
+            back_button.clicked.connect(self.displayRoleContent)
+
+            # Add the back button to the internal window
+            self.internal_window.layout().addWidget(back_button)
 
     def displayKeybindingContent(self):
         keybinding.displayKeybindingContent(self.internal_window, self.predator_font)

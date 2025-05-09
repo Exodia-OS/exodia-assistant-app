@@ -9,7 +9,7 @@
 
 import os
 import yaml
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QScrollArea, QFrame
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QScrollArea, QFrame, QLineEdit
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QBrush, QColor, QPen, QPolygon, QRegion
 from Xlib import display
@@ -62,10 +62,12 @@ class RoleSelectionWindow(QWidget):
         self.layout = None
         self.current_role = None
         self.available_roles = None
+        self.filtered_roles = None
         self.predator_font = predator_font
         self.selected_role = None
         self.roles_container = None
         self.scroll_area = None
+        self.search_text = ""
         self.initUI()
 
     def initUI(self):
@@ -92,6 +94,86 @@ class RoleSelectionWindow(QWidget):
         else:
             title_label.setStyleSheet("color: #00B0C8; font-size: 24px;")
         self.layout.addWidget(title_label)
+
+        # Search bar
+        search_layout = QHBoxLayout()
+        search_layout.setContentsMargins(0, 10, 0, 10)
+
+        # Search text field
+        self.search_field = QLineEdit()
+        self.search_field.setPlaceholderText("Search roles...")
+        self.search_field.setFixedHeight(40)
+        if self.predator_font:
+            self.search_field.setFont(self.predator_font)
+            self.search_field.setStyleSheet(f"""
+                QLineEdit {{
+                    background-color: #151A21;
+                    color: white;
+                    border: 1px solid #00B0C8;
+                    border-radius: 5px;
+                    padding: 5px;
+                    font-family: '{self.predator_font.family()}';
+                }}
+                QLineEdit:focus {{
+                    border: 2px solid #00B0C8;
+                }}
+            """)
+        else:
+            self.search_field.setStyleSheet("""
+                QLineEdit {
+                    background-color: #151A21;
+                    color: white;
+                    border: 1px solid #00B0C8;
+                    border-radius: 5px;
+                    padding: 5px;
+                }
+                QLineEdit:focus {
+                    border: 2px solid #00B0C8;
+                }
+            """)
+        self.search_field.textChanged.connect(self.search_roles)
+
+        # Search button
+        search_button = QPushButton("Search", self)
+        search_button.setFixedSize(100, 40)
+        search_button.setCursor(Qt.PointingHandCursor)
+        if self.predator_font:
+            search_button.setFont(self.predator_font)
+            search_button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: #00B0C8;
+                    color: white;
+                    border-radius: 5px;
+                    font-family: '{self.predator_font.family()}';
+                }}
+                QPushButton:hover {{
+                    background-color: #0086A8;
+                }}
+                QPushButton:pressed {{
+                    background-color: #005F78;
+                }}
+            """)
+        else:
+            search_button.setStyleSheet("""
+                QPushButton {
+                    background-color: #00B0C8;
+                    color: white;
+                    border-radius: 5px;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #0086A8;
+                }
+                QPushButton:pressed {
+                    background-color: #005F78;
+                }
+            """)
+        search_button.clicked.connect(lambda: self.search_roles(self.search_field.text()))
+
+        search_layout.addWidget(self.search_field)
+        search_layout.addWidget(search_button)
+
+        self.layout.addLayout(search_layout)
 
         # Scroll area for roles
         self.scroll_area = QScrollArea(self)
@@ -230,6 +312,16 @@ class RoleSelectionWindow(QWidget):
         polygon = QPolygon(points)
         return QRegion(polygon)
 
+    def search_roles(self, text):
+        """
+        Filter roles based on search text.
+
+        Args:
+            text (str): The search text
+        """
+        self.search_text = text.lower()
+        self.create_roles_container()
+
     def create_roles_container(self):
         """
         Create and populate the container with available roles.
@@ -245,10 +337,16 @@ class RoleSelectionWindow(QWidget):
         self.available_roles = get_available_roles()
         self.current_role = load_role_from_yaml()
 
+        # Filter roles based on search text
+        if self.search_text:
+            self.filtered_roles = [role for role in self.available_roles if self.search_text in role.lower()]
+        else:
+            self.filtered_roles = self.available_roles
+
         # Set spacing for the role layout
         roles_layout.setSpacing(10)
 
-        for role in self.available_roles:
+        for role in self.filtered_roles:
             role_frame = QFrame()
             role_frame.setCursor(Qt.PointingHandCursor)  # Change cursor to hand when hovering
             role_frame.setStyleSheet("""
