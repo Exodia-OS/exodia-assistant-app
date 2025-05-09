@@ -19,6 +19,7 @@ class Role(QWidget):
         super().__init__(parent)
         # Set the geometry (position and size) of the widget
         self.setGeometry(0, 0, 800, 600)
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)  # Make the background transparent
 
         # Use predator font from utils.py
@@ -115,8 +116,8 @@ class Role(QWidget):
     def show_role_selection_window(self):
         """
         Show the role selection window.
-        Creates a new window each time to ensure it's up-to-date.
+        Creates a new window each time to ensure it's up to date.
         """
-        # Always create a new window to ensure it's up-to-date
+        # Always create a new window to ensure it's up to date
         self.role_selection_window = roles_utils.RoleSelectionWindow(predator_font=self.predator_font)
         self.role_selection_window.show()

@@ -8,7 +8,7 @@
 #####################################
 
 import os
-from Xlib import X, display
+from Xlib import display
 from Xlib.Xatom import STRING
 from PyQt5.QtCore import Qt, QPoint, QRect
 from PyQt5.QtGui import QPainter, QBrush, QPolygon, QColor, QRegion, QFont

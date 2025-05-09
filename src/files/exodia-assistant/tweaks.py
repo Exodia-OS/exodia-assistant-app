@@ -7,8 +7,6 @@
 #                                   #
 #####################################
 
-import os
-import sys
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QScrollArea, QLineEdit, QFrame
 from PyQt5.QtCore import Qt
 import utils
@@ -106,8 +104,10 @@ class Tweaks(QWidget):
             text_label = QLabel(label)
             text_label.setAlignment(Qt.AlignCenter)
             text_label.setWordWrap(True)
+            # Adjust font size based on text length to ensure it fits
+            font_size = 18 if len(label) < 20 else 16
             text_label.setStyleSheet(
-                f"color: white; font-family: '{self.predator_font.family()}'; font-size: 18px;"
+                f"color: white; font-family: '{self.predator_font.family()}'; font-size: {font_size}px;"
             )
 
             layout = QVBoxLayout()

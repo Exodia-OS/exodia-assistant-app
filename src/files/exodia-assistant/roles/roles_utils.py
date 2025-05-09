@@ -12,6 +12,20 @@ import yaml
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QScrollArea, QFrame
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QBrush, QColor, QPen, QPolygon, QRegion
+from Xlib import display
+from Xlib.Xatom import STRING
+
+
+# Function to set WM_CLASS for the window
+def set_wm_class(win_id, instance_name, class_name):
+    # Set the WM_CLASS property for a window.
+    disp = display.Display()
+    window = disp.create_resource_object('window', win_id)
+    wm_class_atom = disp.intern_atom('WM_CLASS')
+    value = f'{instance_name}\0{class_name}\0'.encode('utf-8')
+    window.change_property(wm_class_atom, STRING, 8, value)
+    disp.flush()
+
 
 def get_available_roles():
 
@@ -56,10 +70,13 @@ class RoleSelectionWindow(QWidget):
 
     def initUI(self):
         # Set window properties
-        self.setGeometry(300, 100, 1140, 640)
+        self.setFixedSize(900, 700)
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setMask(self.create_role_selection_mask())
+        # Set WM_CLASS after the window is shown
+        self.set_wm_class()
+        print("UI Initialized")
 
         # Main layout
         self.layout = QVBoxLayout(self)
@@ -118,40 +135,74 @@ class RoleSelectionWindow(QWidget):
         ok_button = QPushButton("OK", self)
         ok_button.setFixedSize(100, 40)
         ok_button.setCursor(Qt.PointingHandCursor)  # Change cursor to hand when hovering
-        ok_button.setStyleSheet("""
-            QPushButton {
-                background-color: #00B0C8;
-                color: white;
-                border-radius: 5px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #0086A8;
-            }
-            QPushButton:pressed {
-                background-color: #005F78;
-            }
-        """)
+        if self.predator_font:
+            ok_button.setFont(self.predator_font)
+            ok_button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: #00B0C8;
+                    color: white;
+                    border-radius: 5px;
+                    font-family: '{self.predator_font.family()}';
+                }}
+                QPushButton:hover {{
+                    background-color: #0086A8;
+                }}
+                QPushButton:pressed {{
+                    background-color: #005F78;
+                }}
+            """)
+        else:
+            ok_button.setStyleSheet("""
+                QPushButton {
+                    background-color: #00B0C8;
+                    color: white;
+                    border-radius: 5px;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #0086A8;
+                }
+                QPushButton:pressed {
+                    background-color: #005F78;
+                }
+            """)
         ok_button.clicked.connect(self.save_and_close)
 
         # Cancel button
-        cancel_button = QPushButton("Cancel", self)
+        cancel_button = QPushButton("CANCEL", self)
         cancel_button.setFixedSize(100, 40)
         cancel_button.setCursor(Qt.PointingHandCursor)  # Change cursor to hand when hovering
-        cancel_button.setStyleSheet("""
-            QPushButton {
-                background-color: #151A21;
-                color: white;
-                border-radius: 5px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #1A2530;
-            }
-            QPushButton:pressed {
-                background-color: #0F1218;
-            }
-        """)
+        if self.predator_font:
+            cancel_button.setFont(self.predator_font)
+            cancel_button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: #151A21;
+                    color: white;
+                    border-radius: 5px;
+                    font-family: '{self.predator_font.family()}';
+                }}
+                QPushButton:hover {{
+                    background-color: #1A2530;
+                }}
+                QPushButton:pressed {{
+                    background-color: #0F1218;
+                }}
+            """)
+        else:
+            cancel_button.setStyleSheet("""
+                QPushButton {
+                    background-color: #151A21;
+                    color: white;
+                    border-radius: 5px;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #1A2530;
+                }
+                QPushButton:pressed {
+                    background-color: #0F1218;
+                }
+            """)
         cancel_button.clicked.connect(self.close)
 
         buttons_layout.addWidget(ok_button)
@@ -159,16 +210,22 @@ class RoleSelectionWindow(QWidget):
 
         self.layout.addLayout(buttons_layout)
 
+    # Set the WM_CLASS property with instance and class names
+    def set_wm_class(self):
+        # Get the native window ID
+        win_id = self.winId().__int__()
+        set_wm_class(win_id, "exodiaos-assistant", "ExodiaOS Assistant")
+
     @staticmethod
     def create_role_selection_mask():
 
         points = [
-            QPoint(910, 100),  # Top center, 1
-            QPoint(940, 130),  # Top right, 2
-            QPoint(940, 440),  # Middle right, 3
-            QPoint(230, 440),  # Bottom center, 4
-            QPoint(200, 410),  # Bottom left, 5
-            QPoint(200, 100),  # Middle left, 6
+            QPoint(850, 0),  # Top right corner, 1
+            QPoint(900, 50),  # Right top-middle, a bit down, 2
+            QPoint(900, 700),  # Bottom right corner, 3
+            QPoint(50, 700),  # Bottom left-middle, 4
+            QPoint(0, 650),  # Bottom left corner, 5
+            QPoint(0, 0)  # Top left corner, 6
         ]
         polygon = QPolygon(points)
         return QRegion(polygon)
@@ -176,7 +233,7 @@ class RoleSelectionWindow(QWidget):
     def create_roles_container(self):
         """
         Create and populate the container with available roles.
-        This method can be called to refresh the roles list.
+        This method can be called to refresh the Roles list.
         """
         # Container for roles
         self.roles_container = QWidget()
@@ -223,14 +280,26 @@ class RoleSelectionWindow(QWidget):
             status_label = QLabel("Select")
             status_label.setFixedSize(100, 40)
             status_label.setAlignment(Qt.AlignCenter)
-            status_label.setStyleSheet("""
-                QLabel {
-                    background-color: #00B0C8;
-                    color: white;
-                    border-radius: 5px;
-                    padding: 5px;
-                }
-            """)
+            if self.predator_font:
+                status_label.setFont(self.predator_font)
+                status_label.setStyleSheet(f"""
+                    QLabel {{
+                        background-color: #00B0C8;
+                        color: white;
+                        border-radius: 5px;
+                        padding: 5px;
+                        font-family: '{self.predator_font.family()}';
+                    }}
+                """)
+            else:
+                status_label.setStyleSheet("""
+                    QLabel {
+                        background-color: #00B0C8;
+                        color: white;
+                        border-radius: 5px;
+                        padding: 5px;
+                    }
+                """)
 
             # If this is the current role, mark it as selected
             if role == self.current_role:
@@ -326,16 +395,21 @@ class RoleSelectionWindow(QWidget):
         painter.drawRect(self.rect())
 
         border_points = [
-            QPoint(910, 100),  # Top center
-            QPoint(940, 130),  # Top right
-            QPoint(940, 440),  # Middle right
-            QPoint(230, 440),  # Bottom center
-            QPoint(200, 410),  # Bottom left
-            QPoint(200, 100),  # Middle left
+            QPoint(850, 0),  # Top right corner, 1
+            QPoint(900, 50),  # Right top-middle, a bit down, 2
+            QPoint(900, 700),  # Bottom right corner, 3
+            QPoint(50, 700),  # Bottom left-middle, 4
+            QPoint(0, 650),  # Bottom left corner, 5
+            QPoint(0, 0)  # Top left corner, 6
         ]
         border_polygon = QPolygon(border_points)
 
         border_pen = QPen(QColor("#00B0C8"))
-        border_pen.setWidth(5)
+        border_pen.setWidth(10)  # Increased border width
         painter.setPen(border_pen)
         painter.drawPolygon(border_polygon)
+
+        # Draw title text if predator_font is available
+        if hasattr(self, 'predator_font') and self.predator_font:
+            painter.setFont(self.predator_font)
+            painter.setPen(QColor("#00B0C8"))
