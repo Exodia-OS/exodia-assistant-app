@@ -2,18 +2,26 @@ cat 1:
   - name: Name
     Status:
     pkgs: pkg
+    pre-exec:
+    post-exec:
 
   - name: Name 2
     Status:
     pkgs: pkg-2
+    pre-exec:
+    post-exec:
 
 
 cat 2:
   - name: Name 3
     Status:
     pkgs: pkg-3
+    pre-exec:
+    post-exec:
 
 cat 3:
   - name: Name 4
     Status:
-    pkgs: pkg-4
+    pkgs: pkg-4, pkg-5, pkg-6
+    pre-exec:
+    post-exec:

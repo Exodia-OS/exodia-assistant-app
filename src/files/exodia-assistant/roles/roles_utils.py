@@ -85,6 +85,7 @@ class RoleSelectionWindow(QWidget):
 
         # Main layout
         self.layout = QVBoxLayout(self)
+        # self.layout.setContentsMargins(x, y, width, height)
         self.layout.setContentsMargins(220, 120, 220, 120)
         self.layout.setSpacing(10)  # Add some spacing between elements
 

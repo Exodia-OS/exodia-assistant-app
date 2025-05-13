@@ -2,33 +2,49 @@ containerization:
   - name: Docker
     Status:
     pkgs: docker
+    pre-exec:
+    post-exec:
 
   - name: Docker Compose
     Status:
     pkgs: docker-compose
+    pre-exec:
+    post-exec:
 
   - name: Podman
     Status:
     pkgs: podman
+    pre-exec:
+    post-exec:
 
   - name: Podman Compose
     Status:
     pkgs: podman-compose
+    pre-exec:
+    post-exec:
 
   - name: Podman Desktop
     Status:
     pkgs: podman-desktop
+    pre-exec:
+    post-exec:
 
   - name: Kubernetes
     Status:
     pkgs: kubelet, kubeadm, kubectl
+    pre-exec:
+    post-exec:
 
 configuration management:
   - name: Ansible
     Status:
     pkgs: ansible
+    pre-exec:
+    post-exec:
 
 IaaC:
   - name: Terraform
     Status:
     pkgs: terraform
+    pre-exec:
+    post-exec:
