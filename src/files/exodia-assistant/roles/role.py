@@ -50,7 +50,7 @@ class Role(QWidget):
         self.layout.addWidget(self.scroll_area)
 
         # Available roles
-        self.roles = ["Select a Role", "Manage Your Role", "Create a Role", "How to Create Your Own Role"]
+        self.roles = ["Select a Role", "Manage Your Role", "Create a Role", "How to Create Your Own Role", "Explore Role"]
 
         # Role selection window
         self.role_selection_window = None
@@ -107,6 +107,18 @@ class Role(QWidget):
         elif role_name == "How to Create Your Own Role":
             if self.internal_window:
                 self.display_create_your_own_role(back_callback)
+                return ""  # Return empty string as content will be handled by display_create_role
+            else:
+                # Fallback to the old method if internal_window is not available
+                return f"""<div style="font-family: {self.predator_font.family()}; color: #00B0C8; line-height: 1.6; font-size: 18px; max-width: 800px; margin: auto; padding: 0 20px;">
+                    <h4 style="color: #00C8B0; font-size: 20px; margin-bottom: 15px;">{role_name}</h4>
+                    <p>This category is under development. will be available soon!</p>
+                </div>"""
+
+        # If the role is "Explore Role", use the display_create_role method if internal_window is available
+        elif role_name == "Explore Role":
+            if self.internal_window:
+                self.display_explore_role(back_callback)
                 return ""  # Return empty string as content will be handled by display_create_role
             else:
                 # Fallback to the old method if internal_window is not available
@@ -353,6 +365,124 @@ class Role(QWidget):
 
         # Create the content for the "How to Create Your Own Role" section
         html_content = utils.loadHTMLContent('./HTML-files', 'HowtoCreateYourOwnRole.html', self.predator_font.family())
+
+        # Create a label for the content
+        content_label = QLabel()
+        content_label.setTextFormat(Qt.RichText)
+        content_label.setWordWrap(True)
+        content_label.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
+        content_label.setText(html_content)
+
+        # Create a scroll area for the content
+        scroll_area = QScrollArea()
+        scroll_area.setGeometry(40, 20, 1100, 600)
+        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll_area.setWidgetResizable(True)
+
+        # Create a widget to hold the content
+        scroll_content = QWidget()
+        scroll_content.setStyleSheet("background-color: #151A21;")
+        scroll_area.setWidget(scroll_content)
+
+        # Add the content label to the scroll content
+        layout = QVBoxLayout(scroll_content)
+        layout.addWidget(content_label)
+
+        # Style the scroll area
+        scroll_area.setStyleSheet("""
+            QScrollArea { 
+                border: none;
+                padding: 0;
+                background-color: #151A21;
+            }
+            QScrollBar:vertical {
+                background: #151A21;
+                width: 10px;
+                margin: 0 0 0 0;
+            }
+            QScrollBar::handle:vertical {
+                background: #00B0C8;
+                border-radius: 0px;
+            }
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                background: #00B0C8;
+            }
+            QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+                background: #151A21;
+            }
+        """)
+
+        # Style the content label
+        content_label.setFont(self.predator_font)
+        content_label.setStyleSheet(
+            f"color: #00B0C8; font-size: 18px; background-color: #151A21; padding: 10px;"
+            f"font-family: '{self.predator_font.family()}';"
+        )
+        content_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+
+        # Add the scroll area to the internal window
+        self.internal_window.layout().addWidget(scroll_area)
+
+    def display_explore_role(self, back_callback=None):
+        """
+        Display the "Explore Role" content with a Back button and scroll area
+        similar to the ones in tweaks.py.
+
+        Args:
+            back_callback (function): Callback function to execute when the Back button is clicked
+        """
+        # Clear the existing layout
+        if not self.internal_window.layout():
+            self.internal_window.setLayout(QVBoxLayout())
+
+        # Clear previous content
+        while self.internal_window.layout().count():
+            item = self.internal_window.layout().takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.deleteLater()
+
+        # Create a "Back" button to return to the roles view
+        back_button = QPushButton("Back")
+        back_button.setFont(self.predator_font)
+        back_button.setFixedSize(100, 40)
+        back_button.setStyleSheet(
+            """
+            QPushButton {
+                background-color: #006C7A;
+                color: white;
+                border: none;
+                font-size: 18px;
+                font-weight: bold;
+                border-radius: 5px;
+            }
+            QPushButton:hover {
+                background-color: #004F59;
+            }
+            QPushButton:pressed {
+                background-color: #005F78;
+            }
+            """
+        )
+
+        # Connect the Back button to the callback function or a default function
+        if back_callback:
+            back_button.clicked.connect(back_callback)
+        else:
+            # Default behavior if no callback is provided
+            back_button.clicked.connect(lambda: self.internal_window.setLayout(QVBoxLayout()))
+
+        # Add the "Back" button to the top layout
+        top_layout = QHBoxLayout()
+        top_layout.addWidget(back_button, alignment=Qt.AlignLeft)
+
+        top_widget = QWidget()
+        top_widget.setLayout(top_layout)
+        self.internal_window.layout().addWidget(top_widget)
+
+        # Create the content for the "Explore Role" section
+        html_content = utils.loadHTMLContent('./HTML-files', 'ExploreRole.html', self.predator_font.family())
 
         # Create a label for the content
         content_label = QLabel()
