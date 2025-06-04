@@ -157,7 +157,7 @@ class ButtonContent:
         role = Role()
 
         # For "Create a Role" or "Manage Your Role", pass the internal_window and back_callback to enable the new display method
-        if role_name == "Create a Role" or role_name == "Manage Your Role" or role_name == "How to Create Your Own Role" or role_name == "Explore Role":
+        if role_name == "Create a Role" or role_name == "Manage Your Role" or  role_name == "Explore Role":
             # Load the role content with the internal window and back_callback
             role_content = role.load_role_content(role_name, self.internal_window, self.displayRoleContent)
 
