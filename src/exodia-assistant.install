@@ -38,6 +38,7 @@ GROUB=`cat /etc/group | grep ${GID} | cut -d: -f1 | head -1`
 CONFIG_DIR="/home/${USER}/.config/exodia-assistant"
 USR_DIR='/usr/share/exodia/exodia-assistant/roles/'
 FILE_NAME='role.yaml'
+PROFILES='profiles'
 
 ## Installing python Packages ##
 post_install() {
@@ -46,9 +47,14 @@ post_install() {
   mkdir -p ${CONFIG_DIR}
   mv ${USR_DIR}/${FILE_NAME} ${CONFIG_DIR}
 
+  echo -e ${Green}"\n[*] Installing ${BPurple}Profiles${Green} .\n" ${RESET_COLOR}
+  mkdir -p ${CONFIG_DIR}
+  mv ${USR_DIR}/${PROFILES} ${CONFIG_DIR}
+
   echo -e ${BBlue}"   ==> Granting permissions to the ${BPurple}${USER} ${BBlue}user." ${RESET_COLOR}
   chown -R ${USER}:${GROUB} ${CONFIG_DIR}
   chown -R ${USER}:${GROUB} ${CONFIG_DIR}/${FILE_NAME}
+  chown -R ${USER}:${GROUB} ${CONFIG_DIR}/${PROFILES}
 
 	echo -e ${Green}"\n[*] Installing python Packages.\n" ${RESET_COLOR}
 

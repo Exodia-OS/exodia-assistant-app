@@ -8,12 +8,26 @@
 #####################################
 
 import os, sys
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton, QLabel, QHBoxLayout, QTabWidget, QFrame
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton, QLabel, QHBoxLayout, QTabWidget, QFrame, QTextBrowser
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QDesktopServices
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import utils
 from . import roles_utils
+
+
+def open_url(url):
+    """
+    Open a URL in the default web browser.
+
+    Args:
+        url (QUrl or str): The URL to open
+    """
+    if isinstance(url, str):
+        url = QUrl(url)
+    print(f"Opening URL: {url.toString()}")
+    QDesktopServices.openUrl(url)
+
 
 class Role(QWidget):
     def __init__(self, parent=None):
@@ -548,12 +562,14 @@ class Role(QWidget):
         roadmap_layout.addWidget(separator)
 
         # Add content
-        content_label = QLabel()
-        content_label.setTextFormat(Qt.RichText)
-        content_label.setWordWrap(True)
-        content_label.setAlignment(Qt.AlignTop)
+        content_label = QTextBrowser()
+        content_label.setOpenExternalLinks(True)
+        content_label.setOpenLinks(False)  # We'll handle link clicks ourselves
         content_label.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.LinksAccessibleByMouse)
-        content_label.linkActivated.connect(self.open_url)
+        content_label.anchorClicked.connect(open_url)
+
+        # Style the QTextBrowser to match the QLabel styling
+        content_label.setStyleSheet(f"color: #00B0C8; font-size: 18px; background-color: #151A21; padding: 10px; font-family: '{font_family}'; border: none;")
 
         # Get the selected role from role.yaml
         selected_role = roles_utils.load_role_from_yaml()
@@ -653,12 +669,14 @@ class Role(QWidget):
         materials_layout.addWidget(separator)
 
         # Add content
-        content_label = QLabel()
-        content_label.setTextFormat(Qt.RichText)
-        content_label.setWordWrap(True)
-        content_label.setAlignment(Qt.AlignTop)
+        content_label = QTextBrowser()
+        content_label.setOpenExternalLinks(True)
+        content_label.setOpenLinks(False)  # We'll handle link clicks ourselves
         content_label.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.LinksAccessibleByMouse)
-        content_label.linkActivated.connect(self.open_url)
+        content_label.anchorClicked.connect(open_url)
+
+        # Style the QTextBrowser to match the QLabel styling
+        content_label.setStyleSheet(f"color: #00B0C8; font-size: 18px; background-color: #151A21; padding: 10px; font-family: '{font_family}'; border: none;")
 
         # Get the selected role from role.yaml
         selected_role = roles_utils.load_role_from_yaml()
@@ -776,12 +794,14 @@ class Role(QWidget):
         setup_layout.addWidget(separator)
 
         # Add content
-        content_label = QLabel()
-        content_label.setTextFormat(Qt.RichText)
-        content_label.setWordWrap(True)
-        content_label.setAlignment(Qt.AlignTop)
+        content_label = QTextBrowser()
+        content_label.setOpenExternalLinks(True)
+        content_label.setOpenLinks(False)  # We'll handle link clicks ourselves
         content_label.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.LinksAccessibleByMouse)
-        content_label.linkActivated.connect(self.open_url)
+        content_label.anchorClicked.connect(open_url)
+
+        # Style the QTextBrowser to match the QLabel styling
+        content_label.setStyleSheet(f"color: #00B0C8; font-size: 18px; background-color: #151A21; padding: 10px; font-family: '{font_family}'; border: none;")
         content_label.setText(f"""
         <div style="color: #00B0C8; line-height: 1.6; font-size: 18px; font-family: {font_family};">
             <p>This tab provides guidance on setting up your development environment for your selected role, including:</p>
@@ -835,12 +855,3 @@ class Role(QWidget):
         # Always create a new window to ensure it's up to date
         self.role_selection_window = roles_utils.RoleSelectionWindow(predator_font=self.predator_font)
         self.role_selection_window.show()
-
-    def open_url(self, url):
-        """
-        Open a URL in the default web browser.
-
-        Args:
-            url (str): The URL to open
-        """
-        QDesktopServices.openUrl(QUrl(url))
