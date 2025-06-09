@@ -89,7 +89,9 @@ class Role(QWidget):
             self.internal_window = internal_window
 
         # Path to the profiles directory
-        roles_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "profiles")
+        config_dir = os.path.expanduser("~/.config/exodia-assistant")
+        os.makedirs(config_dir, exist_ok=True)  # Ensure directory exists
+        roles_dir = os.path.join(config_dir, "/profiles")
 
         text = """<div style="font-family: {}; color: #00B0C8; line-height: 1.6; font-size: 18px; max-width: 800px; margin: auto; padding: 0 20px;">                    
                     <h4 style="color: #00C8B0; font-size: 20px; margin-bottom: 15px;"> Role Overview </h4>
@@ -584,6 +586,12 @@ class Role(QWidget):
                 # Load the HTML content from the file
                 with open(roadmap_path, "r", encoding="utf-8") as html_file:
                     html_content = html_file.read()
+
+                # Expand ~ in image paths to a full home path
+                home_dir = os.path.expanduser("~")
+                html_content = html_content.replace('src="~', f'src="file://{home_dir}')
+                html_content = html_content.replace("src='~", f"src='file://{home_dir}")
+
                 content_label.setText(html_content)
             else:
                 # Display an error message if the file doesn't exist
@@ -772,6 +780,10 @@ class Role(QWidget):
         Args:
             tab_widget (QTabWidget): The tab widget to add the tab to
         """
+        import subprocess
+        import yaml
+        import os
+
         setup_tab = QWidget()
         setup_tab.setStyleSheet("background-color: #151A21;")
         setup_layout = QVBoxLayout(setup_tab)
@@ -780,7 +792,7 @@ class Role(QWidget):
         setup_layout.setSpacing(15)
 
         # Add title
-        title_label = QLabel("Environment Setup")
+        title_label = QLabel("Environment")
         title_label.setFont(self.predator_font)
         font_family = self.predator_font.family()
         title_label.setStyleSheet(f"color: #00B0C8; font-family: '{font_family}'; font-size: 24px;")
@@ -793,30 +805,292 @@ class Role(QWidget):
         separator.setStyleSheet("background-color: #00B0C8;")
         setup_layout.addWidget(separator)
 
-        # Add content
-        content_label = QTextBrowser()
-        content_label.setOpenExternalLinks(True)
-        content_label.setOpenLinks(False)  # We'll handle link clicks ourselves
-        content_label.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.LinksAccessibleByMouse)
-        content_label.anchorClicked.connect(open_url)
+        # Get the selected role from role.yaml
+        selected_role = roles_utils.load_role_from_yaml()
 
-        # Style the QTextBrowser to match the QLabel styling
-        content_label.setStyleSheet(f"color: #00B0C8; font-size: 18px; background-color: #151A21; padding: 10px; font-family: '{font_family}'; border: none;")
-        content_label.setText(f"""
-        <div style="color: #00B0C8; line-height: 1.6; font-size: 18px; font-family: {font_family};">
-            <p>This tab provides guidance on setting up your development environment for your selected role, including:</p>
-            <ul>
-                <li>Required software and tools</li>
-                <li>Configuration instructions</li>
-                <li>Best practices</li>
-                <li>Recommended extensions and plugins</li>
-                <li>Environment troubleshooting</li>
-            </ul>
-            <p>Select a role to view its specific environment setup instructions.</p>
-        </div>
-        """)
-        content_label.setStyleSheet(f"color: #00B0C8; font-size: 18px; font-family: '{font_family}';")
-        setup_layout.addWidget(content_label)
+        if not selected_role:
+            # Display a message if no role is selected
+            content_label = QTextBrowser()
+            content_label.setOpenExternalLinks(True)
+            content_label.setOpenLinks(False)
+            content_label.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.LinksAccessibleByMouse)
+            content_label.anchorClicked.connect(open_url)
+            content_label.setStyleSheet(f"color: #00B0C8; font-size: 18px; background-color: #151A21; padding: 10px; font-family: '{font_family}'; border: none;")
+            content_label.setText(f"""
+            <div style="color: #00B0C8; line-height: 1.6; font-size: 18px; font-family: {font_family};">
+                <p>This tab provides guidance on setting up your development environment for your selected role, including:</p>
+                <ul>
+                    <li>Required software and tools</li>
+                    <li>Configuration instructions</li>
+                    <li>Best practices</li>
+                    <li>Recommended extensions and plugins</li>
+                    <li>Environment troubleshooting</li>
+                </ul>
+                <p>Select a role to view its specific environment setup instructions.</p>
+            </div>
+            """)
+            setup_layout.addWidget(content_label)
+        else:
+            # Construct the path to the tools.yaml file for the selected role
+            tools_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
+                                    f"profiles/{selected_role}/tools.yaml")
+
+            # Check if the tools.yaml file exists
+            if not os.path.exists(tools_path):
+                content_label = QTextBrowser()
+                content_label.setStyleSheet(f"color: #00B0C8; font-size: 18px; background-color: #151A21; padding: 10px; font-family: '{font_family}'; border: none;")
+                content_label.setText(f"""
+                <div style="color: #00B0C8; line-height: 1.6; font-size: 18px; font-family: {font_family};">
+                    <p>Tools configuration file not found for the selected role: {selected_role}</p>
+                    <p>Expected path: {tools_path}</p>
+                </div>
+                """)
+                setup_layout.addWidget(content_label)
+            else:
+                # Load the tools.yaml file
+                try:
+                    with open(tools_path, 'r') as file:
+                        tools_data = yaml.safe_load(file)
+
+                    # Function to check if a package is installed
+                    def is_package_installed(package):
+                        if package.startswith("bash "):
+                            # For script-based installations, we can't easily check
+                            return False
+                        try:
+                            # Try to check if the package is installed using pacman
+                            result = subprocess.run(
+                                ["pacman", "-Q", package.strip()], 
+                                stdout=subprocess.PIPE, 
+                                stderr=subprocess.PIPE,
+                                text=True
+                            )
+                            return result.returncode == 0
+                        except Exception:
+                            return False
+
+                    # Function to update the tools.yaml file
+                    def update_tools_yaml():
+                        with open(tools_path, 'w') as file:
+                            yaml.dump(tools_data, file, default_flow_style=False)
+
+                    # Function to install a tool
+                    def install_tool(tool):
+                        # Run pre-exec commands if they exist
+                        if tool.get('pre-exec'):
+                            pre_exec_commands = tool['pre-exec'].split(',') if tool['pre-exec'] else []
+                            for cmd in pre_exec_commands:
+                                cmd = cmd.strip()
+                                if cmd:
+                                    if cmd.startswith("bash "):
+                                        # Execute as a script
+                                        subprocess.run(cmd, shell=True)
+                                    else:
+                                        # Execute as a shell command
+                                        subprocess.run(cmd, shell=True)
+
+                        # Install the packages
+                        pkgs = tool.get('pkgs', '')
+                        if pkgs:
+                            if pkgs.startswith("bash "):
+                                # Execute as a script
+                                subprocess.run(pkgs, shell=True)
+                            else:
+                                # Install packages using pacman
+                                package_list = [pkg.strip() for pkg in pkgs.split(',')]
+                                subprocess.run(["sudo", "pacman", "-S", "--noconfirm"] + package_list)
+
+                        # Run post-exec commands if they exist
+                        if tool.get('post-exec'):
+                            post_exec_commands = tool['post-exec'].split(',') if tool['post-exec'] else []
+                            for cmd in post_exec_commands:
+                                cmd = cmd.strip()
+                                if cmd:
+                                    if cmd.startswith("bash "):
+                                        # Execute as a script
+                                        subprocess.run(cmd, shell=True)
+                                    else:
+                                        # Execute as a shell command
+                                        subprocess.run(cmd, shell=True)
+
+                        # Update the tool status
+                        tool['Status'] = 'Installed'
+                        update_tools_yaml()
+
+                    # Function to uninstall a tool
+                    def uninstall_tool(tool):
+                        # Uninstall the packages
+                        pkgs = tool.get('pkgs', '')
+                        if pkgs and not pkgs.startswith("bash "):
+                            # Only uninstall if it's a package, not a script
+                            package_list = [pkg.strip() for pkg in pkgs.split(',')]
+                            subprocess.run(["sudo", "pacman", "-R", "--noconfirm"] + package_list)
+
+                        # Update the tool status
+                        tool['Status'] = 'UnInstalled'
+                        update_tools_yaml()
+
+                    # Create a "Select All Tools" checkbox
+                    select_all_checkbox = QPushButton("Select All Tools")
+                    select_all_checkbox.setCheckable(True)
+                    select_all_checkbox.setFont(self.predator_font)
+                    select_all_checkbox.setStyleSheet(f"""
+                        QPushButton {{
+                            background-color: #151A21;
+                            color: #00B0C8;
+                            border: 1px solid #00B0C8;
+                            border-radius: 5px;
+                            padding: 5px;
+                            font-family: '{font_family}';
+                            text-align: left;
+                            padding-left: 10px;
+                        }}
+                        QPushButton:checked {{
+                            background-color: #00B0C8;
+                            color: white;
+                        }}
+                    """)
+                    setup_layout.addWidget(select_all_checkbox)
+
+                    # Dictionary to store all checkboxes
+                    all_checkboxes = {}
+                    category_checkboxes = {}
+                    tool_checkboxes = {}
+                    category_tools_dict = {}
+
+                    # Create checkboxes for each category and tool
+                    for category, tools in tools_data.items():
+                        # Create a category checkbox
+                        category_checkbox = QPushButton(category)
+                        category_checkbox.setCheckable(True)
+                        category_checkbox.setFont(self.predator_font)
+                        category_checkbox.setStyleSheet(f"""
+                            QPushButton {{
+                                background-color: #151A21;
+                                color: #00B0C8;
+                                border: 1px solid #00B0C8;
+                                border-radius: 5px;
+                                padding: 5px;
+                                font-family: '{font_family}';
+                                text-align: left;
+                                padding-left: 10px;
+                                margin-top: 10px;
+                            }}
+                            QPushButton:checked {{
+                                background-color: #00B0C8;
+                                color: white;
+                            }}
+                        """)
+                        setup_layout.addWidget(category_checkbox)
+                        category_checkboxes[category] = category_checkbox
+                        all_checkboxes[category] = category_checkbox
+
+                        # Create checkboxes for each tool in the category
+                        category_tools_checkboxes = []
+                        for tool in tools:
+                            # Check if the tool is installed
+                            if 'Status' not in tool or not tool['Status']:
+                                # Auto-detect installation status
+                                if 'pkgs' in tool and tool['pkgs']:
+                                    if tool['pkgs'].startswith("bash "):
+                                        # For script-based installations, we can't easily check
+                                        tool['Status'] = 'UnInstalled'
+                                    else:
+                                        # Check if all packages are installed
+                                        packages = [pkg.strip() for pkg in tool['pkgs'].split(',')]
+                                        if all(is_package_installed(pkg) for pkg in packages):
+                                            tool['Status'] = 'Installed'
+                                        else:
+                                            tool['Status'] = 'UnInstalled'
+                                else:
+                                    tool['Status'] = 'UnInstalled'
+
+                                # Update the YAML file with the detected status
+                                update_tools_yaml()
+
+                            # Create a tool checkbox
+                            tool_checkbox = QPushButton(tool['name'])
+                            tool_checkbox.setCheckable(True)
+                            tool_checkbox.setChecked(tool['Status'] == 'Installed')
+                            tool_checkbox.setFont(self.predator_font)
+                            tool_checkbox.setStyleSheet(f"""
+                                QPushButton {{
+                                    background-color: #151A21;
+                                    color: #00B0C8;
+                                    border: 1px solid #00B0C8;
+                                    border-radius: 5px;
+                                    padding: 5px;
+                                    font-family: '{font_family}';
+                                    text-align: left;
+                                    padding-left: 20px;
+                                    margin-left: 20px;
+                                }}
+                                QPushButton:checked {{
+                                    background-color: #00B0C8;
+                                    color: white;
+                                }}
+                            """)
+                            setup_layout.addWidget(tool_checkbox)
+
+                            # Store the tool data with the checkbox
+                            tool_checkbox.tool_data = tool
+                            tool_checkboxes[tool['name']] = tool_checkbox
+                            all_checkboxes[tool['name']] = tool_checkbox
+                            category_tools_checkboxes.append(tool_checkbox)
+
+                            # Connect the checkbox to install/uninstall functions
+                            def toggle_tool_state(checked, t=tool, checkbox=tool_checkbox):
+                                if checked:
+                                    # Install the tool
+                                    install_tool(t)
+                                    checkbox.setChecked(True)
+                                else:
+                                    # Uninstall the tool
+                                    uninstall_tool(t)
+                                    checkbox.setChecked(False)
+
+                                # Update category checkboxes
+                                for cat, tools_checkboxes in category_tools_dict.items():
+                                    cat_checkbox = category_checkboxes[cat]
+                                    cat_checkbox.setChecked(all(cb.isChecked() for cb in tools_checkboxes))
+
+                                # Update the "Select All" checkbox
+                                select_all_checkbox.setChecked(all(cb.isChecked() for cb in all_checkboxes.values()))
+
+                            tool_checkbox.toggled.connect(toggle_tool_state)
+
+                        # Store the category's tools checkboxes
+                        category_tools_dict[category] = category_tools_checkboxes
+
+                        # Connect the category checkbox to toggle all tools in the category
+                        def toggle_category(checked, cat=category, tools_checkboxes=category_tools_checkboxes):
+                            for checkbox in tools_checkboxes:
+                                checkbox.setChecked(checked)
+
+                        category_checkbox.toggled.connect(toggle_category)
+
+                        # Set the initial state of the category checkbox
+                        category_checkbox.setChecked(all(cb.isChecked() for cb in category_tools_checkboxes))
+
+                    # Connect the "Select All" checkbox to toggle all tools
+                    def toggle_all_tools(checked):
+                        for checkbox in all_checkboxes.values():
+                            checkbox.setChecked(checked)
+
+                    select_all_checkbox.toggled.connect(toggle_all_tools)
+
+                    # Set the initial state of the "Select All" checkbox
+                    select_all_checkbox.setChecked(all(cb.isChecked() for cb in all_checkboxes.values()))
+
+                except Exception as e:
+                    content_label = QTextBrowser()
+                    content_label.setStyleSheet(f"color: #00B0C8; font-size: 18px; background-color: #151A21; padding: 10px; font-family: '{font_family}'; border: none;")
+                    content_label.setText(f"""
+                    <div style="color: #00B0C8; line-height: 1.6; font-size: 18px; font-family: {font_family};">
+                        <p>Error loading tools configuration: {str(e)}</p>
+                    </div>
+                    """)
+                    setup_layout.addWidget(content_label)
 
         # Create a scroll area for the content
         scroll_area = QScrollArea()

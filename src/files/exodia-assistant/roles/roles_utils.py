@@ -29,7 +29,9 @@ def set_wm_class(win_id, instance_name, class_name):
 
 def get_available_roles():
 
-    roles_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "profiles")
+    config_dir = os.path.expanduser("~/.config/exodia-assistant")
+    os.makedirs(config_dir, exist_ok=True)  # Ensure directory exists
+    roles_dir = os.path.join(config_dir, "profiles")
     if os.path.exists(roles_dir) and os.path.isdir(roles_dir):
         return [d for d in os.listdir(roles_dir) if os.path.isdir(os.path.join(roles_dir, d))]
     return []

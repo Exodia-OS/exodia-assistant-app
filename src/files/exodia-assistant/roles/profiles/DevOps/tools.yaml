@@ -1,50 +1,28 @@
-containerization:
-  - name: Docker
-    Status:
-    pkgs: docker
-    pre-exec:
-    post-exec:
-
-  - name: Docker Compose
-    Status:
-    pkgs: docker-compose
-    pre-exec:
-    post-exec:
-
-  - name: Podman
-    Status:
-    pkgs: podman
-    pre-exec:
-    post-exec:
-
-  - name: Podman Compose
-    Status:
-    pkgs: podman-compose
-    pre-exec:
-    post-exec:
-
-  - name: Podman Desktop
-    Status:
-    pkgs: podman-desktop
-    pre-exec:
-    post-exec:
-
-  - name: Kubernetes
-    Status:
-    pkgs: kubelet, kubeadm, kubectl
-    pre-exec:
-    post-exec:
-
-configuration management:
-  - name: Ansible
-    Status:
-    pkgs: ansible
-    pre-exec:
-    post-exec:
-
 IaaC:
-  - name: Terraform
-    Status:
-    pkgs: terraform
-    pre-exec:
-    post-exec:
+- Status: UnInstalled
+  name: Terraform
+  pkgs: terraform
+  post-exec: null
+  pre-exec: null
+configuration management:
+- Status: UnInstalled
+  name: Ansible
+  pkgs: ansible
+  post-exec: null
+  pre-exec: null
+containerization:
+- Status: Installed
+  name: Docker
+  pkgs: docker, docker-compose
+  post-exec: sudo groupadd docker, sudo usermod -aG docker $USER, bash docker.sh
+  pre-exec: null
+- Status: Installed
+  name: Podman
+  pkgs: podman, podman-compose, podman-desktop
+  post-exec: null
+  pre-exec: null
+- Status: Installed
+  name: Kubernetes
+  pkgs: bash /path/to/k8s.sh
+  post-exec: null
+  pre-exec: null

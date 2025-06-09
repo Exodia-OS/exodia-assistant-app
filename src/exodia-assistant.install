@@ -43,18 +43,18 @@ PROFILES='profiles'
 ## Installing python Packages ##
 post_install() {
 
-  echo -e ${Green}"\n[*] Installing ${BPurple}role.yaml${Green} .\n" ${RESET_COLOR}
-  mkdir -p ${CONFIG_DIR}
-  mv ${USR_DIR}/${FILE_NAME} ${CONFIG_DIR}
+  # echo -e ${Green}"\n[*] Installing ${BPurple}role.yaml${Green} .\n" ${RESET_COLOR}
+  # mkdir -p ${CONFIG_DIR}
+  # mv ${USR_DIR}/${FILE_NAME} ${CONFIG_DIR}
 
-  echo -e ${Green}"\n[*] Installing ${BPurple}Profiles${Green} .\n" ${RESET_COLOR}
-  mkdir -p ${CONFIG_DIR}
-  mv ${USR_DIR}/${PROFILES} ${CONFIG_DIR}
+  # echo -e ${Green}"\n[*] Installing ${BPurple}Profiles${Green} .\n" ${RESET_COLOR}
+  # mkdir -p ${CONFIG_DIR}
+  # mv ${USR_DIR}/${PROFILES} ${CONFIG_DIR}
 
-  echo -e ${BBlue}"   ==> Granting permissions to the ${BPurple}${USER} ${BBlue}user." ${RESET_COLOR}
-  chown -R ${USER}:${GROUB} ${CONFIG_DIR}
-  chown -R ${USER}:${GROUB} ${CONFIG_DIR}/${FILE_NAME}
-  chown -R ${USER}:${GROUB} ${CONFIG_DIR}/${PROFILES}
+  # echo -e ${BBlue}"   ==> Granting permissions to the ${BPurple}${USER} ${BBlue}user." ${RESET_COLOR}
+  # chown -R ${USER}:${GROUB} ${CONFIG_DIR}
+  # chown -R ${USER}:${GROUB} ${CONFIG_DIR}/${FILE_NAME}
+  # chown -R ${USER}:${GROUB} ${CONFIG_DIR}/${PROFILES}
 
 	echo -e ${Green}"\n[*] Installing python Packages.\n" ${RESET_COLOR}
 
