@@ -1,23 +1,39 @@
 cat 1:
-- Status: UnInstalled
-  name: Name
-  pkgs: pkg
-  post-exec: null
-  pre-exec: null
-- Status: Installed
-  name: Name 2
-  pkgs: pkg-2
-  post-exec: null
-  pre-exec: null
+  - name: Name
+    Status:
+    pkgs: pkg
+    pre-exec:
+    post-exec:
+    remove:
+    pre-remove:
+    post-remove:
+
+  - name: Name 2
+    Status:
+    pkgs: pkg-2
+    pre-exec:
+    post-exec:
+    remove:
+    pre-remove:
+    post-remove:
+
+
 cat 2:
-- Status: UnInstalled
-  name: Name 3
-  pkgs: pkg-3
-  post-exec: null
-  pre-exec: null
+  - name: Name 3
+    Status:
+    pkgs: pkg-3
+    pre-exec:
+    post-exec:
+    remove:
+    pre-remove:
+    post-remove:
+
 cat 3:
-- Status: UnInstalled
-  name: Name 4
-  pkgs: pkg-4, pkg-5, pkg-6
-  post-exec: null
-  pre-exec: null
+  - name: Name 4
+    Status:
+    pkgs: pkg-4, pkg-5, pkg-6
+    pre-exec:
+    post-exec:
+    remove:
+    pre-remove:
+    post-remove:

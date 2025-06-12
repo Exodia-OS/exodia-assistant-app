@@ -1,4 +1,4 @@
-import os
+import os, re
 
 from PyQt5.QtCore import QPoint
 from PyQt5.QtGui import QFontDatabase, QFont, QPolygon, QRegion
@@ -15,33 +15,45 @@ def loadPredatorFont():
         return QFont(font_family, 30, QFont.Bold)
 
 def loadHTMLContent(directory, filename, font_family):
-
-    # Define the path to the HTML file
-    html_file_path = os.path.join(os.path.dirname(__file__), directory, filename)
+    base_dir = os.path.dirname(__file__)
+    html_file_path = os.path.join(base_dir, directory, filename)
 
     try:
-        # Read the content of the HTML file
         with open(html_file_path, "r", encoding="utf-8") as html_file:
             html_content = html_file.read()
     except FileNotFoundError:
-        html_content = """
+        return f"""
         <div style="color: red; text-align: center; font-size: 18px; padding: 20px;">
-            Error: Could not find the content file at <code>{}</code>.
+            Error: Could not find the content file at <code>{html_file_path}</code>.
         </div>
-        """.format(html_file_path)
+        """
     except Exception as e:
-        html_content = """
+        return f"""
         <div style="color: red; text-align: center; font-size: 18px; padding: 20px;">
             Error: An unexpected error occurred while reading the content file.<br>
-            Details: {}
+            Details: {str(e)}
         </div>
-        """.format(str(e))
+        """
 
-    # Add a placeholder for the font family if it's not already formatted
+    # Function to replace ../something with file:// absolute path
+    def replace_relative_path(match):
+        quote = match.group(1)
+        rel_path = match.group(2)
+        abs_path = os.path.abspath(os.path.join(base_dir, rel_path))
+        return f'{quote}file://{abs_path}'
+
+    # Replace src="../..." and src='...'
+    html_content = re.sub(r'(src=["\'])\.\.\/([^"\']+)', replace_relative_path, html_content)
+
+    # Replace url("../...") and url('../...')
+    html_content = re.sub(r'(url\(["\'])\.\.\/([^"\')]+)', replace_relative_path, html_content)
+
+    # Inject font family if needed
     if "{}" in html_content:
         return html_content.format(font_family)
     else:
         return f"<div style='font-family: {font_family};'>{html_content}</div>"
+
 
 def contentButtonMask():
     """Creates a custom QRegion mask for buttons."""

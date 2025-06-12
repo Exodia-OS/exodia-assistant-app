@@ -4,12 +4,18 @@ cat 1:
     pkgs: pkg
     pre-exec:
     post-exec:
+    remove:
+    pre-remove:
+    post-remove:
 
   - name: Name 2
     Status:
     pkgs: pkg-2
     pre-exec:
     post-exec:
+    remove:
+    pre-remove:
+    post-remove:
 
 
 cat 2:
@@ -18,6 +24,9 @@ cat 2:
     pkgs: pkg-3
     pre-exec:
     post-exec:
+    remove:
+    pre-remove:
+    post-remove:
 
 cat 3:
   - name: Name 4
@@ -25,3 +34,6 @@ cat 3:
     pkgs: pkg-4, pkg-5, pkg-6
     pre-exec:
     post-exec:
+    remove:
+    pre-remove:
+    post-remove:

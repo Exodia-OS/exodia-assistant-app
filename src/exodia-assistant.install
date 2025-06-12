@@ -43,46 +43,64 @@ PROFILES='profiles'
 ## Installing python Packages ##
 post_install() {
 
-  # echo -e ${Green}"\n[*] Installing ${BPurple}role.yaml${Green} .\n" ${RESET_COLOR}
-  # mkdir -p ${CONFIG_DIR}
-  # mv ${USR_DIR}/${FILE_NAME} ${CONFIG_DIR}
+   echo -e ${Green}"\n[*] Installing ${BPurple}role.yaml${Green} and ${BPurple}Profiles${Green} .\n" ${RESET_COLOR}
+   mkdir -p ${CONFIG_DIR}
 
-  # echo -e ${Green}"\n[*] Installing ${BPurple}Profiles${Green} .\n" ${RESET_COLOR}
-  # mkdir -p ${CONFIG_DIR}
-  # mv ${USR_DIR}/${PROFILES} ${CONFIG_DIR}
+   if [ ! -f "${CONFIG_DIR}/${FILE_NAME}" ];
 
-  # echo -e ${BBlue}"   ==> Granting permissions to the ${BPurple}${USER} ${BBlue}user." ${RESET_COLOR}
-  # chown -R ${USER}:${GROUB} ${CONFIG_DIR}
-  # chown -R ${USER}:${GROUB} ${CONFIG_DIR}/${FILE_NAME}
-  # chown -R ${USER}:${GROUB} ${CONFIG_DIR}/${PROFILES}
+      then
 
-	echo -e ${Green}"\n[*] Installing python Packages.\n" ${RESET_COLOR}
+          echo -e ${BBlue}"   ==> Copying ${BPurple}${FILE_NAME} ${BBlue}to config directory." ${RESET_COLOR}
+          cp ${USR_DIR}/${FILE_NAME} ${CONFIG_DIR}
+          echo -e ${BBlue}"   ==> Granting permissions to ${BPurple}${USER} ${BBlue}on config directory." ${RESET_COLOR}
+          chown ${USER}:${GROUB} ${CONFIG_DIR}/${FILE_NAME}
+          chown -R ${USER}:${GROUB} ${CONFIG_DIR}
 
-	cd /usr/share/exodia/exodia-assistant
+   else
 
-	source /usr/local/share/pip/bin/activate
+      echo -e ${Yellow}"   [!] ${FILE_NAME} already exists. Skipping copy." ${RESET_COLOR}
 
-	DIR=$(pwd)
+   fi
 
-	echo -e "${DIR}"
+   if [ ! -d "${CONFIG_DIR}/${PROFILES}" ];
 
-	pip install -r libs.txt
+      then
 
-	echo -e ${Green}"\n[✔] DONE!\n" ${RESET_COLOR}
+          echo -e ${BBlue}"   ==> Copying ${BPurple}${PROFILES} ${BBlue}to config directory." ${RESET_COLOR}
+          cp -r ${USR_DIR}/${PROFILES} ${CONFIG_DIR}
+          echo -e ${BBlue}"   ==> Granting permissions to ${BPurple}${USER} ${BBlue}on config directory." ${RESET_COLOR}
+          chown -R ${USER}:${GROUB} ${CONFIG_DIR}/${PROFILES}
+          chown -R ${USER}:${GROUB} ${CONFIG_DIR}
 
-	# Add warning message
-	echo -e ${Yellow}"\n[!] WARNING: If exodia-assistant doesn't run, follow these steps:" ${RESET_COLOR}
-	echo -e ${Cyan}"   1. Install pip:" ${RESET_COLOR}
-	echo -e ${Cyan}"      - Run: \`curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py\`" ${RESET_COLOR}
-	echo -e ${Cyan}"      - Run: \`python3 get-pip.py\`" ${RESET_COLOR}
-	echo -e ${Cyan}"   2. Install dependencies:" ${RESET_COLOR}
-	echo -e ${Cyan}"      - Run: \`cd /usr/share/exodia/exodia-assistant\`" ${RESET_COLOR}
-	echo -e ${Cyan}"      - Run: \`pip install -r libs.txt\`" ${RESET_COLOR}
-	echo -e ${Yellow}"\n[!] If the issue persists, contact the developer or check the logs.\n" ${RESET_COLOR}
+   else
 
+      echo -e ${Yellow}"   [!] ${PROFILES} directory already exists. Skipping copy." ${RESET_COLOR}
+
+   fi
+
+   echo -e ${Green}"\n[*] Installing Python Packages.\n" ${RESET_COLOR}
+
+   cd /usr/share/exodia/exodia-assistant
+
+   source /usr/local/share/pip/bin/activate
+
+   DIR=$(pwd)
+   echo -e "${DIR}"
+
+   pip install -r libs.txt
+
+   echo -e ${Green}"\n[✔] DONE!\n" ${RESET_COLOR}
+
+   echo -e ${Yellow}"\n[!] WARNING: If exodia-assistant doesn't run, follow these steps:" ${RESET_COLOR}
+   echo -e ${Cyan}"   1. Install pip:" ${RESET_COLOR}
+   echo -e ${Cyan}"      - Run: \`curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py\`" ${RESET_COLOR}
+   echo -e ${Cyan}"      - Run: \`python3 get-pip.py\`" ${RESET_COLOR}
+   echo -e ${Cyan}"   2. Install dependencies:" ${RESET_COLOR}
+   echo -e ${Cyan}"      - Run: \`cd /usr/share/exodia/exodia-assistant\`" ${RESET_COLOR}
+   echo -e ${Cyan}"      - Run: \`pip install -r libs.txt\`" ${RESET_COLOR}
+   echo -e ${Yellow}"\n[!] If the issue persists, contact the developer or check the logs.\n" ${RESET_COLOR}
 
 }
-
 
 ## Updating python Packages ##
 post_upgrade() {

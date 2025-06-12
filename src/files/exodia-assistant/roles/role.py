@@ -832,8 +832,9 @@ class Role(QWidget):
             setup_layout.addWidget(content_label)
         else:
             # Construct the path to the tools.yaml file for the selected role
-            tools_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
-                                    f"profiles/{selected_role}/tools.yaml")
+            config_dir = os.path.expanduser("~/.config/exodia-assistant")
+            os.makedirs(config_dir, exist_ok=True)  # Ensure directory exists
+            tools_path = os.path.join(config_dir, f"profiles/{selected_role}/tools.yaml")
 
             # Check if the tools.yaml file exists
             if not os.path.exists(tools_path):
