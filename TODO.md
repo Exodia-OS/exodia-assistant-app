@@ -1,5 +1,10 @@
 # To Do
 
+- Fix `Update Status` button
+- Fix `Environment` Tab Functionality
+
+---
+
 - add Dashboard Tap
 - button Setting
   - selectable and copyable text [✔]
