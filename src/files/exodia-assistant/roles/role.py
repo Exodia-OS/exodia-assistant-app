@@ -8,7 +8,7 @@
 #####################################
 
 import os, sys
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton, QLabel, QHBoxLayout, QTabWidget, QFrame, QTextBrowser, QCheckBox, QGroupBox, QLineEdit
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton, QLabel, QHBoxLayout, QTabWidget, QFrame, QTextBrowser, QCheckBox, QGroupBox, QLineEdit, QGridLayout
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QDesktopServices
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -913,7 +913,7 @@ class Role(QWidget):
         toolbar_layout.addWidget(update_status_button)
 
         # Update Button
-        update_button = QPushButton("Update")
+        update_button = QPushButton("Save")
         update_button.setFont(self.predator_font)
         update_button.setStyleSheet(f"""
             QPushButton {{
@@ -1002,25 +1002,95 @@ class Role(QWidget):
                         with open(tools_path, 'w') as file:
                             yaml.dump(tools_data, file, default_flow_style=False)
 
-                    # Function to execute commands in Alacritty
+                    # Function to validate tool data
+                    def validate_tool(tool):
+                        if not isinstance(tool, dict):
+                            return False, "Invalid tool format: must be a dictionary"
+                        
+                        if 'name' not in tool:
+                            return False, "Missing required field: name"
+                        
+                        if 'pkg' not in tool:
+                            return False, f"Missing required field: pkg for tool {tool['name']}"
+                        
+                        # Validate optional fields
+                        for field in ['pre-install', 'post-install', 'pre-remove', 'remove', 'post-remove']:
+                            if field in tool and tool[field] is not None:
+                                if not isinstance(tool[field], (str, list)):
+                                    return False, f"Invalid {field} format for tool {tool['name']}: must be string or list"
+                        
+                        return True, None
+
+                    # Function to show error message in UI
+                    def show_error_message(message, is_critical=False):
+                        error_label = QLabel(message)
+                        error_label.setFont(self.predator_font)
+                        error_label.setStyleSheet(f"""
+                            color: #FF6B6B;
+                            font-family: '{font_family}';
+                            font-size: 14px;
+                            padding: 10px;
+                            background-color: #4A1C1C;
+                            border-radius: 5px;
+                            margin: 5px;
+                        """)
+                        if is_critical:
+                            error_label.setStyleSheet(error_label.styleSheet() + "border: 2px solid #FF6B6B;")
+                        content_layout.addWidget(error_label)
+                        return error_label
+
+                    # Function to execute commands in Alacritty with error handling
                     def execute_in_alacritty(commands):
                         if not commands:
-                            return
-                        command_str = " && ".join(commands)
-                        subprocess.run(["alacritty", "-e", "bash", "-c", command_str])
+                            return True, None
+
+                        # Add error handling for each command
+                        validated_commands = []
+                        for cmd in commands:
+                            cmd = cmd.strip()
+                            if cmd:
+                                # Add error handling and logging for each command
+                                validated_commands.append(
+                                    f"echo 'Executing: {cmd}' && "
+                                    f"({cmd}) || {{ "
+                                    f"echo 'Error executing: {cmd}' >&2; "
+                                    f"echo 'Command failed with exit code $?' >&2; "
+                                    f"exit 1; "
+                                    f"}}"
+                                )
+
+                        # Add final status check
+                        command_str = " && ".join(validated_commands)
+                        command_str += " && echo 'All commands executed successfully'"
+
+                        try:
+                            # Execute in Alacritty with proper error handling
+                            process = subprocess.run(
+                                ["alacritty", "-e", "bash", "-c", command_str],
+                                check=True,
+                                capture_output=True,
+                                text=True
+                            )
+                            return True, None
+                        except subprocess.CalledProcessError as e:
+                            error_msg = f"Error executing commands:\n{e.stderr}"
+                            return False, error_msg
+                        except Exception as e:
+                            error_msg = f"Unexpected error: {str(e)}"
+                            return False, error_msg
 
                     # Function to install a tool
                     def install_tool(tool):
                         commands = []
                         
-                        if tool.get('pre-exec'):
-                            pre_exec_commands = tool['pre-exec'].split(',') if tool['pre-exec'] else []
+                        if tool.get('pre-install'):
+                            pre_exec_commands = tool['pre-install'].split(',') if tool['pre-install'] else []
                             for cmd in pre_exec_commands:
                                 cmd = cmd.strip()
                                 if cmd:
                                     commands.append(cmd)
 
-                        pkgs = tool.get('pkgs', '')
+                        pkgs = tool.get('pkg', '')
                         if pkgs:
                             if pkgs.startswith("bash "):
                                 commands.append(pkgs)
@@ -1028,15 +1098,15 @@ class Role(QWidget):
                                 package_list = [pkg.strip() for pkg in pkgs.split(',')]
                                 commands.append(f"sudo pacman -S --noconfirm {' '.join(package_list)}")
 
-                        if tool.get('post-exec'):
-                            post_exec_commands = tool['post-exec'].split(',') if tool['post-exec'] else []
+                        if tool.get('post-install'):
+                            post_exec_commands = tool['post-install'].split(',') if tool['post-install'] else []
                             for cmd in post_exec_commands:
                                 cmd = cmd.strip()
                                 if cmd:
                                     commands.append(cmd)
 
                         execute_in_alacritty(commands)
-                        tool['Status'] = 'Installed'
+                        tool['status'] = 'Installed'
                         update_tools_yaml()
 
                     # Function to uninstall a tool
@@ -1057,7 +1127,7 @@ class Role(QWidget):
                                 if cmd:
                                     commands.append(cmd)
                         else:
-                            pkgs = tool.get('pkgs', '')
+                            pkgs = tool.get('pkg', '')
                             if pkgs and not pkgs.startswith("bash "):
                                 package_list = [pkg.strip() for pkg in pkgs.split(',')]
                                 commands.append(f"sudo pacman -R --noconfirm {' '.join(package_list)}")
@@ -1070,7 +1140,7 @@ class Role(QWidget):
                                     commands.append(cmd)
 
                         execute_in_alacritty(commands)
-                        tool['Status'] = 'UnInstalled'
+                        tool['status'] = 'UnInstalled'
                         update_tools_yaml()
 
                     # Dictionary to store all checkboxes
@@ -1129,32 +1199,38 @@ class Role(QWidget):
                         category_checkboxes[category] = category_checkbox
                         all_checkboxes[category] = category_checkbox
 
+                        # Create a grid layout for tools
+                        tools_grid = QGridLayout()
+                        tools_grid.setSpacing(15)  # Space between tools
+                        tools_grid.setContentsMargins(20, 0, 20, 0)  # Left and right margins
+
                         # Create tool checkboxes
                         category_tools_checkboxes = []
-                        for tool in tools:
+                        for i, tool in enumerate(tools):
                             # Check installation status
-                            if 'Status' not in tool or not tool['Status']:
-                                if 'pkgs' in tool and tool['pkgs']:
-                                    if tool['pkgs'].startswith("bash "):
-                                        tool['Status'] = 'UnInstalled'
+                            if 'status' not in tool or not tool['status']:
+                                if 'pkg' in tool and tool['pkg']:
+                                    if tool['pkg'].startswith("bash "):
+                                        tool['status'] = 'UnInstalled'
                                     else:
-                                        packages = [pkg.strip() for pkg in tool['pkgs'].split(',')]
+                                        packages = [pkg.strip() for pkg in tool['pkg'].split(',')]
                                         if all(is_package_installed(pkg) for pkg in packages):
-                                            tool['Status'] = 'Installed'
+                                            tool['status'] = 'Installed'
                                         else:
-                                            tool['Status'] = 'UnInstalled'
+                                            tool['status'] = 'UnInstalled'
                                 else:
-                                    tool['Status'] = 'UnInstalled'
+                                    tool['status'] = 'UnInstalled'
                                 update_tools_yaml()
 
                             # Create tool container
                             tool_container = QWidget()
                             tool_layout = QHBoxLayout(tool_container)
-                            tool_layout.setContentsMargins(20, 0, 0, 0)
+                            tool_layout.setContentsMargins(0, 0, 0, 0)
+                            tool_layout.setSpacing(10)
 
                             # Create tool checkbox
                             tool_checkbox = QCheckBox(tool['name'])
-                            tool_checkbox.setChecked(tool['Status'] == 'Installed')
+                            tool_checkbox.setChecked(tool['status'] == 'Installed')
                             tool_checkbox.setFont(self.predator_font)
                             tool_checkbox.setStyleSheet(f"""
                                 QCheckBox {{
@@ -1177,24 +1253,28 @@ class Role(QWidget):
                             tool_layout.addWidget(tool_checkbox)
 
                             # Create status label
-                            status_label = QLabel("✔ Installed" if tool['Status'] == 'Installed' else "✘ UnInstalled")
+                            status_label = QLabel("✔ Installed" if tool['status'] == 'Installed' else "✘ UnInstalled")
                             status_label.setFont(self.predator_font)
                             status_label.setStyleSheet(f"""
-                                color: {'#4CAF50' if tool['Status'] == 'Installed' else '#FF6B6B'};
+                                color: {'#4CAF50' if tool['status'] == 'Installed' else '#FF6B6B'};
                                 font-family: '{font_family}';
                                 font-size: 12px;
                                 padding: 2px 8px;
                                 border-radius: 10px;
-                                background-color: {'#1B4332' if tool['Status'] == 'Installed' else '#4A1C1C'};
+                                background-color: {'#1B4332' if tool['status'] == 'Installed' else '#4A1C1C'};
                             """)
                             tool_layout.addWidget(status_label)
 
                             # Add tooltip with package details
-                            if tool.get('pkgs'):
-                                tool_checkbox.setToolTip(f"Packages/Scripts: {tool['pkgs']}")
+                            if tool.get('pkg'):
+                                tool_checkbox.setToolTip(f"Packages/Scripts: {tool['pkg']}")
 
                             tool_layout.addStretch()
-                            category_layout.addWidget(tool_container)
+
+                            # Add tool container to grid
+                            row = i // 2  # Integer division to determine row
+                            col = i % 2   # Modulo to determine column
+                            tools_grid.addWidget(tool_container, row, col)
 
                             # Store tool data and connect signals
                             tool_checkbox.tool_data = tool
@@ -1203,9 +1283,8 @@ class Role(QWidget):
                             category_tools_checkboxes.append(tool_checkbox)
 
                             def toggle_tool_state(checked, t=tool, checkbox=tool_checkbox, status=status_label):
+                                # Only update UI state, don't execute commands
                                 if checked:
-                                    install_tool(t)
-                                    checkbox.setChecked(True)
                                     status.setText("✔ Installed")
                                     status.setStyleSheet("""
                                         color: #4CAF50;
@@ -1216,8 +1295,6 @@ class Role(QWidget):
                                         background-color: #1B4332;
                                     """)
                                 else:
-                                    uninstall_tool(t)
-                                    checkbox.setChecked(False)
                                     status.setText("✘ UnInstalled")
                                     status.setStyleSheet("""
                                         color: #FF6B6B;
@@ -1237,6 +1314,9 @@ class Role(QWidget):
                                 select_all_checkbox.setChecked(all(cb.isChecked() for cb in all_checkboxes.values()))
 
                             tool_checkbox.toggled.connect(toggle_tool_state)
+
+                        # Add the tools grid to the category layout
+                        category_layout.addLayout(tools_grid)
 
                         # Store category's tools checkboxes
                         category_tools_dict[category] = category_tools_checkboxes
@@ -1259,15 +1339,130 @@ class Role(QWidget):
                     select_all_checkbox.toggled.connect(toggle_all_tools)
                     select_all_checkbox.setChecked(all(cb.isChecked() for cb in all_checkboxes.values()))
 
-                    # Connect Update button
+                    # Connect Save button with enhanced error handling
                     def apply_changes():
-                        for category, tools in tools_data.items():
-                            for tool in tools:
-                                tool_checkbox = tool_checkboxes[tool['name']]
-                                if tool_checkbox.isChecked() and tool['Status'] != 'Installed':
-                                    install_tool(tool)
-                                elif not tool_checkbox.isChecked() and tool['Status'] != 'UnInstalled':
-                                    uninstall_tool(tool)
+                        try:
+                            tools_to_install = []
+                            tools_to_uninstall = []
+                            validation_errors = []
+
+                            # Validate and collect tools that need changes
+                            for category, tools in tools_data.items():
+                                for tool in tools:
+                                    # Validate tool data
+                                    is_valid, error_msg = validate_tool(tool)
+                                    if not is_valid:
+                                        validation_errors.append(f"{category}/{tool.get('name', 'Unknown')}: {error_msg}")
+                                        continue
+
+                                    tool_checkbox = tool_checkboxes[tool['name']]
+                                    if tool_checkbox.isChecked() and tool['status'] != 'Installed':
+                                        tools_to_install.append(tool)
+                                    elif not tool_checkbox.isChecked() and tool['status'] != 'UnInstalled':
+                                        tools_to_uninstall.append(tool)
+
+                            # Show validation errors if any
+                            if validation_errors:
+                                show_error_message("Validation errors found:\n" + "\n".join(validation_errors), True)
+                                return
+
+                            if not tools_to_install and not tools_to_uninstall:
+                                return
+
+                            # Build command pipeline
+                            commands = []
+                            packages_to_install = []
+                            packages_to_remove = []
+
+                            # 1. Pre-install scripts
+                            for tool in tools_to_install:
+                                if tool.get('pre-install'):
+                                    pre_install_commands = tool['pre-install'].split(',') if isinstance(tool['pre-install'], str) else tool['pre-install']
+                                    for cmd in pre_install_commands:
+                                        cmd = cmd.strip()
+                                        if cmd:
+                                            commands.append(cmd)
+
+                            # 2. Collect packages to install
+                            for tool in tools_to_install:
+                                if tool.get('pkg'):
+                                    if tool['pkg'].startswith("bash "):
+                                        commands.append(tool['pkg'])
+                                    else:
+                                        package_list = [pkg.strip() for pkg in tool['pkg'].split(',')]
+                                        packages_to_install.extend(package_list)
+
+                            # 3. Post-install scripts
+                            for tool in tools_to_install:
+                                if tool.get('post-install'):
+                                    post_install_commands = tool['post-install'].split(',') if isinstance(tool['post-install'], str) else tool['post-install']
+                                    for cmd in post_install_commands:
+                                        cmd = cmd.strip()
+                                        if cmd:
+                                            commands.append(cmd)
+
+                            # 4. Pre-remove scripts
+                            for tool in tools_to_uninstall:
+                                if tool.get('pre-remove'):
+                                    pre_remove_commands = tool['pre-remove'].split(',') if isinstance(tool['pre-remove'], str) else tool['pre-remove']
+                                    for cmd in pre_remove_commands:
+                                        cmd = cmd.strip()
+                                        if cmd:
+                                            commands.append(cmd)
+
+                            # 5. Collect packages to remove
+                            for tool in tools_to_uninstall:
+                                if tool.get('remove'):
+                                    remove_commands = tool['remove'].split(',') if isinstance(tool['remove'], str) else tool['remove']
+                                    for cmd in remove_commands:
+                                        cmd = cmd.strip()
+                                        if cmd:
+                                            commands.append(cmd)
+                                elif tool.get('pkg') and not tool['pkg'].startswith("bash "):
+                                    package_list = [pkg.strip() for pkg in tool['pkg'].split(',')]
+                                    packages_to_remove.extend(package_list)
+
+                            # 6. Post-remove scripts
+                            for tool in tools_to_uninstall:
+                                if tool.get('post-remove'):
+                                    post_remove_commands = tool['post-remove'].split(',') if isinstance(tool['post-remove'], str) else tool['post-remove']
+                                    for cmd in post_remove_commands:
+                                        cmd = cmd.strip()
+                                        if cmd:
+                                            commands.append(cmd)
+
+                            # Add package installation command if there are packages to install
+                            if packages_to_install:
+                                commands.append(f"sudo pacman -S --noconfirm {' '.join(packages_to_install)}")
+
+                            # Add package removal command if there are packages to remove
+                            if packages_to_remove:
+                                commands.append(f"sudo pacman -Rns --noconfirm {' '.join(packages_to_remove)}")
+
+                            # Execute all commands in a single terminal session
+                            if commands:
+                                success, error_msg = execute_in_alacritty(commands)
+                                if not success:
+                                    show_error_message(error_msg, True)
+                                    return
+
+                                # Update tool statuses after successful execution
+                                for tool in tools_to_install:
+                                    tool['status'] = 'Installed'
+                                for tool in tools_to_uninstall:
+                                    tool['status'] = 'UnInstalled'
+                                
+                                try:
+                                    update_tools_yaml()
+                                except Exception as e:
+                                    show_error_message(f"Error updating tools.yaml: {str(e)}", True)
+                                    return
+
+                                # Refresh UI to reflect new statuses
+                                refresh_tool_statuses()
+
+                        except Exception as e:
+                            show_error_message(f"Unexpected error: {str(e)}", True)
 
                     update_button.clicked.connect(apply_changes)
 
@@ -1310,17 +1505,17 @@ class Role(QWidget):
                             # Update each tool's status
                             for category, tools in tools_data.items():
                                 for tool in tools:
-                                    if 'pkgs' in tool and tool['pkgs']:
-                                        if tool['pkgs'].startswith("bash "):
+                                    if 'pkg' in tool and tool['pkg']:
+                                        if tool['pkg'].startswith("bash "):
                                             # For script-based installations, we can't check
                                             continue
                                             
                                         # Check if all packages are installed
-                                        packages = [pkg.strip() for pkg in tool['pkgs'].split(',')]
+                                        packages = [pkg.strip() for pkg in tool['pkg'].split(',')]
                                         is_installed = all(pkg in installed_packages for pkg in packages)
                                         
                                         # Update tool status in YAML
-                                        tool['Status'] = 'Installed' if is_installed else 'UnInstalled'
+                                        tool['status'] = 'Installed' if is_installed else 'UnInstalled'
                                         
                                         # Update UI
                                         tool_checkbox = tool_checkboxes[tool['name']]

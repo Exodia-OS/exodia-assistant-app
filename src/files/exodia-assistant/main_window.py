@@ -36,11 +36,11 @@ def set_wm_class(win_id, instance_name, class_name):
 # Function to create a mask for the custom window shape
 def createMask():
     points = [
-        QPoint(1550, 0),  # Top right corner, 1
-        QPoint(1600, 50),  # Right top-middle, a bit down, 2
-        QPoint(1600, 900),  # Bottom right corner, 3
-        QPoint(50, 900),  # Bottom left-middle, 4
-        QPoint(0, 850),  # Bottom left corner, 5
+        QPoint(1650, 0),  # Top right corner, 1
+        QPoint(1700, 50),  # Right top-middle, a bit down, 2
+        QPoint(1700, 980),  # Bottom right corner, 3
+        QPoint(50, 980),  # Bottom left-middle, 4
+        QPoint(0, 930),  # Bottom left corner, 5
         QPoint(0, 0)  # Top left corner, 6
     ]
     polygon = QPolygon(points)
@@ -66,7 +66,7 @@ class CustomShapeWindow(QMainWindow):
 
     def initUI(self):
         # Set window size
-        self.setFixedSize(1600, 900)  # Adjust size as needed
+        self.setFixedSize(1700, 980)  # Adjust size as needed
         # Set window flags to remove the title bar and make it frameless
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         # Make the window transparent
@@ -207,11 +207,11 @@ class CustomShapeWindow(QMainWindow):
 
         # Define the polygon for the outer border
         border_points = [
-            QPoint(1550, 0),  # Top right corner, 1
-            QPoint(1600, 50),  # Right top-middle, a bit down, 2
-            QPoint(1600, 900),  # Bottom right corner, 3
-            QPoint(50, 900),  # Bottom left-middle, 4
-            QPoint(0, 850),  # Bottom left corner, 5
+            QPoint(1650, 0),  # Top right corner, 1
+            QPoint(1700, 50),  # Right top-middle, a bit down, 2
+            QPoint(1700, 980),  # Bottom right corner, 3
+            QPoint(50, 980),  # Bottom left-middle, 4
+            QPoint(0, 930),  # Bottom left corner, 5
             QPoint(0, 0)  # Top left corner, 6
         ]
         border_polygon = QPolygon(border_points)

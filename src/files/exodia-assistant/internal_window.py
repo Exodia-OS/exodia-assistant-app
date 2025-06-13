@@ -18,7 +18,7 @@ class InternalWindow(QWidget):
         super().__init__(parent)
         # Set the geometry (position and size) of the internal window
         # self.setGeometry(x, y, width, height)
-        self.setGeometry(300, 100, 1240, 740)
+        self.setGeometry(300, 100, 1340, 830)
         self.setAttribute(Qt.WA_TranslucentBackground)  # Make the background transparent
         self.polygon = self.createCustomMask()  # Store the polygon used for the mask
         self.content_label = QLabel(self)
@@ -34,7 +34,7 @@ class InternalWindow(QWidget):
 
         # Create the scroll area
         scroll_area = QScrollArea(self)
-        scroll_area.setGeometry(10, 20, 1210, 710)  # Set scroll area size within the internal window
+        scroll_area.setGeometry(10, 20, 1310, 800)  # Set scroll area size within the internal window
         # scroll_area.setGeometry(self.rect())  # Set the scroll area to the full size of the window
         scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -88,10 +88,10 @@ class InternalWindow(QWidget):
     def createCustomMask(self):
         # Define points for an 8-sided polygon
         points = [
-            QPoint(1210, 0),  # Top center, 1
-            QPoint(1240, 30),  # Top right, 2
-            QPoint(1240, 740),  # Middle right, 3
-            QPoint(0, 740),  # Bottom center, 4
+            QPoint(1310, 0),  # Top center, 1
+            QPoint(1340, 40),  # Top right, 2
+            QPoint(1340, 830),  # Middle right, 3
+            QPoint(0, 830),  # Bottom center, 4
             QPoint(0, 0)  # Middle left, 5
         ]
 
