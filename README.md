@@ -82,6 +82,7 @@ This project is licensed under the GPL3 License—see the LICENSE file for detai
 ### AI wrote 60% of this code.
 
 - [Junie AI](https://www.jetbrains.com/junie)
+- [Cursor AI](https://www.cursor.com)
 - [DeepSeek](https://chat.deepseek.com)
 - [KimiAI](https://kimi.moonshot.cn)
 - [ChatGPT](https://chatgpt.com)
