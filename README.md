@@ -59,7 +59,7 @@ Navigate through the different sections using the side panel buttons. Use the se
 - Install the dependencies
   ```bash
   cd src/files/exodia-assistant/
-  pip install -r libs.txt 
+  pip install -r requirements.txt 
   ```
 - Create a new branch with your **_username_** `dev-${GITHUB-USERNAME}` name (e.g. `dev-mmsaeed509`)
   ```bash

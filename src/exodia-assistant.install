@@ -87,7 +87,7 @@ post_install() {
    DIR=$(pwd)
    echo -e "${DIR}"
 
-   pip install -r libs.txt
+   pip install -r requirements.txt
 
    echo -e ${Green}"\n[✔] DONE!\n" ${RESET_COLOR}
 
@@ -97,7 +97,7 @@ post_install() {
    echo -e ${Cyan}"      - Run: \`python3 get-pip.py\`" ${RESET_COLOR}
    echo -e ${Cyan}"   2. Install dependencies:" ${RESET_COLOR}
    echo -e ${Cyan}"      - Run: \`cd /usr/share/exodia/exodia-assistant\`" ${RESET_COLOR}
-   echo -e ${Cyan}"      - Run: \`pip install -r libs.txt\`" ${RESET_COLOR}
+   echo -e ${Cyan}"      - Run: \`pip install -r requirements.txt\`" ${RESET_COLOR}
    echo -e ${Yellow}"\n[!] If the issue persists, contact the developer or check the logs.\n" ${RESET_COLOR}
 
 }

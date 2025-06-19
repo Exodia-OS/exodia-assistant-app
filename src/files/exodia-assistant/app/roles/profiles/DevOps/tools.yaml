@@ -1,0 +1,67 @@
+IaaC:
+- Status: UnInstalled
+  name: Terraform
+  pkgs: terraform
+  post-exec: null
+  post-remove: null
+  pre-exec: null
+  pre-remove: null
+  remove: null
+configuration management:
+- Status: UnInstalled
+  name: Ansible
+  pkgs: ansible
+  post-exec: null
+  post-remove: null
+  pre-exec: null
+  pre-remove: null
+  remove: null
+containerization:
+- Status: Installed
+  name: Docker
+  pkgs: docker
+  post-exec: null
+  post-remove: null
+  pre-exec: null
+  pre-remove: null
+  remove: null
+- Status: Installed
+  name: Docker Compose
+  pkgs: docker-compose
+  post-exec: null
+  post-remove: null
+  pre-exec: null
+  pre-remove: null
+  remove: null
+- Status: Installed
+  name: Podman
+  pkgs: podman
+  post-exec: null
+  post-remove: null
+  pre-exec: null
+  pre-remove: null
+  remove: null
+- Status: Installed
+  name: Podman Compose
+  pkgs: podman-compose
+  post-exec: null
+  post-remove: null
+  pre-exec: null
+  pre-remove: null
+  remove: null
+- Status: Installed
+  name: Podman Desktop
+  pkgs: podman-desktop
+  post-exec: null
+  post-remove: null
+  pre-exec: null
+  pre-remove: null
+  remove: null
+- Status: UnInstalled
+  name: Kubernetes
+  pkgs: kubelet, kubeadm, kubectl
+  post-exec: null
+  post-remove: null
+  pre-exec: null
+  pre-remove: null
+  remove: null

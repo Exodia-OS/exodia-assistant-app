@@ -1,0 +1,244 @@
+<style>
+        /* Define the Predator font */
+        @font-face {
+            font-family: 'Predator';
+            src: url('../fonts/Squares-Bold.otf') format('opentype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        /* Apply the Predator font to all text */
+        body {
+            /*font-family: 'Predator', Arial, sans-serif;*/
+            background-color: #1e1e1e;
+            color: #00B0C8;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Apply emoji fonts to emoji icons */
+        .emoji {
+            font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #00C8B0;
+            font-size: 32px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        p {
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .announcement {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .announcement h2 {
+            color: #00C8B0;
+            font-size: 24px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .announcement p {
+            font-size: 16px;
+            color: #FFFFFF;
+            text-align: left;
+        }
+
+        .announcement ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .announcement li {
+            padding: 10px;
+            border-bottom: 1px solid #00C8B0;
+            transition: background-color 0.3s ease;
+        }
+
+        .announcement li:hover {
+            background-color: #3a3a3a;
+        }
+
+        .announcement code {
+            background-color: #222222;
+            color: #00B0C8;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        .internetConnection {
+            color: #FF0000;
+            font-size: 24px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .internetConnection h2{
+            color: #FF0000;
+        }
+
+</style>
+
+<div style="text-align: center; padding: 20px;">
+    <img src="../icons/exodia-cyan.png" alt="Exodia OS Logo" border="0" style="margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);">
+</div>
+
+<div style="color: #00B0C8; line-height: 1.6; font-size: 18px; max-width: 800px; margin: auto; padding: 0 20px;">
+
+    <h1 style="color: #00C8B0; font-size: 32px; margin-bottom: 20px; text-align: center;">Welcome to Exodia OS</h1>
+
+    <p style="font-size: 20px; text-align: center;">
+        Exodia OS is a highly customized Arch-based Linux distribution, crafted for cybersecurity experts and daily users alike.
+        Whether you're performing robust pentests or tackling simple daily tasks, Exodia OS provides a seamless experience.
+        Its aesthetically pleasing interface and powerful tools make it a prime choice for programming, development,
+        operations security, OSINT, and much more.
+    </p>
+
+    <p style="font-style: italic; margin: 20px 0; text-align: center; color: #00C8B0;">
+        Proudly developed in Egypt by the Cyb3rTh1eveZ Team. <span class="emoji">🇪🇬</span>
+    </p>
+
+    <div style="text-align: center; margin: 20px 0;">
+        <img src="../imgs/desktop.png" alt="Exodia OS Desktop" width="1200" style="max-width: 100%; height: auto;">
+    </div>
+
+    <h2 style="color: #00C8B0; font-size: 28px; margin-top: 30px; text-align: center;">Benefits:</h2>
+
+    <ul style="list-style-type: none; padding-left: 0;">
+
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0; transition: background-color 0.3s ease;">
+            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
+            <strong>Dynamic Environments:</strong> Comes with BSPWM and 20+ tailor-made themes.
+        </li>
+
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0; transition: background-color 0.3s ease;">
+            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
+            <strong>Preinstalled Tools:</strong> Essential cybersecurity tools are included.
+        </li>
+
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0; transition: background-color 0.3s ease;">
+            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
+            <strong>Multiple Editions:</strong> Choose from Home, Acer-Predator, and Wireless editions.
+        </li>
+
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0; transition: background-color 0.3s ease;">
+            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
+            <strong>Versatile Window Managers:</strong> Currently supports BSPWM, DWM, and I3WM.
+        </li>
+
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0; transition: background-color 0.3s ease;">
+            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
+            <strong>Future Updates:</strong> More DEs, WMs, and WCs are on the way.
+        </li>
+
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0; transition: background-color 0.3s ease;">
+            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
+            <strong>Simplified Installation:</strong> Easy installation with the Calamares installer.
+        </li>
+
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0; transition: background-color 0.3s ease;">
+            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
+            <strong>Rolling Release:</strong> Always up to date with the latest features.
+        </li>
+
+        <li style="padding: 15px; transition: background-color 0.3s ease;">
+            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
+            <strong>AUR Support:</strong> Full support for AUR repositories (with yay).
+        </li>
+
+    </ul>
+
+    <h2 style="color: #00C8B0; font-size: 28px; margin-top: 30px; text-align: center;">Key Features:</h2>
+
+    <ul style="list-style-type: none; padding-left: 0;">
+
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0; transition: background-color 0.3s ease;">
+            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
+            <strong>PowerShell:</strong> Microsoft PowerShell pre-installed/pre-configured with Oh My Posh.
+        </li>
+
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0; transition: background-color 0.3s ease;">
+            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
+            <strong>TUI Apps:</strong> Support a whole bunch of TUI Apps. Run <code>pacman -Sg Exodia-TUI-Apps</code> to list all available apps.
+        </li>
+
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0; transition: background-color 0.3s ease;">
+            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
+            <strong>Files Templates:</strong> Helps you create coding files like web development, Python, and more.
+        </li>
+
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0; transition: background-color 0.3s ease;">
+            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
+            <strong>EWW:</strong> Supports ElKowars wacky widgets (EWW), comes pre-installed and configured.
+        </li>
+
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0; transition: background-color 0.3s ease;">
+            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
+            <strong>zsh:</strong> Exodia comes with zsh pre-installed and pre-configured as the default shell.
+        </li>
+
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0; transition: background-color 0.3s ease;">
+            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
+            <strong>PredatorSense:</strong> A kernel module to control RGB & fan speed in Linux for Acer Predator laptops via <code>Predator-Sense-CLI</code> and <code>Predator-Sense-GUI</code>.
+        </li>
+
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0; transition: background-color 0.3s ease;">
+            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
+            <strong>CyberSecurity Tools:</strong> Supports tools for all cybersecurity fields using BlackArch Repos & Exodia Repos.
+        </li>
+
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0; transition: background-color 0.3s ease;">
+            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
+            <strong>BIOS & UEFI:</strong> Supports both BIOS & UEFI.
+        </li>
+
+        <li style="padding: 15px; transition: background-color 0.3s ease;">
+            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
+            <strong>Plymouth:</strong> Supports <code>Plymouth</code>, with <code>exodia-plymouth</code> as the default theme.
+        </li>
+
+    </ul>
+
+    <h2 style="color: #00C8B0; font-size: 28px; margin-top: 30px; text-align: center;">Showcases:</h2>
+
+    <div style="text-align: center; padding: 20px;">
+
+        <img src="../imgs/Showcase/10.png" width=1200 style="margin-bottom: 20px; ">
+        <br/><br/>
+        <img src="../imgs/Showcase/1.png" width=1200 style="margin-bottom: 20px; ">
+        <br/><br/>
+        <img src="../imgs/Showcase/2.png" width=1200 style="margin-bottom: 20px; ">
+        <br/><br/>
+        <img src="../imgs/Showcase/3.png" width=1200 style="margin-bottom: 20px; ">
+        <br/><br/>
+        <img src="../imgs/Showcase/4.png" width=1200 style="margin-bottom: 20px; ">
+        <br/><br/>
+        <img src="../imgs/Showcase/5.png" width=1200 style="margin-bottom: 20px; ">
+        <br/><br/>
+        <img src="../imgs/Showcase/6.png" width=1200 style="margin-bottom: 20px; ">
+        <br/><br/>
+        <img src="../imgs/Showcase/7.png" width=1200 style="margin-bottom: 20px; ">
+        <br/><br/>
+        <img src="../imgs/Showcase/8.png" width=1200 style="margin-bottom: 20px; ">
+        <br/><br/>
+        <img src="../imgs/Showcase/9.png" width=1200 style="margin-bottom: 20px; ">
+
+    </div>
+
+</div>

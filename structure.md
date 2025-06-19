@@ -546,7 +546,7 @@ exodia-assistant
 
 ├── keybinding.py
 
-├── libs.txt
+├── requirements.txt
 
 ├── main.py
 

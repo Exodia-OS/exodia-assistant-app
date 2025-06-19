@@ -132,7 +132,7 @@ Contains utility functions used throughout the application:
    ```bash
    sudo pacman -S python-xlib exodia-pip-venv python-pyqt5
    cd src/files/exodia-assistant/
-   pip install -r libs.txt
+   pip install -r requirements.txt
    ```
 
 3. Run the application:
