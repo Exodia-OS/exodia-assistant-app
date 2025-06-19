@@ -1,67 +1,59 @@
 IaaC:
-- Status: UnInstalled
-  name: Terraform
-  pkgs: terraform
-  post-exec: null
+- name: Terraform
+  pkg: terraform
+  post-install: null
   post-remove: null
-  pre-exec: null
+  pre-install: null
   pre-remove: null
   remove: null
+  status: UnInstalled
 configuration management:
-- Status: UnInstalled
-  name: Ansible
-  pkgs: ansible
-  post-exec: null
+- name: Ansible
+  pkg: ansible
+  post-install: null
   post-remove: null
-  pre-exec: null
+  pre-install: null
   pre-remove: null
   remove: null
+  status: Installed
 containerization:
-- Status: Installed
-  name: Docker
-  pkgs: docker
-  post-exec: null
+- name: Docker
+  pkg: docker
+  post-install: null
   post-remove: null
-  pre-exec: null
+  pre-install: null
   pre-remove: null
   remove: null
-- Status: Installed
-  name: Docker Compose
-  pkgs: docker-compose
-  post-exec: null
+  status: Installed
+- name: Docker Compose
+  pkg: docker-compose
+  post-install: null
   post-remove: null
-  pre-exec: null
+  pre-install: null
   pre-remove: null
   remove: null
-- Status: Installed
-  name: Podman
-  pkgs: podman
-  post-exec: null
+  status: Installed
+- name: Podman
+  pkg: podman
+  post-install: null
   post-remove: null
-  pre-exec: null
+  pre-install: null
   pre-remove: null
   remove: null
-- Status: Installed
-  name: Podman Compose
-  pkgs: podman-compose
-  post-exec: null
+  status: Installed
+- name: Podman Compose
+  pkg: podman-compose
+  post-install: null
   post-remove: null
-  pre-exec: null
+  pre-install: null
   pre-remove: null
   remove: null
-- Status: Installed
-  name: Podman Desktop
-  pkgs: podman-desktop
-  post-exec: null
+  status: Installed
+- name: Podman Desktop
+  pkg: podman-desktop
+  post-install: null
   post-remove: null
-  pre-exec: null
+  pre-install: null
   pre-remove: null
   remove: null
-- Status: UnInstalled
-  name: Kubernetes
-  pkgs: kubelet, kubeadm, kubectl
-  post-exec: null
-  post-remove: null
-  pre-exec: null
-  pre-remove: null
-  remove: null
+  status: Installed

@@ -1,36 +1,74 @@
 <div style="color: #00B0C8; line-height: 1.6; font-size: 18px; max-width: 800px; margin: auto; padding: 0 20px;">
 
     <p style="font-style: italic; margin: 20px 0; text-align: center;">
-
-        <strong><strong style="color: #00C8B0;">How to Create Your Own Role</strong>
+        <strong style="color: #00C8B0;">How to Create Your Own Role</strong>
     </p>
 
-    <p style="font-style: italic; margin: 20px 0; text-align: left;">
-        The Ultimate Guide to Creating Your Own Role
+    <p style="margin: 20px 0; text-align: left;">
+        <strong>Roles</strong> in Exodia Assistant are user-selectable profiles that provide custom roadmaps, materials, and environments for different learning or workflow paths (e.g., Backend, DevOps, Frontend, MLOps). You can easily add your own!
     </p>
 
-    <ul style="list-style-type: none; padding-left: 0; margin-top: 10px;">
-
-        <li style="padding: 15px; border-bottom: 1px solid #00C8B0; transition: background-color 0.3s ease;">
-            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
-            <strong>How to write the <code style="background-color: #222222; color: #00B0C8; padding: 2px 4px; border-radius: 4px;"> RoadMap </code> .</strong>
+    <ol style="padding-left: 0; margin-top: 10px; list-style-position: inside;">
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0;">
+            <span style="font-size: 20px; margin-right: 10px;">1.</span>
+            <strong>Create a new folder for your role:</strong><br>
+            <span style="color: #fff; background: #222; padding: 2px 6px; border-radius: 4px;">~/.config/exodia-assistant/profiles/YourRoleName/</span>
         </li>
 
-        <br>
-
-        <li style="padding: 15px; border-bottom: 1px solid #00C8B0; transition: background-color 0.3s ease;">
-            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
-            <strong>How to write the <code style="background-color: #222222; color: #00B0C8; padding: 2px 4px; border-radius: 4px;"> Materials </code> .</strong>
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0;">
+            <span style="font-size: 20px; margin-right: 10px;">2.</span>
+            <strong>Add a <code style="background-color: #222222; color: #00B0C8; padding: 2px 4px; border-radius: 4px;">roadmap.html</code>:</strong><br>
+            <span style="color: #aaa;">Describe the learning or workflow path for this role. Use headings, lists, and images as needed.</span>
         </li>
 
-        <br>
-
-        <li style="padding: 15px; border-bottom: 1px solid #00C8B0; transition: background-color 0.3s ease;">
-            <span style="font-size: 20px; margin-right: 10px;">&#8226;</span>
-            <strong>How to write the <code style="background-color: #222222; color: #00B0C8; padding: 2px 4px; border-radius: 4px;"> Environment </code> .</strong>
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0;">
+            <span style="font-size: 20px; margin-right: 10px;">3.</span>
+            <strong>Add a <code style="background-color: #222222; color: #00B0C8; padding: 2px 4px; border-radius: 4px;">materials.html</code>:</strong><br>
+            <span style="color: #aaa;">List recommended resources, tutorials, books, or tools for this role. Use links and formatting for clarity.</span>
         </li>
 
-    </ul>
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0;">
+            <span style="font-size: 20px; margin-right: 10px;">4.</span>
+            <strong>(Optional) Add an <code style="background-color: #222222; color: #00B0C8; padding: 2px 4px; border-radius: 4px;">tools.yaml</code>:</strong><br>
+            <span style="color: #aaa;">Define environment variables, tool lists, or setup instructions in YAML format.</span>
+        </li>
 
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0;">
+            <span style="font-size: 20px; margin-right: 10px;">5.</span>
+            <strong>Add images or other resources as needed:</strong><br>
+            <span style="color: #aaa;">Place screenshots, diagrams, or icons in the same folder for use in your HTML files.</span>
+        </li>
+
+        <li style="padding: 15px; border-bottom: 1px solid #00C8B0;">
+            <span style="font-size: 20px; margin-right: 10px;">6.</span>
+            <strong>Test your new role:</strong><br>
+            <span style="color: #aaa;">Restart Exodia Assistant and select your role from the Roles section. Check that all content displays correctly.</span>
+        </li>
+    </ol>
+
+    <div style="margin-top: 30px; padding: 15px; background: #112233; border-radius: 8px;">
+        <strong>Tips:</strong>
+        <ul style="list-style-type: disc; color: #00C8B0; margin-left: 20px;">
+            <li>Use clear, concise language in your HTML files.</li>
+            <li>Keep file and folder names consistent and descriptive.</li>
+            <li>Preview your HTML in a browser for formatting before testing in the app.</li>
+            <li>Refer to existing roles (Backend, DevOps, etc.) for examples.</li>
+        </ul>
+    </div>
+
+    <div style="margin-top: 20px; color: #aaa; font-size: 16px;">
+        <strong>Example Structure <code style="background-color: #222222; color: #00B0C8; padding: 2px 4px; border-radius: 4px;">Role</code> :</strong>
+    </div>
+    <div style="text-align: left; padding: 20px;">
+        <img src="../imgs/Role/StructureOf_Role.png" border="0"  style="margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);">
+    </div>
+
+    <div style="margin-top: 20px; color: #aaa; font-size: 16px;">
+        <strong>Example Structure Of <code style="background-color: #222222; color: #00B0C8; padding: 2px 4px; border-radius: 4px;">~/.config/exodia-assistant</code> :</strong>
+    </div>
+    <div style="text-align: left; padding: 20px;">
+        <img src="../imgs/Role/StructureOf_exodia-assistant_config.png" border="0"  style="margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);">
+    </div>
 
 </div>
+

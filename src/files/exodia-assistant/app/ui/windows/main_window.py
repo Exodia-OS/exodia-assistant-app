@@ -16,7 +16,7 @@ from ..widgets.profile_pic import ProfilePicture
 from ..widgets.side_buttons_panel import CustomButtonPanel  # Import the button panel
 from ..widgets.side_buttons_panel_content import ButtonContent  # Import the ButtonContent class
 from ...core.settings import SettingWindow
-from app.utils import x11_utils, font_utils, ui_utils
+from ...utils import x11_utils, font_utils, ui_utils
 
 # Function to create a mask for the custom window shape
 def createMask():

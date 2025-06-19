@@ -7,7 +7,6 @@
 #                                   #
 #####################################
 
-import os
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QColor, QBrush, QRegion, QPolygon, QPen, QFontDatabase, QFont
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QScrollArea

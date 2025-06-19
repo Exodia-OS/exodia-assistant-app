@@ -112,10 +112,7 @@ class Role(QWidget):
                 return ""  # Return empty string as content will be handled by display_create_role
             else:
                 # Fallback to the old method if internal_window is not available
-                return f"""<div style="font-family: {self.predator_font.family()}; color: #00B0C8; line-height: 1.6; font-size: 18px; max-width: 800px; margin: auto; padding: 0 20px;">
-                    <h4 style="color: #00C8B0; font-size: 20px; margin-bottom: 15px;">{role_name}</h4>
-                    <p>This category is under development. will be available soon!</p>
-                </div>"""
+                return html_utils.loadHTMLContent('../../assets/html', 'HowtoCreateYourOwnRole.html', self.predator_font.family())
 
         # If the role is "Explore Role", use the display_create_role method if internal_window is available
         elif role_name == "Explore Role":
@@ -240,15 +237,8 @@ class Role(QWidget):
         self.internal_window.layout().addWidget(top_widget)
 
         # Create the content for the "Create a Role" section
-        html_content = f"""
-        <div style="color: #00B0C8; line-height: 1.6; font-size: 18px; max-width: 800px; margin: auto; padding: 0 20px; font-family: {self.predator_font.family()};">
-          <h1 style="color: #00B0C8; font-size: 32px; margin-bottom: 20px; text-align: center;">Create a Role</h1>
-          It's allows you to Create Your Own Role. and you can share this role with others.
-          <p style="font-size: 20px; text-align: center;">
-            This category is under development. will be available soon!
-          </p>
-        </div>
-        """
+        html_content = html_utils.loadHTMLContent('../../assets/html', 'HowtoCreateYourOwnRole.html', self.predator_font.family())
+
 
         # Create a label for the content
         content_label = QLabel()
