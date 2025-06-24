@@ -1,14 +1,16 @@
 #####################################
 #                                   #
-#  Role UI for Exodia Assistant      #
-#  Separated from logic              #
+#  @author      : 00xWolf           #
+#    GitHub    : @mmsaeed509       #
+#    Developer : Mahmoud Mohamed   #
+#  﫥  Copyright : Exodia OS         #
 #                                   #
 #####################################
 
 import os
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton, QLabel, QHBoxLayout, QTabWidget
 from PyQt5.QtCore import Qt
-from ..core import role as role_logic
+from ...core import role as role_logic
 from ...utils import font_utils, roles_utils
 
 class RoleTabUI(QWidget):

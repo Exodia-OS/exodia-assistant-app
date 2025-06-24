@@ -1,8 +1,8 @@
 #####################################
 #                                   #
 #  @author      : 00xWolf           #
-#    GitHub    : @mmsaeed509       #
-#    Developer : Mahmoud Mohamed   #
+#    GitHub    : @mmsaeed509       #
+#    Developer : Mahmoud Mohamed   #
 #  﫥  Copyright : Exodia OS         #
 #                                   #
 #####################################
@@ -813,7 +813,7 @@ class Role(QWidget):
         header_layout.addWidget(title_label)
 
         # Subtitle
-        subtitle_label = QLabel("Toggle tools to install or uninstall them via Alacritty")
+        subtitle_label = QLabel("Check   `/usr/share/exodia/exodia-assistant/app/roles/`   For New Roles and Role Updates")
         subtitle_label.setFont(self.predator_font)
         subtitle_label.setStyleSheet(f"""
             color: #8B9CB3;
