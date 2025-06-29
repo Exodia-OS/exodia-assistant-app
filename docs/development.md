@@ -3,7 +3,7 @@
 ## Prerequisites
 - Python 3.6 or higher
 - PyQt5
-- PyYAML
+- toml
 - python-xlib
 
 ## Installation
@@ -35,5 +35,6 @@
 ## Notes
 - The app is developed and tested on Linux (Arch-based). Other distros may require package name adjustments.
 - Use a virtual environment for Python dependencies if possible.
+- **Role tool configuration files are now TOML, not YAML.**
 
 See `contributing.md` for workflow and best practices. 

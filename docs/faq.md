@@ -19,7 +19,7 @@ A: Check your Python version, PyQt5 install, and that you're running from the co
 A: See `features.md` for step-by-step guides.
 
 **Q: How do I add a new role?**
-A: Create a new folder in `roles/profiles/` and add your content (see `features.md`).
+A: Create a new folder in `roles/profiles/` and add your content (see `features.md`). Tool configuration is now in TOML files, not YAML.
 
 ## UI & Styling
 **Q: The UI looks broken or fonts are missing.**

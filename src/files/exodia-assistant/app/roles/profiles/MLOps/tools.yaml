@@ -1,39 +1,59 @@
-cat 1:
-  - name: Name 1
-    pkg: pkg-1
-    post-install: 
-    post-remove: 
-    pre-install: 
-    pre-remove: 
-    remove: 
-    status: 
-
-  - name: Name 2
-    pkg: pkg-3
-    post-install: 
-    post-remove: 
-    pre-install: 
-    pre-remove: 
-    remove: 
-    status: 
-
-
-cat 2:
-  - name: Name 3
-    pkg: pkg-3
-    post-install: 
-    post-remove: 
-    pre-install: 
-    pre-remove: 
-    remove: 
-    status: 
-
-cat 3:
-  - name: Name 4
-    pkg: pkg-4
-    post-install: 
-    post-remove: 
-    pre-install: 
-    pre-remove: 
-    remove: 
-    status: 
+IaaC:
+- name: Terraform
+  pkg: terraform
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: UnInstalled
+configuration management:
+- name: Ansible
+  pkg: ansible
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+containerization:
+- name: Docker
+  pkg: docker
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+- name: Docker Compose
+  pkg: docker-compose
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+- name: Podman
+  pkg: podman
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+- name: Podman Compose
+  pkg: podman-compose
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+- name: Podman Desktop
+  pkg: podman-desktop
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed

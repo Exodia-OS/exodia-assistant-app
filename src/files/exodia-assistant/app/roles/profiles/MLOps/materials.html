@@ -1,103 +1,203 @@
 <style>
-        /* Define the Predator font */
-        @font-face {
-            font-family: 'Predator';
-            src: url('/usr/share/exodia/exodia-assistant/Fonts/Squares-Bold.otf') format('opentype');
-            font-weight: bold;
-            font-style: normal;
-        }
-
-        /* Apply the Predator font to all text */
-        body {
-            /*font-family: 'Predator', Arial, sans-serif;*/
-            background-color: #1e1e1e;
-            color: #00B0C8;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-        }
-
-        /* Apply emoji fonts to emoji icons */
-        .emoji {
-            font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        h1 {
-            color: #00C8B0;
-            font-size: 32px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        p {
-            font-size: 18px;
-            text-align: center;
-        }
-
-        .announcement {
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-
-        .announcement h2 {
-            color: #00C8B0;
-            font-size: 24px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .announcement p {
-            font-size: 16px;
-            color: #FFFFFF;
-            text-align: left;
-        }
-
-        .announcement ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .announcement li {
-            padding: 10px;
-            border-bottom: 1px solid #00C8B0;
-            transition: background-color 0.3s ease;
-        }
-
-        .announcement li:hover {
-            background-color: #3a3a3a;
-        }
-
-        .announcement code {
-            background-color: #222222;
-            color: #00B0C8;
-            padding: 2px 4px;
-            border-radius: 4px;
-        }
-        .internetConnection {
-            color: #FF0000;
-            font-size: 24px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .internetConnection h2{
-            color: #FF0000;
-        }
-
-</style>
-
-<div style="color: #00B0C8; line-height: 1.6; font-size: 18px; max-width: 800px; margin: auto; padding: 0 20px;">
-
-    <h1 style="color: #00C8B0; font-size: 32px; margin-bottom: 20px; text-align: center;">It will be added soon. Stay tuned!</h1>
-
-
-</div>
+    /* Define the Predator font */
+    @font-face {
+        font-family: 'Predator';
+        src: url('../fonts/Squares-Bold.otf') format('opentype');
+        font-weight: bold;
+        font-style: normal;
+    }
+  
+    /* Apply the Predator font to all text */
+    body {
+        /*font-family: 'Predator', Arial, sans-serif;*/
+        background-color: #1e1e1e;
+        color: #00B0C8;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+    }
+  
+    /* Apply emoji fonts to emoji icons */
+    .emoji {
+        font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+    }
+  
+    .container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+  
+    h1 {
+        color: #00C8B0;
+        font-size: 32px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+  
+    h2 {
+        color: #00C8B0;
+        font-size: 24px;
+        margin-top: 30px;
+        border-bottom: 1px solid #00C8B0;
+        padding-bottom: 5px;
+    }
+  
+    h3 {
+        color: #00C8B0;
+        font-size: 20px;
+        margin-top: 25px;
+    }
+  
+    p {
+        font-size: 18px;
+        text-align: center;
+    }
+  
+    a {
+        color: #00B0C8;
+        text-decoration: none;
+    }
+  
+    a:hover {
+        color: #00C8B0;
+        text-decoration: underline;
+    }
+  
+    ul {
+        list-style-type: none;
+        padding-left: 20px;
+    }
+  
+    li {
+        padding: 8px 0;
+        border-bottom: 1px solid #333;
+    }
+  
+    li:last-child {
+        border-bottom: none;
+    }
+  
+    code {
+        background-color: #222222;
+        color: #00B0C8;
+        padding: 2px 4px;
+        border-radius: 4px;
+        font-family: monospace;
+    }
+  
+    .announcement {
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+  
+    .announcement h2 {
+        color: #00C8B0;
+        font-size: 24px;
+        margin-bottom: 15px;
+        text-align: center;
+        border-bottom: none;
+    }
+  
+    .announcement p {
+        font-size: 16px;
+        color: #FFFFFF;
+        text-align: left;
+    }
+  
+    .section {
+        margin-bottom: 30px;
+        padding: 15px;
+        background-color: #252525;
+        border-radius: 8px;
+    }
+  
+    .subsection {
+        margin-left: 15px;
+        padding-left: 15px;
+        border-left: 2px solid #00C8B0;
+    }
+  
+    .free-badge {
+        background-color: #006600;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-left: 5px;
+    }
+  
+    .book-badge {
+        background-color: #660066;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-left: 5px;
+    }
+  
+    .course-badge {
+        background-color: #000066;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-left: 5px;
+    }
+  </style>
+  
+  <div style="color: #00B0C8; line-height: 1.6; font-size: 18px; max-width: 800px; margin: auto; padding: 0 20px;">
+  
+  <h1>MLOps Learning Materials</h1>
+  
+  <div class="section">
+    <h1>Udemy Courses</h1>
+    
+    <h3>MLOps</h3>
+    <ul>
+        <li><a href="https://www.udemy.com/course/aws-certified-machine-learning-engineer-associate-mla-c01">AWS Certified Machine Learning Engineer Associate: Hands On!</a></li>
+        <li><a href="https://www.udemy.com/course/complete-mlops-bootcamp-with-10-end-to-end-ml-projects">Complete MLOps Bootcamp With 10+ End To End ML Projects</a></li>
+    </ul>
+  
+    <h3>CI/CD</h3>
+    <ul>
+        <li><a href="https://www.udemy.com/course/decodingdevops">Jenkins: From DevOps Beginners to Advanced</a></li>
+        <li><a href="https://www.udemy.com/course/github-actions-the-complete-guide">GitHub Actions - The Complete Guide</a></li>
+        <li><a href="https://www.udemy.com/course/gitlab-ci-pipelines-ci-cd-and-devops-for-beginners">GitLab CI/CD: Pipelines, CI/CD and DevOps for Beginners</a></li>
+        <li><a href="https://www.udemy.com/course/azure-devops-fundamental">Azure Devops Crash Course -Build CI-CD release pipelines</a></li>
+        <li><a href="https://www.udemy.com/course/gitlab-cicd-course">GitLab CI - A Complete Hands-On for CI/CD Pipelines & DevOps</a></li>
+    </ul>
+  
+  
+    <h3>APIs</h3>
+    <ul>
+        <li><a href="https://www.udemy.com/course/api-and-web-service-introduction">API and Web Service Introduction</a></li>
+        <li><a href="https://www.udemy.com/course/api-with-postman-for-absolute-beginners">Introduction to REST APIs for Absolute Beginners</a></li>
+    </ul>
+  
+    <h3>Agile</h3>
+    <ul>
+        <li><a href="https://www.udemy.com/course/agile-fundamentals-scrum-kanban-scrumban/">Agile Fundamentals: Including Scrum & Kanban</a></li>
+        <li><a href="https://www.udemy.com/course/complete-agile-scrum-master-training-exam-simulator/">Complete Agile Scrum Master Certification Training</a></li>
+    </ul>
+  
+  </div>
+  
+  <div class="section">
+    <h2>1. GIT</h2>
+    <ul>
+        <li><a href="https://git-scm.com/book/en/v2">Pro Git Book</a> <span class="free-badge">FREE</span></li>
+        <li><a href="https://www.atlassian.com/git">Learn Git by Atlassian</a> <span class="free-badge">FREE</span></li>
+        <li><a href="https://learngitbranching.js.org/">Learn Git Branching</a> <span class="free-badge">FREE</span></li>
+        <li><a href="https://www.codecademy.com/learn/learn-git">Learn Git & GitHub on CodeAcademy</a> <span class="free-badge">FREE</span></li>
+        <li><a href="https://gitexplorer.com/">Git Command Explorer</a> <span class="free-badge">FREE</span></li>
+        <li><a href="https://gitimmersion.com/index.html">Git Immersion</a> <span class="free-badge">FREE</span></li>
+        <li><a href="http://marklodato.github.io/visual-git-guide/index-en.html">A Visual Git Reference</a> <span class="free-badge">FREE</span></li>
+    </ul>
+  </div>
+  
+      
+  </div>
