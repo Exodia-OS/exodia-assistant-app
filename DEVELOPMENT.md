@@ -1,5 +1,10 @@
 # Exodia Assistant App - Developer Documentation
 
+## Recent Changes
+- **Tool configuration files** are now in **TOML** format instead of YAML. Update or add new role tools in TOML files (see `app/roles/profiles/<Role>/tools.toml`).
+- The **Environment Setup tab** logic has been moved to `app/core/role_env_setup.py` for better modularity.
+- The Environment tab UI now displays the **total number of tools and the number of installed tools** between the search bar and the Update Status button. This count updates live as you toggle tool checkboxes.
+
 ## Documentation Has Moved!
 
 All developer and contributor documentation is now located in the `docs/` directory for easier navigation and maintenance.

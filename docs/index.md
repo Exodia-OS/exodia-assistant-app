@@ -11,7 +11,7 @@ Exodia Assistant is a comprehensive helper application for Exodia OS, providing 
 - Keybinding reference (searchable)
 - Wiki and knowledge base
 - System tweaks and configuration
-- Role-based user profiles
+- Role-based user profiles (tools now configured in TOML files)
 - Developer information
 - Custom UI/UX
 
@@ -20,7 +20,7 @@ Exodia Assistant is a comprehensive helper application for Exodia OS, providing 
 ### Prerequisites
 - Python 3.6+
 - PyQt5
-- PyYAML
+- toml
 - python-xlib
 
 ### Setup

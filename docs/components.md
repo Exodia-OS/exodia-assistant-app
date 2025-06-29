@@ -38,10 +38,12 @@ This document explains the core components of the Exodia Assistant App, their re
 - **Files:**
   - `roles/role.py`: Role display logic
   - `roles/roles_utils.py`: Role utilities
-  - `roles/profiles/`: Role profile data (HTML, YAML, images)
+  - `roles/profiles/`: Role profile data (HTML, TOML, images)
+  - `core/role_env_setup.py`: Environment Setup tab logic
 - **Responsibilities:**
   - Allow users to select and view different roles/profiles
-  - Store and load role data from YAML/HTML
+  - Store and load role data from TOML/HTML
+  - Environment Setup tab displays all tools, grouped by category, and shows the total number of tools and installed tools in the UI (between the search bar and Update Status button)
 
 ## Utility Functions (`utils/`)
 - **Files:**

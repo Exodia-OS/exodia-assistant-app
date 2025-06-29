@@ -12,7 +12,9 @@ exodia-assistant-app/
 │       └── exodia-assistant/
 │           ├── app/
 │           │   ├── core/
+│           │   │   └── role_env_setup.py  # Environment Setup tab logic
 │           │   ├── roles/
+│           │   │   └── profiles/         # Role profiles (HTML, TOML, images)
 │           │   ├── ui/
 │           │   ├── utils/
 │           ├── assets/
@@ -27,8 +29,8 @@ exodia-assistant-app/
 - **DEVELOPMENT.md**: Developer notes (now points to `docs/`).
 - **docs/**: Full documentation (you are here!).
 - **src/**: All source code.
-- **src/files/exodia-assistant/app/core/**: Core logic, settings, and role management.
-- **src/files/exodia-assistant/app/roles/**: Role system and user profiles.
+- **src/files/exodia-assistant/app/core/**: Core logic, settings, and role management. Includes `role_env_setup.py` for Environment tab logic.
+- **src/files/exodia-assistant/app/roles/**: Role system and user profiles. Tool configuration is now in TOML files.
 - **src/files/exodia-assistant/app/ui/**: UI components (windows, widgets, panels).
 - **src/files/exodia-assistant/app/utils/**: Utility functions (file, font, HTML, etc.).
 - **src/files/exodia-assistant/assets/**: Fonts, images, icons, and HTML content.
