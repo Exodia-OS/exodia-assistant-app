@@ -1,123 +1,308 @@
 <style>
-        /* Define the Predator font */
-        @font-face {
-            font-family: 'Predator';
-            src: url('../fonts/Squares-Bold.otf') format('opentype');
-            font-weight: bold;
-            font-style: normal;
-        }
+    /* Define the Predator font */
+    @font-face {
+        font-family: 'Predator';
+        src: url('../fonts/Squares-Bold.otf') format('opentype');
+        font-weight: bold;
+        font-style: normal;
+    }
+  
+    /* Apply the Predator font to all text */
+    body {
+        /*font-family: 'Predator', Arial, sans-serif;*/
+        background-color: #1e1e1e;
+        color: #00B0C8;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+    }
+  
+    /* Apply emoji fonts to emoji icons */
+    .emoji {
+        font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+    }
+  
+    .container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+  
+    h1 {
+        color: #00C8B0;
+        font-size: 32px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+  
+    h2 {
+        color: #00C8B0;
+        font-size: 24px;
+        margin-top: 30px;
+        border-bottom: 1px solid #00C8B0;
+        padding-bottom: 5px;
+    }
+  
+    h3 {
+        color: #00C8B0;
+        font-size: 20px;
+        margin-top: 25px;
+    }
 
-        /* Apply the Predator font to all text */
-        body {
-            /*font-family: 'Predator', Arial, sans-serif;*/
-            background-color: #1e1e1e;
-            color: #00B0C8;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-        }
+    h5 {
+        color: #006C7A;
+        font-size: 20px;
+        margin-top: 25px;
+    }
+  
+    p {
+        font-size: 18px;
+        text-align: center;
+    }
+  
+    a {
+        color: #00B0C8;
+        text-decoration: none;
+    }
+  
+    a:hover {
+        color: #00C8B0;
+        text-decoration: underline;
+    }
+  
+    ul {
+        list-style-type: none;
+        padding-left: 20px;
+    }
+  
+    li {
+        padding: 8px 0;
+        border-bottom: 1px solid #333;
+    }
+  
+    li:last-child {
+        border-bottom: none;
+    }
+  
+    code {
+        background-color: #222222;
+        color: #00B0C8;
+        padding: 2px 4px;
+        border-radius: 4px;
+        font-family: monospace;
+    }
+  
+    .announcement {
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+  
+    .announcement h2 {
+        color: #00C8B0;
+        font-size: 24px;
+        margin-bottom: 15px;
+        text-align: center;
+        border-bottom: none;
+    }
+  
+    .announcement p {
+        font-size: 16px;
+        color: #FFFFFF;
+        text-align: left;
+    }
+  
+    .section {
+        margin-bottom: 30px;
+        padding: 15px;
+        background-color: #252525;
+        border-radius: 8px;
+    }
+  
+    .subsection {
+        margin-left: 15px;
+        padding-left: 15px;
+        border-left: 2px solid #00C8B0;
+    }
+  
+    .free-badge {
+        background-color: #006600;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-left: 5px;
+    }
+  
+    .book-badge {
+        background-color: #660066;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-left: 5px;
+    }
+  
+    .course-badge {
+        background-color: #000066;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-left: 5px;
+    }
+  </style>
+  
+  <div style="color: #00B0C8; line-height: 1.6; font-size: 18px; max-width: 800px; margin: auto; padding: 0 20px;">
+  
+  <h1><span class="emoji">🚀</span> DevOps Learning Journey</h1>
+  
+  <div class="section">
+    
+    <h3>A simple guide to start your journey in DevOps. I'm going to share with you my personal roadmap and the courses that helped me the most.</h3>
+    
+    <h4><span class="emoji">📘</span> Start Here: Beginner to Advanced</h4>
 
-        /* Apply emoji fonts to emoji icons */
-        .emoji {
-            font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
-        }
+    <h4>I highly recommend starting with this course:</h4>
+    
+    <ul>
+        <li> <span class="emoji">👉</span> <a href="https://www.udemy.com/course/decodingdevops">DevOps Beginners to Advanced with Projects</a></li>
 
-        .container {
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
+    </ul>
 
-        h1 {
-            color: #00C8B0;
-            font-size: 32px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
+    <h4>It takes you through all the fundamental DevOps concepts and tools, and covers everything you need to get started.</h4>
 
-        p {
-            font-size: 18px;
-            text-align: center;
-        }
+    <h3><span class="emoji">🐳</span> Containerization & Orchestration (Docker & Kubernetes)</h3>
 
-        .announcement {
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
+    <h4>After grasping the basics, the next step is learning about containerization and orchestration tools like Docker and Kubernetes (K8s). Start with the following:</h4>
 
-        .announcement h2 {
-            color: #00C8B0;
-            font-size: 24px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
+    <h4><span class="emoji">✅</span> Recommended Courses:</h4>
+    
+    <ul>
+        <li><a href="https://www.udemy.com/course/docker-kubernetes-the-practical-guide">Docker & Kubernetes: The Practical Guide</a></li>
+        <li><a href="https://www.udemy.com/course/learn-kubernetes/">Kubernetes for the Absolute Beginners - Hands-on</a></li>
+        <li><a href="https://www.udemy.com/course/helm-masterclass-50-practical-demos-for-kubernetes-devops">Helm Masterclass: 50 Practical Demos for Kubernetes DevOps</a></li>
+    </ul>
 
-        .announcement p {
-            font-size: 16px;
-            color: #FFFFFF;
-            text-align: left;
-        }
+    <h4><span class="emoji">🔁</span>  Advanced Kubernetes (Optional for Beginners – Useful After First Job):</h4>
+    
+    
+    <ul>   
+        <li><a href="https://www.udemy.com/course/certified-kubernetes-administrator-with-practice-tests">Certified Kubernetes Administrator (CKA) with Practice Tests</a></li>
+        <li><a href="https://www.udemy.com/course/certified-kubernetes-application-developer">Kubernetes Certified Application Developer (CKAD) with Tests</a></li>
+        <li><a href="https://www.udemy.com/course/learn-openshift">OpenShift for the Absolute Beginners - Hands-on</a>  (for certain job roles) </li>
 
-        .announcement ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
+    </ul>
+    
 
-        .announcement li {
-            padding: 10px;
-            border-bottom: 1px solid #00C8B0;
-            transition: background-color 0.3s ease;
-        }
+    <h3><span class="emoji">🔄</span> CI/CD (Continuous Integration / Continuous Delivery)</h3>
 
-        .announcement li:hover {
-            background-color: #3a3a3a;
-        }
-
-        .announcement code {
-            background-color: #222222;
-            color: #00B0C8;
-            padding: 2px 4px;
-            border-radius: 4px;
-        }
-        .internetConnection {
-            color: #FF0000;
-            font-size: 24px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .internetConnection h2{
-            color: #FF0000;
-        }
-
-</style>
-
-<div style="color: #00B0C8; line-height: 1.6; font-size: 18px; max-width: 800px; margin: auto; padding: 0 20px;">
-
-    <h1 style="color: #00C8B0; font-size: 32px; margin-bottom: 20px; text-align: center;">DevOps Roadmap</h1>
-
-    <div style="text-align: center; margin: 20px 0;">
-        <img src="~/.config/exodia-assistant/profiles/DevOps/roadmap.png" alt="Exodia OS Desktop" width="1050" style="max-width: 100%; height: auto;">
-    </div>
+    <h4>You’ll get a solid introduction to Jenkins and AWS CodePipeline in the DevOps Beginners to Advanced course.</h4>
+    <h4>To deepen your knowledge, I highly recommend:</h4>
 
 
-    <h1 style="color: #00C8B0; font-size: 32px; margin-bottom: 20px; text-align: center;">DevOps as Burger (DaaB) </h1>
+    <h4><span class="emoji">✅</span> Recommended Courses:</h4>
+    
+    <ul>
+        <li><a href="https://www.udemy.com/course/azure-devops-fundamental">Azure Devops Crash Course -Build CI-CD release pipelines</a> (Azure DevOps is in demand at many companies)</li>
+        <li><a href="https://www.udemy.com/course/github-actions-the-complete-guide">GitHub Actions - The Complete Guide</a></li>
+    </ul>
 
-    <div style="text-align: center; margin: 20px 0;">
-        <img src="~/.config/exodia-assistant/profiles/DevOps/DevOpsBurger.jpg" alt="Exodia OS Desktop" width="1050" style="max-width: 100%; height: auto;">
-    </div>
+    <h4><span class="emoji">➕</span> Additional (Optional or Role-Specific):</h4>
+    
+    <ul>
+
+        <li><a href="https://www.udemy.com/course/gitlab-ci-pipelines-ci-cd-and-devops-for-beginners">GitLab CI/CD: Pipelines, CI/CD and DevOps for Beginners</a></li>
+        <li><a href="https://www.udemy.com/course/gitlab-cicd-course">GitLab CI - A Complete Hands-On for CI/CD Pipelines & DevOps</a></li>
+        <li><a href="https://www.udemy.com/course/devops-cicd-with-jenkins-maven-gradle-sonarqube-docker-ansible">DevOps: Build CI/CD Pipelines using Jenkins, Docker, Sonar</a></li>
+        
+    </ul>
 
 
-    <h1 style="color: #00C8B0; font-size: 32px; margin-bottom: 20px; text-align: center;">DevOps Tools</h1>
+    <h3><span class="emoji">⚙️</span> Infrastructure as Code (IaC)</h3>
+    <h4>You’ll get introduced to Terraform and AWS CloudFormation in the main DevOps course. But to go deeper:</h4>
+    <h4><span class="emoji">✅</span> Recommended Courses:</h4>
+    <ul>
 
-    <div style="text-align: center; margin: 20px 0;">
-        <img src="~/.config/exodia-assistant/profiles/DevOps/tools.png" alt="Exodia OS Desktop" width="1050" style="max-width: 100%; height: auto;">
-    </div>
+        <li><a href="https://www.udemy.com/course/terraform-beginner-to-advanced">HashiCorp Certified: Terraform Associate</a></li>
 
-    <br>
+    </ul>
+    <h4><span class="emoji">➕</span> Optional(alternative to Terraform, useful for specific job roles):</h4>
+    <ul>
+
+        <li><a href="https://www.pulumi.com/">Pulumi</a></li>
+        
+    </ul>
+
+    <h3><span class="emoji">📈</span> Monitoring & Observability</h3>
+    <h4>Learn Monitoring Tools like Grafana and Prometheus:</h4>
+    <h4><span class="emoji">✅</span> Recommended Courses:</h4>
+    <ul>
+
+        <li><a href="https://www.udemy.com/course/prometheus-monitoring">Prometheus MasterClass: Infra Monitoring & Alerting</a></li>
+
+    </ul>
 
 
-</div>
+
+
+    <h3><span class="emoji">🌐</span> API & Web Basics</h3>
+    <ul>
+
+        <li><a href="https://www.udemy.com/course/api-and-web-service-introduction">API and Web Service Introduction</a></li>
+
+    </ul>
+
+
+    <h3><span class="emoji">📈</span> Agile Methodology</h3>    
+    <ul>
+
+        <li><a href="https://www.udemy.com/course/agile-fundamentals-scrum-kanban-scrumban">Agile Fundamentals: Including Scrum & Kanban</a></li>
+        <li><a href="https://www.udemy.com/course/complete-agile-scrum-master-training-exam-simulator">Complete Agile Scrum Master Certification Training</a></li>
+
+    </ul>
+
+
+    <h3><span class="emoji">🗃️</span> Database Fundamentals</h3>    
+    <ul>
+        <li><a href="https://www.udemy.com/course/database-engines-crash-course">Fundamentals of Database Engineering</a></li>
+    </ul>
+
+
+    <h3><span class="emoji">🔐</span> DevSecOps (Security in DevOps)</h3>
+    <ul>
+        <li><a href="https://www.udemy.com/course/devsecops-fundamentals">DevSecOps Fundamentals - Including Hands-On Demos</a></li>
+        <li><a href="https://www.udemy.com/course/devsecops-with-terraform-kubernetes-jenkins-aws">DevSecOps & DevOps with Jenkins, Kubernetes, Terraform & AWS</a></li>
+        <li><a href="https://www.udemy.com/course/application-security-the-complete-guide">Application Security - The Complete Guide</a></li>
+        <li><a href="https://www.udemy.com/course/kubernetes-devsecops">DevSecOps - Kubernetes DevOps & Security with Hands-On Labs</a></li>
+        <li><a href="https://www.udemy.com/course/devsecops-with-sast-sca-dast">Hands-On DevSecOps: Secure CI/CD with Jenkins on AWS</a></li>
+        <li><a href="https://www.udemy.com/course/devsecops-in-aws-and-aws-security-services-asecurityguru">AWS Security: DevSecOps & AWS Security Services & Terraform</a></li>
+    </ul>
+
+    <h3><span class="emoji">🧪</span> Projects & Hands-On Challenges</h3>
+    <h4><span class="emoji">🧰</span> Labs & Interactive Practice</h4>
+    <h5>Explore challenges in Linux, Docker, networking, and Kubernetes with in-browser terminals.</h5>
+    <ul>
+        <li><a href="https://labs.iximiuz.com">Iximiuz Labs – Learn DevOps by Practicing in Live Environments</a></li>
+    </ul>
+    <h4><span class="emoji">🔨</span> Real-World Projects</h4>
+    <h5>Learn to build CI/CD pipelines, container-based deployments, infrastructure setups, and more.</h5>
+    <ul>
+        <li><a href="https://www.udemy.com/course/devopsprojects">DevOps Projects | Real Time DevOps & GitOps Projects</a></li>
+    </ul>
+
+    <h3><span class="emoji">🎯</span> Optional but Useful (Based on Job Requirements)</h3>
+    <ul>
+        <li><a href="https://www.udemy.com/course/microsoft-azure-from-zero-to-hero-the-complete-guide">Microsoft Azure From Zero to Hero - The Complete Guide</a></li>
+        <li><a href="https://www.udemy.com/course/gcp-google-kubernetes-engine-gke-with-devops">Google Kubernetes Engine GKE with DevOps 75 Real-World Demos</a></li>
+        <li><a href="https://www.youtube.com/watch?v=YXfA5O5Mr18&ab_channel=AmadeusforDevelopers">Podman</a></li>
+    </ul>
+
+  
+  
+  
+  </div>
+    
+  </div>

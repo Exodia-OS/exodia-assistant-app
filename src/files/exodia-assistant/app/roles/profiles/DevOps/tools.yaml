@@ -23,7 +23,7 @@ Configuration Management:
   pre-install: null
   pre-remove: null
   remove: null
-  status: Installed
+  status: UnInstalled
 - name: Nix
   pkg: nix
   post-install: null
@@ -114,9 +114,25 @@ Orchestration (K8s):
   pre-install: null
   pre-remove: null
   remove: null
-  status: UnInstalled
-- name: MiniKube (Recom. install on VM or Docker)
+  status: Installed
+- name: MiniKube
   pkg: minikube
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+- name: crc (CodeReady Containers) - OpenShift local cluster
+  pkg: crc
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: UnInstalled
+- name: OpenShift command-line interface (oc)
+  pkg: oc
   post-install: null
   post-remove: null
   pre-install: null
