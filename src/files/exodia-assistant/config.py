@@ -17,7 +17,7 @@ from typing import Final
 
 # App Info
 APP_NAME: Final[str]    = "Exodia OS Assistant"
-APP_VERSION: Final[str] = "4.0"
+APP_VERSION: Final[str] = "4.1"
 APP_RELEASE: Final[str] = "3"
 APP_AUTHOR: Final[str]  = "00xWolf"
 APP_URL: Final[str]     = "https://github.com/00xWolf/exodia-assistant"
@@ -45,6 +45,3 @@ WM_CLASS_2: Final[str] = "exodiaos-assistant"
 
 # Environment
 DEBUG: Final[bool] = bool(os.environ.get("EXODIA_DEBUG", False))
-
-# Add more configuration constants as needed
-

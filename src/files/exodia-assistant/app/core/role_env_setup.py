@@ -334,14 +334,19 @@ def create_setup_environment_tab(self, tab_widget):
                 # Function to install a tool
                 def install_tool(tool):
                     commands = []
-                    
+                    # Install dependencies first
+                    deps = tool.get('dependencies')
+                    if deps:
+                        if isinstance(deps, str):
+                            deps = [d.strip() for d in deps.split(',') if d.strip()]
+                        if deps:
+                            commands.append(f"sudo pacman -S --noconfirm {' '.join(deps)}")
                     if tool.get('pre-install'):
                         pre_exec_commands = tool['pre-install'].split(',') if tool['pre-install'] else []
                         for cmd in pre_exec_commands:
                             cmd = cmd.strip()
                             if cmd:
                                 commands.append(cmd)
-
                     pkgs = tool.get('pkg', '')
                     if pkgs:
                         if pkgs.startswith("bash "):
@@ -349,14 +354,12 @@ def create_setup_environment_tab(self, tab_widget):
                         else:
                             package_list = [pkg.strip() for pkg in pkgs.split(',')]
                             commands.append(f"sudo pacman -S --noconfirm {' '.join(package_list)}")
-
                     if tool.get('post-install'):
                         post_exec_commands = tool['post-install'].split(',') if tool['post-install'] else []
                         for cmd in post_exec_commands:
                             cmd = cmd.strip()
                             if cmd:
                                 commands.append(cmd)
-
                     execute_in_alacritty(commands)
                     tool['status'] = 'Installed'
                     update_tools_yaml()
@@ -364,14 +367,12 @@ def create_setup_environment_tab(self, tab_widget):
                 # Function to uninstall a tool
                 def uninstall_tool(tool):
                     commands = []
-                    
                     if tool.get('pre-remove'):
                         pre_remove_commands = tool['pre-remove'].split(',') if tool['pre-remove'] else []
                         for cmd in pre_remove_commands:
                             cmd = cmd.strip()
                             if cmd:
                                 commands.append(cmd)
-
                     if tool.get('remove'):
                         remove_commands = tool['remove'].split(',') if tool['remove'] else []
                         for cmd in remove_commands:
@@ -383,14 +384,19 @@ def create_setup_environment_tab(self, tab_widget):
                         if pkgs and not pkgs.startswith("bash "):
                             package_list = [pkg.strip() for pkg in pkgs.split(',')]
                             commands.append(f"sudo pacman -R --noconfirm {' '.join(package_list)}")
-
+                    # Always remove dependencies after main pkg
+                    deps = tool.get('dependencies')
+                    if deps:
+                        if isinstance(deps, str):
+                            deps = [d.strip() for d in deps.split(',') if d.strip()]
+                        if deps:
+                            commands.append(f"sudo pacman -R --noconfirm {' '.join(deps)}")
                     if tool.get('post-remove'):
                         post_remove_commands = tool['post-remove'].split(',') if tool['post-remove'] else []
                         for cmd in post_remove_commands:
                             cmd = cmd.strip()
                             if cmd:
                                 commands.append(cmd)
-
                     execute_in_alacritty(commands)
                     tool['status'] = 'UnInstalled'
                     update_tools_yaml()
@@ -523,9 +529,23 @@ def create_setup_environment_tab(self, tab_widget):
                         """)
                         tool_layout.addWidget(status_label)
 
-                        # Add tooltip with package details
+                        # Enhanced tooltip: fit size to text, keep long lines on one line
+                        tooltip_lines = [
+                            f"<div style='background-color:#151A21; color:#00B0C8; padding:12px 12px; border-radius:8px; display:inline-block; white-space:nowrap; max-width:700px; font-size:14px;'>"
+                            f"<b>Tool:</b> {tool.get('name', '')}<br>"
+                        ]
                         if tool.get('pkg'):
-                            tool_checkbox.setToolTip(f"Packages/Scripts: {tool['pkg']}")
+                            tooltip_lines.append(f"<b>Package:</b> <span style='color:#fff'>{tool['pkg']}</span><br>")
+                        if tool.get('dependencies'):
+                            deps = tool['dependencies']
+                            if isinstance(deps, str):
+                                deps = [d.strip() for d in deps.split(',') if d.strip()]
+                            if deps:
+                                tooltip_lines.append(f"<b>Dependencies:</b> <span style='color:#fff'>{', '.join(deps)}</span><br>")
+                        status_color = '#4CAF50' if tool['status'] == 'Installed' else '#FF6B6B'
+                        tooltip_lines.append(f"<b>Status:</b> <span style='color:{status_color}'>{'Installed' if tool['status'] == 'Installed' else 'UnInstalled'}</span>")
+                        tooltip_lines.append("</div>")
+                        tool_checkbox.setToolTip("".join(tooltip_lines))
 
                         tool_layout.addStretch()
 

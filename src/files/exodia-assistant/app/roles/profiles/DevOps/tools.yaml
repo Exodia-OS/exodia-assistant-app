@@ -1,6 +1,7 @@
 AWS:
 - name: AWS CLI
   pkg: aws-cli
+  dependencies:
   post-install: null
   post-remove: null
   pre-install: null
@@ -9,6 +10,7 @@ AWS:
   status: UnInstalled
 - name: AWS CLI V2
   pkg: aws-cli-v2
+  dependencies:
   post-install: null
   post-remove: null
   pre-install: null
@@ -18,6 +20,7 @@ AWS:
 Configuration Management:
 - name: Ansible
   pkg: ansible
+  dependencies:
   post-install: null
   post-remove: null
   pre-install: null
@@ -26,6 +29,7 @@ Configuration Management:
   status: UnInstalled
 - name: Nix
   pkg: nix
+  dependencies:
   post-install: null
   post-remove: null
   pre-install: null
@@ -35,6 +39,7 @@ Configuration Management:
 Containerization:
 - name: Docker
   pkg: docker
+  dependencies:
   post-install: null
   post-remove: null
   pre-install: null
@@ -43,6 +48,7 @@ Containerization:
   status: Installed
 - name: Docker Compose
   pkg: docker-compose
+  dependencies:
   post-install: null
   post-remove: null
   pre-install: null
@@ -51,6 +57,7 @@ Containerization:
   status: Installed
 - name: Podman
   pkg: podman
+  dependencies:
   post-install: null
   post-remove: null
   pre-install: null
@@ -59,6 +66,7 @@ Containerization:
   status: Installed
 - name: Podman Compose
   pkg: podman-compose
+  dependencies:
   post-install: null
   post-remove: null
   pre-install: null
@@ -67,6 +75,7 @@ Containerization:
   status: Installed
 - name: Podman Desktop
   pkg: podman-desktop
+  dependencies:
   post-install: null
   post-remove: null
   pre-install: null
@@ -76,6 +85,7 @@ Containerization:
 IaaC:
 - name: Terraform
   pkg: terraform
+  dependencies:
   post-install: null
   post-remove: null
   pre-install: null
@@ -84,6 +94,7 @@ IaaC:
   status: UnInstalled
 - name: Pulumi
   pkg: pulumi
+  dependencies:
   post-install: null
   post-remove: null
   pre-install: null
@@ -93,6 +104,7 @@ IaaC:
 Orchestration (K8s):
 - name: Kubelet
   pkg: kubelet
+  dependencies:
   post-install: null
   post-remove: null
   pre-install: null
@@ -101,6 +113,7 @@ Orchestration (K8s):
   status: UnInstalled
 - name: Kubeadm
   pkg: kubeadm
+  dependencies:
   post-install: null
   post-remove: null
   pre-install: null
@@ -109,6 +122,7 @@ Orchestration (K8s):
   status: UnInstalled
 - name: Kubectl
   pkg: kubectl
+  dependencies:
   post-install: null
   post-remove: null
   pre-install: null
@@ -117,22 +131,107 @@ Orchestration (K8s):
   status: Installed
 - name: MiniKube
   pkg: minikube
-  post-install: null
-  post-remove: null
-  pre-install: null
-  pre-remove: null
-  remove: null
-  status: Installed
-- name: crc (CodeReady Containers) - OpenShift local cluster
-  pkg: crc
+  dependencies:
   post-install: null
   post-remove: null
   pre-install: null
   pre-remove: null
   remove: null
   status: UnInstalled
+- name: crc (CodeReady Containers) - OpenShift local cluster
+  pkg: crc
+  dependencies:
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
 - name: OpenShift command-line interface (oc)
   pkg: oc
+  dependencies:
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+VMs:
+- name: VMWare Workstation
+  pkg: vmware-workstation
+  dependencies:
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: UnInstalled
+- name: VirtualBox
+  pkg: virtualbox
+  dependencies:
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+- name: VirtualBox Ext Oracle
+  pkg: virtualbox-ext-oracle
+  dependencies:
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+- name: VirtualBox Ext VNC
+  pkg: virtualbox-ext-vnc
+  dependencies:
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+- name: VirtualBox Guest ISO
+  pkg: virtualbox-guest-iso
+  dependencies:
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+- name: VirtualBox Guest Utils
+  pkg: virtualbox-guest-utils
+  dependencies:
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+- name: VirtualBox Host DKMS
+  pkg: virtualbox-host-dkms
+  dependencies:
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+- name: VirtualBox SDK
+  pkg: virtualbox-sdk
+  dependencies:
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+- name: Virt Manager (QEMU)
+  pkg: virt-manager
+  dependencies: qemu-arch-extra, edk2-ovmf, edk2-armvirt, edk2-shell, dnsmasq, qemu, ebtables
   post-install: null
   post-remove: null
   pre-install: null
