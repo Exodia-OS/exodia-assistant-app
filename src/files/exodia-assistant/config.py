@@ -15,7 +15,7 @@ All global constants, paths, and environment settings should be defined here.
 import os
 from typing import Final
 
-# App Info
+# App Info #
 APP_NAME: Final[str]    = "Exodia OS Assistant"
 APP_VERSION: Final[str] = "4.1"
 APP_RELEASE: Final[str] = "3"
@@ -23,7 +23,7 @@ APP_AUTHOR: Final[str]  = "00xWolf"
 APP_URL: Final[str]     = "https://github.com/00xWolf/exodia-assistant"
 APP_LICENSE: Final[str] = "MIT License"
 
-# Paths
+# Paths #
 BASE_DIR: Final[str]   = os.path.dirname(os.path.abspath(__file__))
 ASSETS_DIR: Final[str] = os.path.join(BASE_DIR, "assets")
 FONTS_DIR: Final[str]  = os.path.join(ASSETS_DIR, "fonts")
@@ -36,12 +36,12 @@ ROLES_PROFILES_DIR: Final[str] = os.path.join(USER_CONFIG_DIR, "profiles")
 ROLE_YAML_PATH: Final[str]     = os.path.join(USER_CONFIG_DIR, "role.yaml")
 SETTINGS_PATH: Final[str]      = os.path.join(USER_CONFIG_DIR, "settings.yaml")
 
-# Font
+# Font #
 DEFAULT_FONT_FAMILY: Final[str] = "Squares-Bold"
 
-# WM_CLASS
+# WM_CLASS #
 WM_CLASS: Final[str]   = "ExodiaOS Assistant"
 WM_CLASS_2: Final[str] = "exodiaos-assistant"
 
-# Environment
+# Environment #
 DEBUG: Final[bool] = bool(os.environ.get("EXODIA_DEBUG", False))

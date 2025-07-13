@@ -14,7 +14,9 @@ from typing import Any, Optional
 
 
 def read_text_file(path: str, encoding: str = "utf-8") -> Optional[str]:
-    """Read a text file and return its contents as a string. Returns None if file not found or error."""
+    """
+    Read a text file and return its contents as a string. Returns None if a file is not found or error.
+    """
     try:
         with open(path, "r", encoding=encoding) as f:
             return f.read()
@@ -24,7 +26,9 @@ def read_text_file(path: str, encoding: str = "utf-8") -> Optional[str]:
 
 
 def write_text_file(path: str, content: str, encoding: str = "utf-8") -> bool:
-    """Write a string to a text file. Returns True on success, False on error."""
+    """
+    Write a string to a text file. Returns True on success, False on error.
+    """
     try:
         with open(path, "w", encoding=encoding) as f:
             f.write(content)
@@ -35,7 +39,9 @@ def write_text_file(path: str, content: str, encoding: str = "utf-8") -> bool:
 
 
 def read_json_file(path: str, encoding: str = "utf-8") -> Optional[Any]:
-    """Read a JSON file and return the parsed object. Returns None on error."""
+    """
+    Read a JSON file and return the parsed object. Returns None on error.
+    """
     try:
         with open(path, "r", encoding=encoding) as f:
             return json.load(f)
@@ -45,7 +51,9 @@ def read_json_file(path: str, encoding: str = "utf-8") -> Optional[Any]:
 
 
 def write_json_file(path: str, data: Any, encoding: str = "utf-8", indent: int = 2) -> bool:
-    """Write an object to a JSON file. Returns True on success, False on error."""
+    """
+    Write an object to a JSON file. Returns True on success, False on error.
+    """
     try:
         with open(path, "w", encoding=encoding) as f:
             json.dump(data, f, indent=indent)
@@ -56,7 +64,9 @@ def write_json_file(path: str, data: Any, encoding: str = "utf-8", indent: int =
 
 
 def read_yaml_file(path: str, encoding: str = "utf-8") -> Optional[Any]:
-    """Read a YAML file and return the parsed object. Returns None on error."""
+    """
+    Read a YAML file and return the parsed object. Returns None on error.
+    """
     try:
         with open(path, "r", encoding=encoding) as f:
             return yaml.safe_load(f)
@@ -66,7 +76,9 @@ def read_yaml_file(path: str, encoding: str = "utf-8") -> Optional[Any]:
 
 
 def write_yaml_file(path: str, data: Any, encoding: str = "utf-8") -> bool:
-    """Write an object to a YAML file. Returns True on success, False on error."""
+    """
+    Write an object to a YAML file. Returns True on success, False on error.
+    """
     try:
         with open(path, "w", encoding=encoding) as f:
             yaml.dump(data, f, default_flow_style=False, allow_unicode=True)
@@ -77,5 +89,7 @@ def write_yaml_file(path: str, data: Any, encoding: str = "utf-8") -> bool:
 
 
 def ensure_dir_exists(path: str) -> None:
-    """Ensure that a directory exists. Create it if it does not."""
+    """
+    Ensure that a directory exists. Create it if it does not.
+    """
     os.makedirs(path, exist_ok=True)

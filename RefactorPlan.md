@@ -28,20 +28,20 @@
 
 ## 2. Module Responsibilities
 
-| Module/File                | Responsibility                                                                 |
-|----------------------------|-------------------------------------------------------------------------------|
-| `main.py`                  | App entry, launches main window                                               |
-| `app/core/role.py`         | Role UI, role loading, business logic, asset loading (all mixed)              |
-| `app/core/settings.py`     | Settings window UI, config file handling, theme/font logic                    |
-| `app/ui/windows/`          | Main and internal window composition                                          |
-| `app/ui/widgets/`          | Side panel, profile pic, button widgets                                       |
-| `app/ui/tabs/`             | News, tweaks, wiki tab logic                                                  |
-| `app/ui/keybinding/`       | Keybinding UI logic                                                           |
-| `app/utils/roles_utils.py` | Role discovery, YAML read/write, role selection window                        |
-| `app/utils/html_utils.py`  | HTML loading, asset path fixing                                               |
-| `assets/`                  | Static files (HTML, images, icons, fonts)                                     |
-| `app/roles/profiles/`      | Per-role HTML, YAML, images                                                   |
-| `config.py`                | (Unused) Intended for global config                                           |
+| Module/File                | Responsibility                                                   |
+|----------------------------|------------------------------------------------------------------|
+| `main.py`                  | App entry, launches main window                                  |
+| `app/core/role.py`         | Role UI, role loading, business logic, asset loading (all mixed) |
+| `app/core/settings.py`     | Settings window UI, config file handling, theme/font logic       |
+| `app/ui/windows/`          | Main and internal window composition                             |
+| `app/ui/widgets/`          | Side panel, profile pic, button widgets                          |
+| `app/ui/tabs/`             | News, tweaks, wiki tab logic                                     |
+| `app/ui/keybinding/`       | Keybinding UI logic                                              |
+| `app/utils/roles_utils.py` | Role discovery, YAML read/write, role selection window           |
+| `app/utils/html_utils.py`  | HTML loading, asset path fixing                                  |
+| `assets/`                  | Static files (HTML, images, icons, fonts)                        |
+| `app/roles/profiles/`      | Per-role HTML, YAML, images                                      |
+| `config.py`                | (Unused) Intended for global config                              |
 
 ---
 

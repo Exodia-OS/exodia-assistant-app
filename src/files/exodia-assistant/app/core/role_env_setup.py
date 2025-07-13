@@ -305,9 +305,8 @@ def create_setup_environment_tab(self, tab_widget):
                             validated_commands.append(
                                 f"echo 'Executing: {cmd}' && "
                                 f"({cmd}) || {{ "
-                                f"echo 'Error executing: {cmd}' >&2; "
-                                f"echo 'Command failed with exit code $?' >&2; "
-                                f"exit 1; "
+                                f"echo 'Warning: {cmd} failed (this might be normal for uninstalls)' >&2; "
+                                f"echo 'Continuing with next command...' >&2; "
                                 f"}}"
                             )
 
@@ -319,14 +318,11 @@ def create_setup_environment_tab(self, tab_widget):
                         # Execute in Alacritty with proper error handling
                         process = subprocess.run(
                             ["alacritty", "-e", "bash", "-c", command_str],
-                            check=True,
                             capture_output=True,
                             text=True
                         )
+                        # Don't fail on non-zero exit codes for uninstall operations
                         return True, None
-                    except subprocess.CalledProcessError as e:
-                        error_msg = f"Error executing commands:\n{e.stderr}"
-                        return False, error_msg
                     except Exception as e:
                         error_msg = f"Unexpected error: {str(e)}"
                         return False, error_msg
@@ -529,7 +525,7 @@ def create_setup_environment_tab(self, tab_widget):
                         """)
                         tool_layout.addWidget(status_label)
 
-                        # Enhanced tooltip: fit size to text, keep long lines on one line
+                        # Enhanced tooltip: show all tool information
                         tooltip_lines = [
                             f"<div style='background-color:#151A21; color:#00B0C8; padding:12px 12px; border-radius:8px; display:inline-block; white-space:nowrap; max-width:700px; font-size:14px;'>"
                             f"<b>Tool:</b> {tool.get('name', '')}<br>"
@@ -542,6 +538,16 @@ def create_setup_environment_tab(self, tab_widget):
                                 deps = [d.strip() for d in deps.split(',') if d.strip()]
                             if deps:
                                 tooltip_lines.append(f"<b>Dependencies:</b> <span style='color:#fff'>{', '.join(deps)}</span><br>")
+                        if tool.get('pre-install'):
+                            tooltip_lines.append(f"<b>Pre-Install:</b> <span style='color:#fff'>{tool['pre-install']}</span><br>")
+                        if tool.get('post-install'):
+                            tooltip_lines.append(f"<b>Post-Install:</b> <span style='color:#fff'>{tool['post-install']}</span><br>")
+                        if tool.get('pre-remove'):
+                            tooltip_lines.append(f"<b>Pre-Remove:</b> <span style='color:#fff'>{tool['pre-remove']}</span><br>")
+                        if tool.get('remove'):
+                            tooltip_lines.append(f"<b>Remove:</b> <span style='color:#fff'>{tool['remove']}</span><br>")
+                        if tool.get('post-remove'):
+                            tooltip_lines.append(f"<b>Post-Remove:</b> <span style='color:#fff'>{tool['post-remove']}</span><br>")
                         status_color = '#4CAF50' if tool['status'] == 'Installed' else '#FF6B6B'
                         tooltip_lines.append(f"<b>Status:</b> <span style='color:{status_color}'>{'Installed' if tool['status'] == 'Installed' else 'UnInstalled'}</span>")
                         tooltip_lines.append("</div>")
@@ -659,8 +665,18 @@ def create_setup_environment_tab(self, tab_widget):
                         commands = []
                         packages_to_install = []
                         packages_to_remove = []
+                        dependencies_to_install = []
+                        dependencies_to_remove = []
 
-                        # 1. Pre-install scripts
+                        # 1. Collect dependencies to install
+                        for tool in tools_to_install:
+                            deps = tool.get('dependencies')
+                            if deps:
+                                if isinstance(deps, str):
+                                    deps = [d.strip() for d in deps.split(',') if d.strip()]
+                                dependencies_to_install.extend(deps)
+
+                        # 2. Pre-install scripts
                         for tool in tools_to_install:
                             if tool.get('pre-install'):
                                 pre_install_commands = tool['pre-install'].split(',') if isinstance(tool['pre-install'], str) else tool['pre-install']
@@ -669,7 +685,11 @@ def create_setup_environment_tab(self, tab_widget):
                                     if cmd:
                                         commands.append(cmd)
 
-                        # 2. Collect packages to install
+                        # 3. Install dependencies first
+                        if dependencies_to_install:
+                            commands.append(f"sudo pacman -S --noconfirm {' '.join(dependencies_to_install)}")
+
+                        # 4. Collect packages to install
                         for tool in tools_to_install:
                             if tool.get('pkg'):
                                 if tool['pkg'].startswith("bash "):
@@ -678,7 +698,7 @@ def create_setup_environment_tab(self, tab_widget):
                                     package_list = [pkg.strip() for pkg in tool['pkg'].split(',')]
                                     packages_to_install.extend(package_list)
 
-                        # 3. Post-install scripts
+                        # 5. Post-install scripts
                         for tool in tools_to_install:
                             if tool.get('post-install'):
                                 post_install_commands = tool['post-install'].split(',') if isinstance(tool['post-install'], str) else tool['post-install']
@@ -687,7 +707,7 @@ def create_setup_environment_tab(self, tab_widget):
                                     if cmd:
                                         commands.append(cmd)
 
-                        # 4. Pre-remove scripts
+                        # 6. Pre-remove scripts
                         for tool in tools_to_uninstall:
                             if tool.get('pre-remove'):
                                 pre_remove_commands = tool['pre-remove'].split(',') if isinstance(tool['pre-remove'], str) else tool['pre-remove']
@@ -696,7 +716,7 @@ def create_setup_environment_tab(self, tab_widget):
                                     if cmd:
                                         commands.append(cmd)
 
-                        # 5. Collect packages to remove
+                        # 7. Collect packages to remove
                         for tool in tools_to_uninstall:
                             if tool.get('remove'):
                                 remove_commands = tool['remove'].split(',') if isinstance(tool['remove'], str) else tool['remove']
@@ -708,7 +728,15 @@ def create_setup_environment_tab(self, tab_widget):
                                 package_list = [pkg.strip() for pkg in tool['pkg'].split(',')]
                                 packages_to_remove.extend(package_list)
 
-                        # 6. Post-remove scripts
+                        # 8. Collect dependencies to remove
+                        for tool in tools_to_uninstall:
+                            deps = tool.get('dependencies')
+                            if deps:
+                                if isinstance(deps, str):
+                                    deps = [d.strip() for d in deps.split(',') if d.strip()]
+                                dependencies_to_remove.extend(deps)
+
+                        # 9. Post-remove scripts
                         for tool in tools_to_uninstall:
                             if tool.get('post-remove'):
                                 post_remove_commands = tool['post-remove'].split(',') if isinstance(tool['post-remove'], str) else tool['post-remove']
@@ -721,9 +749,15 @@ def create_setup_environment_tab(self, tab_widget):
                         if packages_to_install:
                             commands.append(f"sudo pacman -S --noconfirm {' '.join(packages_to_install)}")
 
-                        # Add package removal command if there are packages to remove
-                        if packages_to_remove:
-                            commands.append(f"sudo pacman -Rns --noconfirm {' '.join(packages_to_remove)}")
+                        # Add package removal command if there are packages to remove (including dependencies)
+                        all_packages_to_remove = packages_to_remove + dependencies_to_remove
+                        if all_packages_to_remove:
+                            commands.append(f"sudo pacman -Rns --noconfirm {' '.join(all_packages_to_remove)}")
+
+                        # Debug: Print commands being executed
+                        print("Commands to execute:")
+                        for i, cmd in enumerate(commands):
+                            print(f"{i+1}. {cmd}")
 
                         # Execute all commands in a single terminal session
                         if commands:

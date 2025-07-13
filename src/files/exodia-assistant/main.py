@@ -9,6 +9,7 @@
 
 from PyQt5.QtWidgets import QApplication
 from app.ui.windows.main_window import CustomShapeWindow  # Import the class directly
+import config
 
 if __name__ == '__main__':
     app = QApplication([])
