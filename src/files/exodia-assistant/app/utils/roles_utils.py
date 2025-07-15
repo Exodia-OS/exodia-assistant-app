@@ -13,40 +13,30 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLab
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QBrush, QColor, QPen, QPolygon, QRegion
 from ..utils import x11_utils
+from config import WM_CLASS, WM_CLASS_2, USER_CONFIG_DIR, ROLES_PROFILES_DIR, ROLE_YAML_PATH
 
 
 def get_available_roles():
-
-    config_dir = os.path.expanduser("~/.config/exodia-assistant")
-    os.makedirs(config_dir, exist_ok=True)  # Ensure directory exists
-    roles_dir = os.path.join(config_dir, "profiles")
-    if os.path.exists(roles_dir) and os.path.isdir(roles_dir):
-        return [d for d in os.listdir(roles_dir) if os.path.isdir(os.path.join(roles_dir, d))]
+    os.makedirs(USER_CONFIG_DIR, exist_ok=True)  # Ensure directory exists
+    if os.path.exists(ROLES_PROFILES_DIR) and os.path.isdir(ROLES_PROFILES_DIR):
+        return [d for d in os.listdir(ROLES_PROFILES_DIR) if os.path.isdir(os.path.join(ROLES_PROFILES_DIR, d))]
     return []
 
 def save_role_to_yaml(role_name):
-    config_dir = os.path.expanduser("~/.config/exodia-assistant")
-    os.makedirs(config_dir, exist_ok=True)  # Ensure directory exists
-    yaml_path = os.path.join(config_dir, "role.yaml")
-
+    os.makedirs(USER_CONFIG_DIR, exist_ok=True)  # Ensure directory exists
     data = {"selected_role": role_name}
-
-    with open(yaml_path, 'w') as yaml_file:
+    with open(ROLE_YAML_PATH, 'w') as yaml_file:
         yaml.dump(data, yaml_file, default_flow_style=False)
 
 def load_role_from_yaml():
-    config_dir = os.path.expanduser("~/.config/exodia-assistant")
-    os.makedirs(config_dir, exist_ok=True)  # Ensure directory exists
-    yaml_path = os.path.join(config_dir, "role.yaml")
-
+    os.makedirs(USER_CONFIG_DIR, exist_ok=True)  # Ensure directory exists
     # If the file does not exist, create it with default content
-    if not os.path.exists(yaml_path):
-        with open(yaml_path, 'w') as yaml_file:
+    if not os.path.exists(ROLE_YAML_PATH):
+        with open(ROLE_YAML_PATH, 'w') as yaml_file:
             yaml.dump({"selected_role": "DevOps"}, yaml_file, default_flow_style=False)
         return "DevOps"
-
     try:
-        with open(yaml_path, 'r') as yaml_file:
+        with open(ROLE_YAML_PATH, 'r') as yaml_file:
             data = yaml.safe_load(yaml_file)
             return data.get("selected_role")
     except Exception:
@@ -294,7 +284,7 @@ class RoleSelectionWindow(QWidget):
     def set_wm_class(self):
         # Get the native window ID
         win_id = self.winId().__int__()
-        x11_utils.set_wm_class(win_id, "exodiaos-assistant", "ExodiaOS Assistant")
+        x11_utils.set_wm_class(win_id, WM_CLASS_2, WM_CLASS)
 
     @staticmethod
     def create_role_selection_mask():

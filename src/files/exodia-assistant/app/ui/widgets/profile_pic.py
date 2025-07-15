@@ -8,10 +8,12 @@
 #####################################
 
 import os
+import yaml
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPainter, QColor, QRegion, QPixmap, QPen
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QPainterPath
+from config import DEFAULT_USER_AVATAR, SETTINGS_FILE_PATH
 
 
 class ProfilePicture(QWidget):
@@ -22,12 +24,33 @@ class ProfilePicture(QWidget):
         self.setGeometry(30, 20, 150, 150)
         self.setAttribute(Qt.WA_TranslucentBackground)  # Make the background transparent
         self.radius = min(self.width(), self.height()) // 2
-        self.image_path = os.path.expanduser("~/.face")  # Expand the tilde to the full path
+        self.image_path = self.loadProfilePicturePath()
         self.pixmap = QPixmap(self.image_path)
 
         # Check if the pixmap is loaded correctly
         if self.pixmap.isNull():
             print(f"Failed to load image from: {self.image_path}")
+
+    def loadProfilePicturePath(self):
+        """Load profile picture path from settings.yaml"""
+        try:
+            if os.path.exists(SETTINGS_FILE_PATH):
+                with open(SETTINGS_FILE_PATH, 'r') as file:
+                    settings = yaml.safe_load(file) or {}
+                    profile_path = settings.get('profile_picture_path')
+                    if profile_path and os.path.exists(profile_path):
+                        return profile_path
+        except Exception as e:
+            print(f"Error loading profile picture path from settings: {e}")
+        
+        # Fallback to default avatar
+        return DEFAULT_USER_AVATAR
+
+    def refreshProfilePicture(self):
+        """Refresh the profile picture from settings"""
+        self.image_path = self.loadProfilePicturePath()
+        self.pixmap = QPixmap(self.image_path)
+        self.update()  # Trigger a repaint
 
     def createCustomMask(self):
         # Define a circular mask

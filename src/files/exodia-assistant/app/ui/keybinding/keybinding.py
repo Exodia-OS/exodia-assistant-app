@@ -1,11 +1,13 @@
+import os
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QScrollArea, QLineEdit, QFrame
 from ...utils import ui_utils, font_utils, file_utils, ui_utils, html_utils
+from config import HTML_DIR
 
 def displayKeybindingContent(internal_window, predator_font):
     text = ""
     # Base directory for HTML files
-    html_dir = "../../assets/html/Keybinding"
+    html_dir = os.path.join(HTML_DIR, 'Keybinding')
 
     def clearLayout():
         """Clears the layout of the internal window."""

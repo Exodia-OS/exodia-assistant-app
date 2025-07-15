@@ -1,10 +1,12 @@
 import os
 import shutil
 import getpass
+import yaml
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QBrush, QColor, QPen, QPolygon, QRegion
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QTabWidget, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QCheckBox, QComboBox, QSlider, QScrollArea, QFrame, QFileDialog, QMessageBox
 from ..utils import font_utils
+from config import APP_VERSION, APP_RELEASE, SETTINGS_FILE_PATH
 
 
 def createButtonMask():
@@ -40,11 +42,12 @@ class SettingWindow(QMainWindow):
         self.close_button = None
         self.is_auto_start = None
         self.custom_font = None
-        self.config_path = os.path.expanduser('~/.config/bspwm/exodia.conf')  # Path to the config file
         self.theme = "dark"  # Default theme
         self.font_size = 18  # Default font size
         self.news_refresh_rate = 60  # Default refresh rate in minutes
+        self.profile_picture_path = None  # Profile picture path from settings
         self.tab_widget = None
+        self.loadSettings()  # Load settings from YAML file
         self.initUI()
 
     def initUI(self):
@@ -58,7 +61,6 @@ class SettingWindow(QMainWindow):
         # Apply the predator font to the entire window
         if self.custom_font:
             self.setFont(self.custom_font)
-        self.loadAutoStartStatus()  # Load the current auto-start status
         self.addCloseButton()  # Add the close button
         self.setupTabs()  # Set up the tabs
         print("UI Initialized")
@@ -81,16 +83,133 @@ class SettingWindow(QMainWindow):
         if self.custom_font:
             self.custom_font.setPointSize(20)
 
-    def loadAutoStartStatus(self):
-        if os.path.exists(self.config_path):
-            with open(self.config_path, 'r') as config_file:
-                for line in config_file:
-                    if 'exodia-assistant-auto-start' in line:
-                        self.is_auto_start = line.split('=')[1].strip().lower() == 'true'
-                        break
-        else:
-            self.is_auto_start = False  # Default to false if the file does not exist
-        print(f"Auto-start status loaded: {self.is_auto_start}")
+    def getDefaultSettings(self):
+        """Get default settings dictionary"""
+        return {
+            'auto-start': False,
+            'theme': 'dark',
+            'font_size': 18,
+            'news_refresh_rate': 60,
+            'profile_picture_path': None
+        }
+
+    def initializeDefaultSettings(self):
+        """Initialize settings with default values"""
+        defaults = self.getDefaultSettings()
+        self.is_auto_start = defaults['auto-start']
+        self.theme = defaults['theme']
+        self.font_size = defaults['font_size']
+        self.news_refresh_rate = defaults['news_refresh_rate']
+        self.profile_picture_path = defaults['profile_picture_path']
+
+    def loadSettings(self):
+        """Load settings from YAML file"""
+        try:
+            # Ensure the config directory exists
+            config_dir = os.path.dirname(SETTINGS_FILE_PATH)
+            if not os.path.exists(config_dir):
+                os.makedirs(config_dir, exist_ok=True)
+                print(f"Created config directory: {config_dir}")
+
+            if os.path.exists(SETTINGS_FILE_PATH):
+                # Load existing settings
+                with open(SETTINGS_FILE_PATH, 'r') as file:
+                    settings = yaml.safe_load(file) or {}
+                    
+                # Load settings with defaults
+                defaults = self.getDefaultSettings()
+                self.is_auto_start = settings.get('auto-start', defaults['auto-start'])
+                self.theme = settings.get('theme', defaults['theme'])
+                self.font_size = settings.get('font_size', defaults['font_size'])
+                self.news_refresh_rate = settings.get('news_refresh_rate', defaults['news_refresh_rate'])
+                self.profile_picture_path = settings.get('profile_picture_path', defaults['profile_picture_path'])
+                
+                print(f"Settings loaded from: {SETTINGS_FILE_PATH}")
+            else:
+                # Create default settings file
+                print(f"Settings file not found, creating default settings: {SETTINGS_FILE_PATH}")
+                self.initializeDefaultSettings()
+                self.saveSettings()
+                
+            print(f"Settings loaded: auto-start={self.is_auto_start}, theme={self.theme}, font_size={self.font_size}")
+        except Exception as e:
+            print(f"Error loading settings: {e}")
+            print("Using default settings due to error")
+            # Use defaults on error
+            self.initializeDefaultSettings()
+
+    def saveSettings(self):
+        """Save settings to YAML file"""
+        try:
+            # Ensure directory exists
+            config_dir = os.path.dirname(SETTINGS_FILE_PATH)
+            os.makedirs(config_dir, exist_ok=True)
+            
+            settings = {
+                'auto-start': self.is_auto_start,
+                'theme': self.theme,
+                'font_size': self.font_size,
+                'news_refresh_rate': self.news_refresh_rate,
+                'profile_picture_path': self.profile_picture_path
+            }
+            
+            with open(SETTINGS_FILE_PATH, 'w') as file:
+                yaml.dump(settings, file, default_flow_style=False, sort_keys=False)
+                
+            print(f"Settings saved to: {SETTINGS_FILE_PATH}")
+            print(f"Settings content: {settings}")
+        except Exception as e:
+            print(f"Error saving settings to {SETTINGS_FILE_PATH}: {e}")
+            print("Settings will be lost on app restart")
+
+    def createSettingsBackup(self):
+        """Create a backup of the current settings file"""
+        try:
+            if os.path.exists(SETTINGS_FILE_PATH):
+                backup_path = f"{SETTINGS_FILE_PATH}.backup"
+                import shutil
+                shutil.copy2(SETTINGS_FILE_PATH, backup_path)
+                print(f"Settings backup created: {backup_path}")
+                return backup_path
+        except Exception as e:
+            print(f"Error creating settings backup: {e}")
+        return None
+
+    def restoreSettingsFromBackup(self):
+        """Restore settings from backup if available"""
+        try:
+            backup_path = f"{SETTINGS_FILE_PATH}.backup"
+            if os.path.exists(backup_path):
+                import shutil
+                shutil.copy2(backup_path, SETTINGS_FILE_PATH)
+                print(f"Settings restored from backup: {backup_path}")
+                return True
+        except Exception as e:
+            print(f"Error restoring settings from backup: {e}")
+        return False
+
+    def validateSettingsFile(self):
+        """Validate the settings file and return True if valid"""
+        try:
+            if not os.path.exists(SETTINGS_FILE_PATH):
+                return False
+            
+            with open(SETTINGS_FILE_PATH, 'r') as file:
+                settings = yaml.safe_load(file)
+                
+            # Check if all required keys exist
+            required_keys = ['auto-start', 'theme', 'font_size', 'news_refresh_rate', 'profile_picture_path']
+            for key in required_keys:
+                if key not in settings:
+                    print(f"Missing required setting: {key}")
+                    return False
+                    
+            return True
+        except Exception as e:
+            print(f"Settings file validation failed: {e}")
+            return False
+
+
 
     def addCloseButton(self):
 
@@ -198,6 +317,14 @@ class SettingWindow(QMainWindow):
         auto_start_layout.addStretch()
 
         general_layout.addLayout(auto_start_layout)
+
+        # Add version display
+        version_label = QLabel(f"v.{APP_VERSION}.{APP_RELEASE}")
+        version_label.setFont(self.custom_font)
+        # Get the font family name for use in StyleSheet
+        font_family = self.custom_font.family() if self.custom_font else "Squares-Bold"
+        version_label.setStyleSheet(f"color: #00B0C8; font-family: '{font_family}'; font-size: 18px;")
+        general_layout.addWidget(version_label)
 
         # Add the tab to the tab widget
         self.tab_widget.addTab(general_tab, "Auto-Start")
@@ -384,7 +511,7 @@ class SettingWindow(QMainWindow):
         news_layout.addLayout(buttons_layout)
 
         # Add the tab to the tab widget
-        self.tab_widget.addTab(news_tab, "Profile Pictures")
+        self.tab_widget.addTab(news_tab, "Change Avatar")
 
     def updateToggleButtonStyle(self):
         # Get the font family name for use in StyleSheet
@@ -418,40 +545,31 @@ class SettingWindow(QMainWindow):
     def toggleAutoStart(self):
         self.is_auto_start = not self.is_auto_start
         self.updateToggleButtonStyle()
-        self.saveAutoStartStatus()
+        self.saveSettings()  # Save to YAML file
 
     def changeTheme(self, theme_text):
         self.theme = "dark" if theme_text == "Dark" else "light"
         # Implementation for changing theme would go here
         print(f"Theme changed to: {self.theme}")
+        self.saveSettings()  # Save to YAML file
 
     def changeFontSize(self, size):
         self.font_size = size
         # Implementation for changing font size would go here
         print(f"Font size changed to: {self.font_size}")
+        self.saveSettings()  # Save to YAML file
 
     def changeRefreshRate(self, rate):
         self.news_refresh_rate = int(rate)
         # Implementation for changing news refresh rate would go here
         print(f"News refresh rate changed to: {self.news_refresh_rate} minutes")
+        self.saveSettings()  # Save to YAML file
 
-    def saveAutoStartStatus(self):
-        if os.path.exists(self.config_path):
-            with open(self.config_path, 'r') as config_file:
-                lines = config_file.readlines()
 
-            with open(self.config_path, 'w') as config_file:
-                for line in lines:
-                    if 'exodia-assistant-auto-start' in line:
-                        line = f'exodia-assistant-auto-start = {"true" if self.is_auto_start else "false"}\n'
-                    config_file.write(line)
-        else:
-            with open(self.config_path, 'w') as config_file:
-                config_file.write(f'exodia-assistant-auto-start = {"true" if self.is_auto_start else "false"}\n')
 
     def change_profile_picture(self):
         """
-        Opens a file dialog to select an image and copies it to ~/.face
+        Opens a file dialog to select an image, saves the path to settings.yaml, and copies it to ~/.face
         """
         # Open the file dialog to select an image
         file_dialog = QFileDialog()
@@ -466,9 +584,18 @@ class SettingWindow(QMainWindow):
                 destination_file = os.path.expanduser("~/.face")
 
                 try:
+                    # Save the profile picture path to settings
+                    self.profile_picture_path = source_file
+                    self.saveSettings()
+                    
                     # Copy the selected image to ~/.face
                     shutil.copy2(source_file, destination_file)
-                    QMessageBox.information(self, "Success", "Profile picture has been updated successfully.")
+                    
+                    # Refresh the profile picture widget if it exists
+                    if hasattr(self.parent(), 'profile_picture'):
+                        self.parent().profile_picture.refreshProfilePicture()
+                    
+                    QMessageBox.information(self, "Success", "Profile picture has been updated successfully and saved to settings.")
                 except Exception as e:
                     QMessageBox.critical(self, "Error", f"Failed to update profile picture: {str(e)}")
 

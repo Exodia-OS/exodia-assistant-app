@@ -16,11 +16,11 @@ import os
 from typing import Final
 
 # App Info #
-APP_NAME: Final[str]    = "Exodia OS Assistant"
+APP_NAME: Final[str]    = "ExodiaOS Assistant"
 APP_VERSION: Final[str] = "4.1"
-APP_RELEASE: Final[str] = "3"
-APP_AUTHOR: Final[str]  = "00xWolf"
-APP_URL: Final[str]     = "https://github.com/00xWolf/exodia-assistant"
+APP_RELEASE: Final[str] = "4"
+APP_AUTHOR: Final[str]  = "Mahmoud Mohammed, @mmsaeed509 - 00xWolf"
+APP_URL: Final[str]     = "https://github.com/Exodia-OS/exodia-assistant-app"
 APP_LICENSE: Final[str] = "MIT License"
 
 # Paths #
@@ -31,10 +31,11 @@ ICONS_DIR: Final[str]  = os.path.join(ASSETS_DIR, "icons")
 IMGS_DIR: Final[str]   = os.path.join(ASSETS_DIR, "imgs")
 HTML_DIR: Final[str]   = os.path.join(ASSETS_DIR, "html")
 
-USER_CONFIG_DIR: Final[str]    = os.path.expanduser("~/.config/exodia-assistant")
-ROLES_PROFILES_DIR: Final[str] = os.path.join(USER_CONFIG_DIR, "profiles")
-ROLE_YAML_PATH: Final[str]     = os.path.join(USER_CONFIG_DIR, "role.yaml")
-SETTINGS_PATH: Final[str]      = os.path.join(USER_CONFIG_DIR, "settings.yaml")
+USER_CONFIG_DIR: Final[str]     = os.path.expanduser("~/.config/exodia-assistant")
+ROLES_PROFILES_DIR: Final[str]  = os.path.join(USER_CONFIG_DIR, "profiles")
+ROLE_YAML_PATH: Final[str]      = os.path.join(USER_CONFIG_DIR, "role.yaml")
+SETTINGS_FILE_PATH: Final[str]  = os.path.join(USER_CONFIG_DIR, "settings.yaml")
+DEFAULT_USER_AVATAR: Final[str] = os.path.expanduser("~/.face")
 
 # Font #
 DEFAULT_FONT_FAMILY: Final[str] = "Squares-Bold"

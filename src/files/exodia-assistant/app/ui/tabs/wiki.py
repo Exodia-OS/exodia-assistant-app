@@ -1,6 +1,8 @@
+import os
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QScrollArea, QLineEdit, QFrame
 from ...utils import font_utils, html_utils, ui_utils
+from config import HTML_DIR
 
 def displayWikiContent(internal_window, predator_font):
     """
@@ -12,7 +14,7 @@ def displayWikiContent(internal_window, predator_font):
     """
     text = ""
     # Base directory for HTML files
-    html_dir = "../../assets/html/tips"
+    html_dir = os.path.join(HTML_DIR, 'tips')
 
     def clearLayout():
         """Clears the layout of the internal window."""

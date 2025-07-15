@@ -15,6 +15,7 @@ from ..tabs.news import News
 from ..tabs.tweaks import Tweaks
 from PyQt5.QtCore import Qt
 from ...utils import font_utils, html_utils, ui_utils
+from config import HTML_DIR
 
 
 def show_role_selection():
@@ -42,7 +43,7 @@ class ButtonContent:
         # Clear previous buttons
         self.clearButtons()
         # Load and format the HTML content
-        text = html_utils.loadHTMLContent('../../assets/html', 'welcome.html', self.predator_font.family())
+        text = html_utils.loadHTMLContent(HTML_DIR, 'welcome.html', self.predator_font.family())
 
         # Update the content of the internal window
         self.internal_window.updateContent(text)
@@ -51,7 +52,7 @@ class ButtonContent:
 
         self.clearButtons()  # Clear previous buttons
         # Load and format the HTML content
-        text = html_utils.loadHTMLContent('../../assets/html', 'developers.html', self.predator_font.family())
+        text = html_utils.loadHTMLContent(HTML_DIR, 'developers.html', self.predator_font.family())
         # Update the content of the internal window
         self.internal_window.updateContent(text)
 

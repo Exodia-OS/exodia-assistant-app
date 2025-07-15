@@ -7,16 +7,19 @@
 #                                   #
 #####################################
 
+import os
+import sys
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QHBoxLayout, QLabel, QScrollArea, QWidget, QFrame
 from PyQt5.QtCore import Qt, QPoint, QRect
 from PyQt5.QtGui import QPainter, QBrush, QPolygon, QColor, QRegion
 from PyQt5.QtGui import QLinearGradient, QPen, QPainterPath
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QWidget
 from ..windows.internal_window import InternalWindow
 from ..widgets.profile_pic import ProfilePicture
 from ..widgets.side_buttons_panel import CustomButtonPanel  # Import the button panel
 from ..widgets.side_buttons_panel_content import ButtonContent  # Import the ButtonContent class
 from ...core.settings import SettingWindow
 from ...utils import x11_utils, font_utils, ui_utils
+from config import WM_CLASS, WM_CLASS_2, APP_NAME
 
 # Function to create a mask for the custom window shape
 def createMask():
@@ -86,7 +89,7 @@ class CustomShapeWindow(QMainWindow):
     def set_wm_class(self):
         # Get the native window ID
         win_id = self.winId().__int__()
-        x11_utils.set_wm_class(win_id, "exodiaos-assistant", "ExodiaOS Assistant")
+        x11_utils.set_wm_class(win_id, WM_CLASS_2, WM_CLASS)
 
     # Function to handle settings button click
     def openSettings(self):
@@ -216,7 +219,7 @@ class CustomShapeWindow(QMainWindow):
         painter.drawPath(path)
 
         # Center the text horizontally
-        text = "Exodia Assistant"
+        text = APP_NAME
         text_rect = painter.fontMetrics().boundingRect(text)
         text_width = text_rect.width()
         text_height = text_rect.height()
