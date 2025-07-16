@@ -1,53 +1,117 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>CS Student Materials</title>
   <style>
-    body { background-color: #151A21; color: #00B0C8; font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
-    h2 { color: #00C8B0; }
-    ul { list-style-type: none; padding: 0; }
-    li { margin: 10px 0; }
+    @font-face {
+        font-family: 'Predator';
+        src: url('../fonts/Squares-Bold.otf') format('opentype');
+        font-weight: bold;
+        font-style: normal;
+    }
+    body {
+        background-color: #151A21;
+        color: #00B0C8;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+    }
+    .emoji {
+        font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+    }
+    .container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+        border-radius: 10px;
+        background-color: #252525;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    h1, h2 {
+        color: #00C8B0;
+    }
+    ul {
+        list-style-type: none;
+        padding-left: 20px;
+    }
+    li {
+        padding: 8px 0;
+        border-bottom: 1px solid #333;
+    }
+    li:last-child {
+        border-bottom: none;
+    }
+    a {
+        color: #00B0C8;
+        text-decoration: none;
+    }
+    a:hover {
+        color: #00C8B0;
+        text-decoration: underline;
+    }
+    .section {
+        margin-bottom: 30px;
+        padding: 15px;
+        background-color: #1a1a1a;
+        border-radius: 8px;
+    }
   </style>
 </head>
 <body>
-  <h1>📚 CS Learning Materials</h1>
 
-  <h2>Programming Fundamentals</h2>
-  <ul>
-    <li><a href="https://www.udemy.com/course/pythonforbeginners/">Python for Beginners (Udemy)</a></li>
-    <li><a href="https://cs50.harvard.edu/x/">CS50: Introduction to Computer Science</a></li>
-    <li><a href="https://www.learn-c.org/">Learn C Interactive</a></li>
-  </ul>
+<div class="container">
+  <h1><span class="emoji">📚</span> CS Student Learning Materials</h1>
 
-  <h2>Data Structures & Algorithms</h2>
-  <ul>
-    <li><a href="https://www.udemy.com/course/master-the-coding-interview-data-structures-algorithms/">Master Coding Interview: DS & Algo</a></li>
-    <li><a href="https://visualgo.net/en">VisualGo.net</a></li>
-  </ul>
+  <div class="section">
+    <h2><span class="emoji">👨‍💻</span> Programming Fundamentals</h2>
+    <ul>
+      <li><a href="https://www.udemy.com/course/pythonforbeginners/">Python for Beginners (Udemy)</a></li>
+      <li><a href="https://cs50.harvard.edu/x/">CS50: Introduction to Computer Science (Harvard)</a></li>
+      <li><a href="https://www.learn-c.org/">Learn C - Interactive Tutorial</a></li>
+    </ul>
+  </div>
 
-  <h2>Computer Architecture & OS</h2>
-  <ul>
-    <li><a href="https://www.udemy.com/course/computer-architecture-and-organization/">Computer Architecture (Udemy)</a></li>
-    <li><a href="https://www.udemy.com/course/operating-systems-from-scratch/">Operating Systems from Scratch</a></li>
-  </ul>
+  <div class="section">
+    <h2><span class="emoji">📐</span> Data Structures & Algorithms</h2>
+    <ul>
+      <li><a href="https://www.udemy.com/course/master-the-coding-interview-data-structures-algorithms/">Master the Coding Interview: DS & Algorithms (Udemy)</a></li>
+      <li><a href="https://visualgo.net/en">VisuAlgo - Algorithm Visualizer</a></li>
+    </ul>
+  </div>
 
-  <h2>Databases</h2>
-  <ul>
-    <li><a href="https://www.w3schools.com/sql/">SQL Tutorial - W3Schools</a></li>
-    <li><a href="https://www.udemy.com/course/sql-and-database-design/">SQL & Database Design (Udemy)</a></li>
-  </ul>
+  <div class="section">
+    <h2><span class="emoji">🧠</span> Computer Architecture & Operating Systems</h2>
+    <ul>
+      <li><a href="https://www.udemy.com/course/computer-architecture-and-organization/">Computer Architecture & Organization (Udemy)</a></li>
+      <li><a href="https://www.udemy.com/course/operating-systems-from-scratch/">Operating Systems from Scratch (Udemy)</a></li>
+    </ul>
+  </div>
 
-  <h2>Networking</h2>
-  <ul>
-    <li><a href="https://www.udemy.com/course/comptia-network-certification-n10-008/">Networking Fundamentals</a></li>
-  </ul>
+  <div class="section">
+    <h2><span class="emoji">💽</span> Databases</h2>
+    <ul>
+      <li><a href="https://www.w3schools.com/sql/">W3Schools SQL Tutorial</a></li>
+      <li><a href="https://www.udemy.com/course/sql-and-database-design/">SQL & Database Design (Udemy)</a></li>
+    </ul>
+  </div>
 
-  <h2>Tools</h2>
-  <ul>
-    <li><a href="https://www.udemy.com/course/git-and-github-bootcamp/">Git & GitHub Bootcamp</a></li>
-    <li><a href="https://missing.csail.mit.edu/">The Missing Semester of Your CS Education</a></li>
-  </ul>
+  <div class="section">
+    <h2><span class="emoji">🌐</span> Networking</h2>
+    <ul>
+      <li><a href="https://www.udemy.com/course/comptia-network-certification-n10-008/">Networking Fundamentals (Udemy)</a></li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2><span class="emoji">🛠️</span> Tools & Productivity</h2>
+    <ul>
+      <li><a href="https://www.udemy.com/course/git-and-github-bootcamp/">Git & GitHub Bootcamp (Udemy)</a></li>
+      <li><a href="https://missing.csail.mit.edu/">The Missing Semester of Your CS Education (MIT)</a></li>
+    </ul>
+  </div>
+</div>
+
 </body>
 </html>

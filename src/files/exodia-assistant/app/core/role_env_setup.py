@@ -57,7 +57,7 @@ def create_setup_environment_tab(self, tab_widget):
 
     # Subtitle + Update Role Button Row
     subtitle_row = QHBoxLayout()
-    subtitle_label = QLabel("Check   `/usr/share/exodia/exodia-assistant/app/roles/`   For New Roles and Role Updates")
+    subtitle_label = QLabel("Check   `/usr/share/exodia/exodia-assistant/app/roles/profiles/`   For New Roles and Role Updates")
     subtitle_label.setFont(self.predator_font)
     subtitle_label.setStyleSheet(f"""
         color: #8B9CB3;

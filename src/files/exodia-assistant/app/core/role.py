@@ -524,6 +524,7 @@ class Role(QWidget):
         # Create tabs
         self.create_roadmap_tab(tab_widget)
         self.create_materials_tab(tab_widget)
+        self.create_hands_on_tab(tab_widget)
         create_setup_environment_tab(self, tab_widget)
 
         # Add the tab widget to the layout
@@ -770,6 +771,104 @@ class Role(QWidget):
 
         # Add the tab to the tab widget
         tab_widget.addTab(scroll_area, "Materials")
+
+    def create_hands_on_tab(self, tab_widget):
+        """
+        Create the Hands-On tab content.
+
+        Args:
+            tab_widget (QTabWidget): The tab widget to add the tab to
+        """
+        hands_on_tab = QWidget()
+        hands_on_tab.setStyleSheet("background-color: #151A21;")
+        hands_on_layout = QVBoxLayout(hands_on_tab)
+        hands_on_layout.setAlignment(Qt.AlignTop)
+        hands_on_layout.setContentsMargins(20, 20, 20, 20)
+        hands_on_layout.setSpacing(15)
+
+        # Add title
+        title_label = QLabel("Now, Let's get our hands dirty!")
+        title_label.setFont(self.predator_font)
+        font_family = self.predator_font.family()
+        title_label.setStyleSheet(f"color: #00B0C8; font-family: '{font_family}'; font-size: 24px;")
+        hands_on_layout.addWidget(title_label)
+
+        # Add separator
+        separator = QFrame()
+        separator.setFrameShape(QFrame.HLine)
+        separator.setFrameShadow(QFrame.Sunken)
+        separator.setStyleSheet("background-color: #00B0C8;")
+        hands_on_layout.addWidget(separator)
+
+        # Add content
+        content_label = QTextBrowser()
+        content_label.setOpenExternalLinks(True)
+        content_label.setOpenLinks(False)  # We'll handle link clicks ourselves
+        content_label.setTextInteractionFlags(Qt.TextSelectableByMouse | Qt.LinksAccessibleByMouse)
+        content_label.anchorClicked.connect(open_url)
+        content_label.setStyleSheet(f"color: #00B0C8; font-size: 18px; background-color: #151A21; padding: 10px; font-family: '{font_family}'; border: none;")
+
+        # Get the selected role from role.yaml
+        selected_role = roles_utils.load_role_from_yaml()
+
+        if selected_role:
+            hands_on_html_path = os.path.join(ROLES_PROFILES_DIR, f"{selected_role}/hands_on.html")
+            if os.path.exists(hands_on_html_path):
+                with open(hands_on_html_path, "r", encoding="utf-8") as html_file:
+                    html_content = html_file.read()
+                content_label.setText(html_content)
+            else:
+                content_label.setText(f"""
+                <div style=\"color: #00B0C8; line-height: 1.6; font-size: 18px; font-family: {font_family};\">
+                    <p>No hands-on exercises or practice content found for the selected role: {selected_role}</p>
+                    <p>Expected path: {hands_on_html_path}</p>
+                </div>
+                """)
+        else:
+            content_label.setText(f"""
+            <div style=\"color: #00B0C8; line-height: 1.6; font-size: 18px; font-family: {font_family};\">
+                <p>This tab provides hands-on exercises and practice for your selected role, including:</p>
+                <ul>
+                    <li>Practical coding tasks</li>
+                    <li>Mini-projects</li>
+                    <li>Quizzes and challenges</li>
+                    <li>Step-by-step guides</li>
+                </ul>
+                <p>Select a role to view its specific hands-on content.</p>
+            </div>
+            """)
+
+        content_label.setStyleSheet(f"color: #00B0C8; font-size: 18px; font-family: '{font_family}';")
+        hands_on_layout.addWidget(content_label)
+
+        # Create a scroll area for the content
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setWidget(hands_on_tab)
+        scroll_area.setStyleSheet("""
+            QScrollArea { 
+                border: none;
+                background-color: #151A21;
+            }
+            QScrollBar:vertical {
+                background: #151A21;
+                width: 10px;
+                margin: 0;
+            }
+            QScrollBar::handle:vertical {
+                background: #00B0C8;
+                border-radius: 0px;
+            }
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                background: #00B0C8;
+            }
+            QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+                background: #151A21;
+            }
+        """)
+
+        # Add the tab to the tab widget
+        tab_widget.addTab(scroll_area, "Hands-On")
 
     def show_role_selection_window(self):
         """
