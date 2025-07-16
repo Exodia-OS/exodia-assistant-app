@@ -10,11 +10,12 @@
 import os
 import subprocess
 import yaml
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QCheckBox, QGroupBox, QScrollArea, QFrame, QLineEdit, QToolTip, QSizePolicy, QGridLayout)
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QCheckBox, QGroupBox, QScrollArea, QFrame, QLineEdit, QToolTip, QSizePolicy, QGridLayout, QMessageBox)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QIcon
 from ..utils import roles_utils
 from config import USER_CONFIG_DIR, ROLES_PROFILES_DIR
+from ..utils.roles_utils import update_role_from_system
 
 def create_setup_environment_tab(self, tab_widget):
     """
@@ -54,7 +55,8 @@ def create_setup_environment_tab(self, tab_widget):
     """)
     header_layout.addWidget(title_label)
 
-    # Subtitle
+    # Subtitle + Update Role Button Row
+    subtitle_row = QHBoxLayout()
     subtitle_label = QLabel("Check   `/usr/share/exodia/exodia-assistant/app/roles/`   For New Roles and Role Updates")
     subtitle_label.setFont(self.predator_font)
     subtitle_label.setStyleSheet(f"""
@@ -62,7 +64,56 @@ def create_setup_environment_tab(self, tab_widget):
         font-family: '{font_family}';
         font-size: 14px;
     """)
-    header_layout.addWidget(subtitle_label)
+    subtitle_row.addWidget(subtitle_label, alignment=Qt.AlignLeft)
+
+    # Add Update Role button
+    update_role_btn = QPushButton("Update Role")
+    update_role_btn.setFont(self.predator_font)
+    update_role_btn.setFixedSize(140, 32)
+    update_role_btn.setStyleSheet(f"""
+        QPushButton {{
+            background-color: #00B0C8;
+            color: white;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+        }}
+        QPushButton:hover {{
+            background-color: #0086A8;
+        }}
+        QPushButton:pressed {{
+            background-color: #005F78;
+        }}
+    """)
+    def handle_update_role():
+        selected_role = roles_utils.load_role_from_yaml() or "DevOps"
+        # Store the current back_callback if available
+        if hasattr(self, 'back_callback'):
+            back_callback = self.back_callback
+        else:
+            back_callback = None
+        success, msg = update_role_from_system(selected_role)
+        if success:
+            QMessageBox.information(
+                header_frame,
+                "Role Updated",
+                f"<span style='color:#00B0C8; font-weight:bold; font-size:15px'>{selected_role}</span> <span style='color:#B0B8C8; font-size:14px;'>Role has been</span> "
+                f"<span style='color:#00B0C8; font-weight:bold;'>successfully updated</span>!<br><br>"
+                f"<span style='color:#B0B8C8; font-size:14px;'>The latest files have been copied from:</span><br>"
+                f"<span style='color:#00C8B0;'><code>/usr/share/exodia/exodia-assistant/app/roles/profiles/{selected_role}/</code></span><br>"
+                f"<span style='color:#B0B8C8; font-size:14px;'>to your user config.</span><br><br>"
+                f"<i><span style='color:#FFD700;'>If you don't see changes, try closing and reopening this tab.</span></i>"
+            )
+            # Always preserve and pass the original back_callback
+            if hasattr(self, 'internal_window') and self.internal_window:
+                self.back_callback = back_callback
+                self.display_manage_role(self.back_callback)
+        else:
+            QMessageBox.critical(header_frame, "Update Failed", f"Failed to update role '{selected_role}':\n{msg}")
+    update_role_btn.clicked.connect(handle_update_role)
+    subtitle_row.addWidget(update_role_btn, alignment=Qt.AlignRight)
+    header_layout.addLayout(subtitle_row)
 
     main_layout.addWidget(header_frame)
 

@@ -9,6 +9,7 @@
 
 import os
 import yaml
+import shutil
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QScrollArea, QFrame, QLineEdit
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPainter, QBrush, QColor, QPen, QPolygon, QRegion
@@ -41,6 +42,27 @@ def load_role_from_yaml():
             return data.get("selected_role")
     except Exception:
         return None
+
+def update_role_from_system(role_name):
+    """
+    Update (copy) a role from the system directory to the user config directory.
+    Overwrites the user's role directory with the system version.
+    Args:
+        role_name (str): The name of the role to update
+    Returns:
+        bool: True if successful, False otherwise
+        str: Error message if failed, else empty string
+    """
+    try:
+        system_role_dir = f"/usr/share/exodia/exodia-assistant/app/roles/profiles/{role_name}"
+        user_role_dir = os.path.join(ROLES_PROFILES_DIR, role_name)
+        if not os.path.exists(system_role_dir):
+            return False, f"System role directory not found: {system_role_dir}"
+        # Copy the directory, overwriting existing files
+        shutil.copytree(system_role_dir, user_role_dir, dirs_exist_ok=True)
+        return True, ""
+    except Exception as e:
+        return False, str(e)
 
 
 class RoleSelectionWindow(QWidget):

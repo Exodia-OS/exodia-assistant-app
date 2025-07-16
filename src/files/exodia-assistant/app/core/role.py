@@ -8,7 +8,7 @@
 #####################################
 
 import os, sys
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton, QLabel, QHBoxLayout, QTabWidget, QFrame, QTextBrowser, QCheckBox, QGroupBox, QLineEdit, QGridLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton, QLabel, QHBoxLayout, QTabWidget, QFrame, QTextBrowser, QCheckBox, QGroupBox, QLineEdit, QGridLayout, QMessageBox
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QDesktopServices
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -428,6 +428,8 @@ class Role(QWidget):
         Args:
             back_callback (function): Callback function to execute when the Back button is clicked
         """
+        # Store the callback for later use (for UI refreshes)
+        self.back_callback = back_callback
         # Clear the existing layout
         if not self.internal_window.layout():
             self.internal_window.setLayout(QVBoxLayout())

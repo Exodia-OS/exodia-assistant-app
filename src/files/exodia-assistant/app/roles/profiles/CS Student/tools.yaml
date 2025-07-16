@@ -1,0 +1,94 @@
+Databases:
+- dependencies: null
+  name: SQLite
+  pkg: sqlite
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+Development Tools (IDEs):
+- dependencies: null
+  name: JetBrains ToolBox
+  pkg: jetbrains-toolbox
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+- dependencies: null
+  name: VS Code
+  pkg: visual-studio-code-bin
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+- dependencies: null
+  name: WindSurf AI
+  pkg: windsurf
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+- dependencies: null
+  name: Cursor AI
+  pkg: cursor-bin
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+Languages:
+- dependencies: null
+  name: Python
+  pkg: python
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+- dependencies: null
+  name: GCC (C/C++ Compiler)
+  pkg: gcc
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+Version Control System (VSC):
+- dependencies: null
+  name: Git
+  pkg: git
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+- dependencies: null
+  name: GitHub CLI
+  pkg: github-cli
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
+- dependencies: null
+  name: GitHub Desktop
+  pkg: github-desktop
+  post-install: null
+  post-remove: null
+  pre-install: null
+  pre-remove: null
+  remove: null
+  status: Installed
