@@ -22,17 +22,15 @@ def createButtonMask():
     return QRegion(polygon)
 
 
-def createCloseButtonMask():
-    button_points = [
-        QPoint(200, 0),  # Top right
-        QPoint(240, 50),  # Bottom right
-        QPoint(200, 100),  # Bottom right curve
-        QPoint(40, 100),  # Bottom left curve
-        QPoint(0, 50),  # Bottom left
-        QPoint(40, 0),  # Top left
-    ]
-    polygon = QPolygon(button_points)
-    return QRegion(polygon)
+def getDefaultSettings():
+    """Get default settings dictionary"""
+    return {
+        'auto-start': True,
+        'theme': 'dark',
+        'font_size': 18,
+        'news_refresh_rate': 60,
+        'profile_picture_path': None
+    }
 
 
 class SettingWindow(QMainWindow):
@@ -52,7 +50,7 @@ class SettingWindow(QMainWindow):
 
     def initUI(self):
         # self.setGeometry(x, y, width, height)
-        self.setGeometry(300, 100, 1140, 640)
+        self.setGeometry(400, 200, 1600, 1200)
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
 
@@ -61,18 +59,18 @@ class SettingWindow(QMainWindow):
         # Apply the predator font to the entire window
         if self.custom_font:
             self.setFont(self.custom_font)
-        self.addCloseButton()  # Add the close button
+        # Removed close button
         self.setupTabs()  # Set up the tabs
         print("UI Initialized")
 
     @staticmethod
     def createMask():
         points = [
-            QPoint(910, 100),  # Top center, 1
-            QPoint(940, 130),  # Top right, 2
-            QPoint(940, 440),  # Middle right, 3
-            QPoint(230, 440),  # Bottom center, 4
-            QPoint(200, 410),  # Bottom left, 5
+            QPoint(925, 100),  # Top center, 1
+            QPoint(955, 130),  # Top right, 2
+            QPoint(955, 495),  # Middle right, 3
+            QPoint(230, 495),  # Bottom center, 4
+            QPoint(200, 465),  # Bottom left, 5
             QPoint(200, 100),  # Middle left, 6
         ]
         polygon = QPolygon(points)
@@ -83,19 +81,9 @@ class SettingWindow(QMainWindow):
         if self.custom_font:
             self.custom_font.setPointSize(20)
 
-    def getDefaultSettings(self):
-        """Get default settings dictionary"""
-        return {
-            'auto-start': False,
-            'theme': 'dark',
-            'font_size': 18,
-            'news_refresh_rate': 60,
-            'profile_picture_path': None
-        }
-
     def initializeDefaultSettings(self):
         """Initialize settings with default values"""
-        defaults = self.getDefaultSettings()
+        defaults = getDefaultSettings()
         self.is_auto_start = defaults['auto-start']
         self.theme = defaults['theme']
         self.font_size = defaults['font_size']
@@ -117,7 +105,7 @@ class SettingWindow(QMainWindow):
                     settings = yaml.safe_load(file) or {}
                     
                 # Load settings with defaults
-                defaults = self.getDefaultSettings()
+                defaults = getDefaultSettings()
                 self.is_auto_start = settings.get('auto-start', defaults['auto-start'])
                 self.theme = settings.get('theme', defaults['theme'])
                 self.font_size = settings.get('font_size', defaults['font_size'])
@@ -211,31 +199,12 @@ class SettingWindow(QMainWindow):
 
 
 
-    def addCloseButton(self):
-
-        self.close_button = QPushButton('X', self)
-        #            self.setGeometry(x, y, width, height)
-        self.close_button.setGeometry(889, 115, 30, 30)  # Positioned above the toggle button
-        # Get the font family name for use in StyleSheet
-        font_family = self.custom_font.family() if self.custom_font else "Squares-Bold"
-        self.close_button.setStyleSheet(f"""
-            QPushButton {{
-                background-color: #151A21;
-                color: #00B0C8;
-                font-family: '{font_family}';
-                font-size: 30px;
-                font-weight: bold;
-                border-radius: 0px;
-            }}
-        """)
-        # # Use the same mask for custom shape
-        # self.close_button.setMask(createCloseButtonMask())
-        self.close_button.clicked.connect(self.close)
+    # Removed addCloseButton method
 
     def setupTabs(self):
         # Create a central widget to hold the tab widget
         central_widget = QWidget(self)
-        central_widget.setGeometry(220, 130, 700, 250)
+        central_widget.setGeometry(220, 130, 720, 340)
         central_widget.setStyleSheet("background-color: transparent;")
 
         # Create a layout for the central widget
@@ -255,12 +224,12 @@ class SettingWindow(QMainWindow):
             QTabBar::tab {{
                 background-color: #151A21;
                 color: #00B0C8;
-                padding: 8px 20px;
+                padding: 4px;
                 margin-right: 2px;
                 border-top-left-radius: 5px;
                 border-top-right-radius: 5px;
                 font-family: '{font_family}';
-                font-size: 16px;
+                font-size: 18px;
                 min-width: 150px;
                 text-align: center;
             }}
@@ -273,10 +242,66 @@ class SettingWindow(QMainWindow):
         # Create tabs
         self.createGeneralTab()
         self.createAppearanceTab()
-        self.createNewsTab()
-
+        self.createAvatarTab()
+        self.createAboutTab()
         # Add the tab widget to the layout
         layout.addWidget(self.tab_widget)
+
+        # Add version display and OK/CANCEL buttons below the tabs
+        bottom_layout = QHBoxLayout()
+        version_label = QLabel(f"App Version: v.{APP_VERSION}.{APP_RELEASE}")
+        version_label.setFont(self.custom_font)
+        version_label.setStyleSheet(f"color: #00B0C8; font-family: '{font_family}'; font-size: 18px;")
+        version_label.setAlignment(Qt.AlignLeft)
+        bottom_layout.addWidget(version_label, alignment=Qt.AlignLeft)
+
+        ok_button = QPushButton("OK")
+        ok_button.setFont(self.custom_font)
+        ok_button.setFixedSize(120, 40)
+        ok_button.setStyleSheet(f"""
+            QPushButton {{
+                background-color: #00B0C8;
+                color: white;
+                font-family: '{font_family}';
+                font-size: 18px;
+                font-weight: bold;
+                border-radius: 5px;
+            }}
+            QPushButton:hover {{
+                background-color: #008B9E;
+            }}
+            QPushButton:pressed {{
+                background-color: #005F78;
+            }}
+        """)
+        ok_button.clicked.connect(self.saveAndClose)
+
+        cancel_button = QPushButton("CANCEL")
+        cancel_button.setFont(self.custom_font)
+        cancel_button.setFixedSize(120, 40)
+        cancel_button.setStyleSheet(f"""
+            QPushButton {{
+                background-color: #151A21;
+                color: #00B0C8;
+                font-family: '{font_family}';
+                font-size: 18px;
+                font-weight: bold;
+                border-radius: 5px;
+                border: 1px solid #00B0C8;
+            }}
+            QPushButton:hover {{
+                background-color: #222831;
+            }}
+            QPushButton:pressed {{
+                background-color: #00343C;
+            }}
+        """)
+        cancel_button.clicked.connect(self.cancelAndClose)
+
+        bottom_layout.addStretch()
+        bottom_layout.addWidget(ok_button, alignment=Qt.AlignRight)
+        bottom_layout.addWidget(cancel_button, alignment=Qt.AlignRight)
+        layout.addLayout(bottom_layout)
 
     def createGeneralTab(self):
         # Create the General tab
@@ -317,14 +342,6 @@ class SettingWindow(QMainWindow):
         auto_start_layout.addStretch()
 
         general_layout.addLayout(auto_start_layout)
-
-        # Add version display
-        version_label = QLabel(f"v.{APP_VERSION}.{APP_RELEASE}")
-        version_label.setFont(self.custom_font)
-        # Get the font family name for use in StyleSheet
-        font_family = self.custom_font.family() if self.custom_font else "Squares-Bold"
-        version_label.setStyleSheet(f"color: #00B0C8; font-family: '{font_family}'; font-size: 18px;")
-        general_layout.addWidget(version_label)
 
         # Add the tab to the tab widget
         self.tab_widget.addTab(general_tab, "Auto-Start")
@@ -435,7 +452,7 @@ class SettingWindow(QMainWindow):
         # Add the tab to the tab widget
         self.tab_widget.addTab(appearance_tab, "Appearance")
 
-    def createNewsTab(self):
+    def createAvatarTab(self):
         # Create the News tab
         news_tab = QWidget()
         news_layout = QVBoxLayout(news_tab)
@@ -512,6 +529,42 @@ class SettingWindow(QMainWindow):
 
         # Add the tab to the tab widget
         self.tab_widget.addTab(news_tab, "Change Avatar")
+
+    def createAboutTab(self):
+        from config import APP_AUTHOR, APP_VERSION, APP_RELEASE, APP_LICENSE
+        about_tab = QWidget()
+        about_layout = QVBoxLayout(about_tab)
+        about_layout.setAlignment(Qt.AlignTop)
+        about_layout.setContentsMargins(40, 40, 40, 40)
+        about_layout.setSpacing(20)
+
+        font_family = self.custom_font.family() if self.custom_font else "Squares-Bold"
+
+        title = QLabel("About ExodiaOS Assistant")
+        title.setFont(self.custom_font)
+        title.setStyleSheet(f"color: #00B0C8; font-family: '{font_family}'; font-size: 28px; font-weight: bold;")
+        about_layout.addWidget(title)
+
+        about_layout.addWidget(self._aboutLabel("Author:", APP_AUTHOR, font_family))
+        about_layout.addWidget(self._aboutLabel("Version:", f"v.{APP_VERSION}.{APP_RELEASE}", font_family))
+        about_layout.addWidget(self._aboutLabel("License:", APP_LICENSE, font_family))
+
+        about_layout.addStretch()
+        self.tab_widget.addTab(about_tab, "About")
+
+    def _aboutLabel(self, label, value, font_family):
+        container = QWidget()
+        layout = QHBoxLayout(container)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(10)
+        key = QLabel(label)
+        key.setStyleSheet(f"color: #00B0C8; font-family: '{font_family}'; font-size: 20px; font-weight: bold;")
+        val = QLabel(value)
+        val.setStyleSheet(f"color: white; font-family: '{font_family}'; font-size: 18px;")
+        layout.addWidget(key)
+        layout.addWidget(val)
+        layout.addStretch()
+        return container
 
     def updateToggleButtonStyle(self):
         # Get the font family name for use in StyleSheet
@@ -631,6 +684,14 @@ class SettingWindow(QMainWindow):
                 except Exception as e:
                     QMessageBox.critical(self, "Error", f"Failed to update SDDM user picture: {str(e)}")
 
+    def saveAndClose(self):
+        self.saveSettings()
+        self.close()
+
+    def cancelAndClose(self):
+        self.loadSettings()  # Reload settings from disk, discarding unsaved changes
+        self.close()
+
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
@@ -639,12 +700,12 @@ class SettingWindow(QMainWindow):
         painter.drawRect(self.rect())
 
         border_points = [
-            QPoint(910, 100),  # Top center
-            QPoint(940, 130),  # Top right
-            QPoint(940, 440),  # Middle right
-            QPoint(230, 440),  # Bottom center
-            QPoint(200, 410),  # Bottom left
-            QPoint(200, 100),  # Middle left
+            QPoint(925, 100),  # Top center, 1
+            QPoint(955, 130),  # Top right, 2
+            QPoint(955, 495),  # Middle right, 3
+            QPoint(230, 495),  # Bottom center, 4
+            QPoint(200, 465),  # Bottom left, 5
+            QPoint(200, 100),  # Middle left, 6
         ]
         border_polygon = QPolygon(border_points)
 

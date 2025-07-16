@@ -14,6 +14,7 @@ from PyQt5.QtGui import QDesktopServices
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from ..utils import font_utils, html_utils, roles_utils
 from .role_env_setup import create_setup_environment_tab
+from config import USER_CONFIG_DIR, ROLES_PROFILES_DIR
 
 def open_url(url):
     """
@@ -88,9 +89,11 @@ class Role(QWidget):
             self.internal_window = internal_window
 
         # Path to the profiles directory
-        config_dir = os.path.expanduser("~/.config/exodia-assistant")
-        os.makedirs(config_dir, exist_ok=True)  # Ensure directory exists
-        roles_dir = os.path.join(config_dir, "/profiles")
+        # config_dir = os.path.expanduser("~/.config/exodia-assistant")
+        # os.makedirs(config_dir, exist_ok=True)  # Ensure directory exists
+        # roles_dir = os.path.join(config_dir, "/profiles")
+        roles_dir = ROLES_PROFILES_DIR
+        os.makedirs(roles_dir, exist_ok=True)  # Ensure directory exists
 
         text = """<div style="font-family: {}; color: #00B0C8; line-height: 1.6; font-size: 18px; max-width: 800px; margin: auto; padding: 0 20px;">                    
                     <h4 style="color: #00C8B0; font-size: 20px; margin-bottom: 15px;"> Role Overview </h4>
@@ -567,9 +570,9 @@ class Role(QWidget):
 
         if selected_role:
             # Construct the path to the roadmap.html file for the selected role
-            config_dir = os.path.expanduser("~/.config/exodia-assistant")
-            os.makedirs(config_dir, exist_ok=True)  # Ensure directory exists
-            roadmap_path = os.path.join(config_dir, f"profiles/{selected_role}/roadmap.html")
+            # config_dir = os.path.expanduser("~/.config/exodia-assistant")
+            # os.makedirs(config_dir, exist_ok=True)  # Ensure directory exists
+            roadmap_path = os.path.join(ROLES_PROFILES_DIR, f"{selected_role}/roadmap.html")
             # print(roadmap_path)
 
             # Check if the roadmap.html file exists
@@ -682,10 +685,10 @@ class Role(QWidget):
 
         if selected_role:
             # Construct the path to the materials.html file for the selected role
-            config_dir = os.path.expanduser("~/.config/exodia-assistant")
-            os.makedirs(config_dir, exist_ok=True)  # Ensure directory exists
-            materials_html_path = os.path.join(config_dir, f"profiles/{selected_role}/materials.html")
-            materials_md_path = os.path.join(config_dir, f"profiles/{selected_role}/materials.md")
+            # config_dir = os.path.expanduser("~/.config/exodia-assistant")
+            # os.makedirs(config_dir, exist_ok=True)  # Ensure directory exists
+            materials_html_path = os.path.join(ROLES_PROFILES_DIR, f"{selected_role}/materials.html")
+            materials_md_path = os.path.join(ROLES_PROFILES_DIR, f"{selected_role}/materials.md")
             # print(materials_html_path)
             # print(materials_md_path)
 

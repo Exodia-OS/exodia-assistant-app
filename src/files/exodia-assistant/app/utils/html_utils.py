@@ -25,6 +25,7 @@ def loadHTMLContent(directory, filename, font_family):
         """
 
     # Fix asset paths to use the absolute path under the root-level assets folder
+    # this function to replace the relative path with an absolute path while rendering HTML content
     def replace_relative_path(match):
         quote = match.group(1)
         rel_path = match.group(2)

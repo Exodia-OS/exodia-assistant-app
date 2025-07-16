@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushBut
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QIcon
 from ..utils import roles_utils
+from config import USER_CONFIG_DIR, ROLES_PROFILES_DIR
 
 def create_setup_environment_tab(self, tab_widget):
     """
@@ -216,9 +217,12 @@ def create_setup_environment_tab(self, tab_widget):
         content_layout.addWidget(no_role_label)
     else:
         # Construct the path to the tools.yaml file for the selected role
-        config_dir = os.path.expanduser("~/.config/exodia-assistant")
-        os.makedirs(config_dir, exist_ok=True)
-        tools_path = os.path.join(config_dir, f"profiles/{selected_role}/tools.yaml")
+        # config_dir = os.path.expanduser("~/.config/exodia-assistant")
+        # os.makedirs(config_dir, exist_ok=True)
+        # tools_path = os.path.join(config_dir, f"profiles/{selected_role}/tools.yaml")
+        role_dir = os.path.join(ROLES_PROFILES_DIR, selected_role)
+        os.makedirs(role_dir, exist_ok=True)
+        tools_path = os.path.join(role_dir, "tools.yaml")
 
         if not os.path.exists(tools_path):
             error_label = QLabel(f"Tools configuration file not found for {selected_role}")
@@ -273,7 +277,7 @@ def create_setup_environment_tab(self, tab_widget):
                     
                     return True, None
 
-                # Function to show error message in UI
+                # Function to show an error message in the UI
                 def show_error_message(message, is_critical=False):
                     error_label = QLabel(message)
                     error_label.setFont(self.predator_font)
@@ -336,7 +340,7 @@ def create_setup_environment_tab(self, tab_widget):
                         if isinstance(deps, str):
                             deps = [d.strip() for d in deps.split(',') if d.strip()]
                         if deps:
-                            commands.append(f"sudo pacman -S --noconfirm {' '.join(deps)}")
+                            commands.append(f"sudo pacman -S --noconfirm {' '.join(deps)} || paru -S --noconfirm {' '.join(deps)}")
                     if tool.get('pre-install'):
                         pre_exec_commands = tool['pre-install'].split(',') if tool['pre-install'] else []
                         for cmd in pre_exec_commands:
@@ -349,7 +353,7 @@ def create_setup_environment_tab(self, tab_widget):
                             commands.append(pkgs)
                         else:
                             package_list = [pkg.strip() for pkg in pkgs.split(',')]
-                            commands.append(f"sudo pacman -S --noconfirm {' '.join(package_list)}")
+                            commands.append(f"sudo pacman -S --noconfirm {' '.join(package_list)} || paru -S --noconfirm {' '.join(package_list)}")
                     if tool.get('post-install'):
                         post_exec_commands = tool['post-install'].split(',') if tool['post-install'] else []
                         for cmd in post_exec_commands:
@@ -379,14 +383,14 @@ def create_setup_environment_tab(self, tab_widget):
                         pkgs = tool.get('pkg', '')
                         if pkgs and not pkgs.startswith("bash "):
                             package_list = [pkg.strip() for pkg in pkgs.split(',')]
-                            commands.append(f"sudo pacman -R --noconfirm {' '.join(package_list)}")
+                            commands.append(f"sudo pacman -R --noconfirm {' '.join(package_list)} || paru -R --noconfirm {' '.join(package_list)}")
                     # Always remove dependencies after main pkg
                     deps = tool.get('dependencies')
                     if deps:
                         if isinstance(deps, str):
                             deps = [d.strip() for d in deps.split(',') if d.strip()]
                         if deps:
-                            commands.append(f"sudo pacman -R --noconfirm {' '.join(deps)}")
+                            commands.append(f"sudo pacman -R --noconfirm {' '.join(deps)} || paru -R --noconfirm {' '.join(deps)}")
                     if tool.get('post-remove'):
                         post_remove_commands = tool['post-remove'].split(',') if tool['post-remove'] else []
                         for cmd in post_remove_commands:
@@ -687,7 +691,7 @@ def create_setup_environment_tab(self, tab_widget):
 
                         # 3. Install dependencies first
                         if dependencies_to_install:
-                            commands.append(f"sudo pacman -S --noconfirm {' '.join(dependencies_to_install)}")
+                            commands.append(f"sudo pacman -S --noconfirm {' '.join(dependencies_to_install)} || paru -S --noconfirm {' '.join(dependencies_to_install)}")
 
                         # 4. Collect packages to install
                         for tool in tools_to_install:
@@ -747,12 +751,12 @@ def create_setup_environment_tab(self, tab_widget):
 
                         # Add package installation command if there are packages to install
                         if packages_to_install:
-                            commands.append(f"sudo pacman -S --noconfirm {' '.join(packages_to_install)}")
+                            commands.append(f"sudo pacman -S --noconfirm {' '.join(packages_to_install)} || paru -S --noconfirm {' '.join(packages_to_install)}")
 
                         # Add package removal command if there are packages to remove (including dependencies)
                         all_packages_to_remove = packages_to_remove + dependencies_to_remove
                         if all_packages_to_remove:
-                            commands.append(f"sudo pacman -Rns --noconfirm {' '.join(all_packages_to_remove)}")
+                            commands.append(f"sudo pacman -Rns --noconfirm {' '.join(all_packages_to_remove)} || paru -Rns --noconfirm {' '.join(all_packages_to_remove)}")
 
                         # Debug: Print commands being executed
                         print("Commands to execute:")
