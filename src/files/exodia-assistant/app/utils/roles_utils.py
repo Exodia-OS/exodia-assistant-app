@@ -84,6 +84,38 @@ def update_role_from_system(role_name, source_type):
     except Exception as e:
         return False, str(e)
 
+def remove_role(role_name):
+    """
+    Remove a role from the user's config directory (uninstall).
+    Args:
+        role_name (str): The name of the role to remove
+    Returns:
+        bool: True if successful, False otherwise
+        str: Error message if failed, else empty string
+    """
+    try:
+        user_role_dir = os.path.join(ROLES_PROFILES_DIR, role_name)
+        if not os.path.exists(user_role_dir):
+            return False, f"Role '{role_name}' not found in user config."
+        shutil.rmtree(user_role_dir)
+        return True, ""
+    except Exception as e:
+        return False, str(e)
+
+def get_all_repo_roles():
+    """
+    List all available roles from the official and community directories in the roles repo.
+    Returns:
+        dict: { 'official': [role1, ...], 'community': [role2, ...] }
+    """
+    repo_dir = os.path.expanduser("~/.config/exodia-roles-management/Exodia-OS-Roles")
+    roles = {'official': [], 'community': []}
+    for source in ['official', 'community']:
+        source_dir = os.path.join(repo_dir, source)
+        if os.path.exists(source_dir) and os.path.isdir(source_dir):
+            roles[source] = [d for d in os.listdir(source_dir) if os.path.isdir(os.path.join(source_dir, d))]
+    return roles
+
 
 class RoleSelectionWindow(QWidget):
     def __init__(self, parent=None, predator_font=None):

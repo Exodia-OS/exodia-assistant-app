@@ -8,7 +8,7 @@
 #####################################
 
 import os, sys
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton, QLabel, QHBoxLayout, QTabWidget, QFrame, QTextBrowser, QCheckBox, QGroupBox, QLineEdit, QGridLayout, QMessageBox
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton, QLabel, QHBoxLayout, QTabWidget, QFrame, QTextBrowser, QCheckBox, QGroupBox, QLineEdit, QGridLayout, QMessageBox, QApplication
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QDesktopServices
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -304,29 +304,26 @@ class Role(QWidget):
 
     def display_explore_role(self, back_callback=None):
         """
-        Display the "Explore Role" content with a Back button and scroll area
-        similar to the ones in tweaks.py.
-
-        Args:
-            back_callback (function): Callback function to execute when the Back button is clicked
+        Display the "Explore Role" content with a Back button, search bar, and a grid of roles (official/community),
+        showing install/uninstall options and installed status.
         """
+        from ..utils import roles_utils
+        import subprocess
+        import time
         # Clear the existing layout
         if not self.internal_window.layout():
             self.internal_window.setLayout(QVBoxLayout())
-
-        # Clear previous content
         while self.internal_window.layout().count():
             item = self.internal_window.layout().takeAt(0)
             widget = item.widget()
             if widget:
                 widget.deleteLater()
 
-        # Create a "Back" button to return to the roles view
+        # Back button
         back_button = QPushButton("Back")
         back_button.setFont(self.predator_font)
         back_button.setFixedSize(100, 40)
-        back_button.setStyleSheet(
-            """
+        back_button.setStyleSheet("""
             QPushButton {
                 background-color: #006C7A;
                 color: white;
@@ -341,84 +338,168 @@ class Role(QWidget):
             QPushButton:pressed {
                 background-color: #005F78;
             }
-            """
-        )
-
-        # Connect the Back button to the callback function or a default function
+        """)
         if back_callback:
             back_button.clicked.connect(back_callback)
         else:
-            # Default behavior if no callback is provided
             back_button.clicked.connect(lambda: self.internal_window.setLayout(QVBoxLayout()))
-
-        # Add the "Back" button to the top layout
         top_layout = QHBoxLayout()
         top_layout.addWidget(back_button, alignment=Qt.AlignLeft)
 
+        # Title
+        title_label = QLabel("Explore Roles (Official & Community)")
+        title_label.setFont(self.predator_font)
+        title_label.setStyleSheet(f"color: #00B0C8; font-size: 24px; font-weight: bold; font-family: '{self.predator_font.family()}';")
+        title_label.setAlignment(Qt.AlignCenter)
+        top_layout.addWidget(title_label, alignment=Qt.AlignCenter)
+        spacer = QWidget()
+        spacer.setFixedSize(100, 40)
+        top_layout.addWidget(spacer, alignment=Qt.AlignRight)
         top_widget = QWidget()
         top_widget.setLayout(top_layout)
         self.internal_window.layout().addWidget(top_widget)
 
-        # Create the content for the "Explore Role" section
-        html_content = html_utils.loadHTMLContent('../../assets/html', 'ExploreRole.html', self.predator_font.family())
-
-        # Create a label for the content
-        content_label = QLabel()
-        content_label.setTextFormat(Qt.RichText)
-        content_label.setWordWrap(True)
-        content_label.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
-        content_label.setText(html_content)
-
-        # Create a scroll area for the content
-        scroll_area = QScrollArea()
-        scroll_area.setGeometry(40, 20, 1100, 600)
-        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        scroll_area.setWidgetResizable(True)
-
-        # Create a widget to hold the content
-        scroll_content = QWidget()
-        scroll_content.setStyleSheet("background-color: #151A21;")
-        scroll_area.setWidget(scroll_content)
-
-        # Add the content label to the scroll content
-        layout = QVBoxLayout(scroll_content)
-        layout.addWidget(content_label)
-
-        # Style the scroll area
-        scroll_area.setStyleSheet("""
-            QScrollArea { 
-                border: none;
-                padding: 0;
+        # Search bar
+        search_layout = QHBoxLayout()
+        search_field = QLineEdit()
+        search_field.setPlaceholderText("Search roles...")
+        search_field.setFixedHeight(40)
+        search_field.setFont(self.predator_font)
+        search_field.setStyleSheet(f"""
+            QLineEdit {{
                 background-color: #151A21;
-            }
-            QScrollBar:vertical {
-                background: #151A21;
-                width: 10px;
-                margin: 0 0 0 0;
-            }
-            QScrollBar::handle:vertical {
-                background: #00B0C8;
-                border-radius: 0px;
-            }
-            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
-                background: #00B0C8;
-            }
-            QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
-                background: #151A21;
-            }
+                color: white;
+                border: 1px solid #00B0C8;
+                border-radius: 5px;
+                padding: 5px;
+                font-family: '{self.predator_font.family()}';
+            }}
+            QLineEdit:focus {{
+                border: 2px solid #00B0C8;
+            }}
         """)
+        search_layout.addWidget(search_field)
+        search_widget = QWidget()
+        search_widget.setLayout(search_layout)
+        self.internal_window.layout().addWidget(search_widget)
 
-        # Style the content label
-        content_label.setFont(self.predator_font)
-        content_label.setStyleSheet(
-            f"color: #00B0C8; font-size: 18px; background-color: #151A21; padding: 10px;"
-            f"font-family: '{self.predator_font.family()}';"
-        )
-        content_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        # Update roles repo (git pull)
+        repo_dir = os.path.expanduser("~/.config/exodia-roles-management/Exodia-OS-Roles")
+        update_label = QLabel("Updating roles repo...")
+        update_label.setFont(self.predator_font)
+        update_label.setStyleSheet("color: #00B0C8; font-size: 16px;")
+        self.internal_window.layout().addWidget(update_label)
+        QApplication.processEvents()
+        try:
+            pull_proc = subprocess.run(["git", "pull"], cwd=repo_dir, capture_output=True, text=True)
+            if pull_proc.returncode == 0:
+                update_label.setText("Roles repo updated.")
+            else:
+                update_label.setText(f"Failed to update roles repo: {pull_proc.stderr}")
+        except Exception as e:
+            update_label.setText(f"Error updating roles repo: {str(e)}")
+        QApplication.processEvents()
+        time.sleep(0.5)
+        update_label.hide()
 
-        # Add the scroll area to the internal window
-        self.internal_window.layout().addWidget(scroll_area)
+        # List roles
+        all_roles = roles_utils.get_all_repo_roles()
+        installed_roles = set(roles_utils.get_available_roles())
+        search_text = ""
+
+        def refresh_roles():
+            # Remove previous roles grid if exists
+            for i in reversed(range(self.internal_window.layout().count())):
+                item = self.internal_window.layout().itemAt(i)
+                widget = item.widget()
+                if isinstance(widget, QScrollArea):
+                    widget.deleteLater()
+            # Create scroll area
+            scroll_area = QScrollArea()
+            scroll_area.setWidgetResizable(True)
+            scroll_area.setStyleSheet("""
+                QScrollArea { border: none; background-color: #151A21; }
+                QScrollBar:vertical { background: #151A21; width: 10px; }
+                QScrollBar::handle:vertical { background: #00B0C8; border-radius: 0px; }
+                QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { background: #00B0C8; }
+                QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: #151A21; }
+            """)
+            scroll_content = QWidget()
+            scroll_content.setStyleSheet("background-color: #0E1218;")
+            grid = QGridLayout(scroll_content)
+            grid.setContentsMargins(20, 20, 20, 20)
+            grid.setSpacing(20)
+            row = 0
+            col = 0
+            def add_role_widget(role_name, source_type):
+                container = QFrame()
+                container.setStyleSheet("background-color: #151A21; border-radius: 8px; border: 1px solid #00B0C8;")
+                vbox = QVBoxLayout(container)
+                vbox.setAlignment(Qt.AlignTop)
+                label = QLabel(f"{role_name} [{source_type.capitalize()}]")
+                label.setFont(self.predator_font)
+                label.setStyleSheet(f"color: #00B0C8; font-size: 18px; font-family: '{self.predator_font.family()}';")
+                label.setAlignment(Qt.AlignCenter)
+                vbox.addWidget(label)
+                status = QLabel()
+                status.setFont(self.predator_font)
+                status.setAlignment(Qt.AlignCenter)
+                if role_name in installed_roles:
+                    status.setText("Installed")
+                    status.setStyleSheet("color: #00C8B0; font-size: 16px;")
+                else:
+                    status.setText("Not Installed")
+                    status.setStyleSheet("color: #B0B8C8; font-size: 16px;")
+                vbox.addWidget(status)
+                btn = QPushButton()
+                btn.setFont(self.predator_font)
+                btn.setFixedHeight(40)
+                if role_name in installed_roles:
+                    btn.setText("Uninstall")
+                    btn.setStyleSheet("background-color: #B00020; color: white; border-radius: 5px; font-size: 16px;")
+                    def uninstall_role():
+                        ok, msg = roles_utils.remove_role(role_name)
+                        if ok:
+                            installed_roles.discard(role_name)
+                            status.setText("Not Installed")
+                            status.setStyleSheet("color: #B0B8C8; font-size: 16px;")
+                            btn.setText("Install")
+                            btn.setStyleSheet("background-color: #00B0C8; color: white; border-radius: 5px; font-size: 16px;")
+                        else:
+                            QMessageBox.critical(container, "Uninstall Failed", f"Failed to uninstall role: {msg}")
+                    btn.clicked.connect(uninstall_role)
+                else:
+                    btn.setText("Install")
+                    btn.setStyleSheet("background-color: #00B0C8; color: white; border-radius: 5px; font-size: 16px;")
+                    def install_role():
+                        ok, msg = roles_utils.update_role_from_system(role_name, source_type)
+                        if ok:
+                            installed_roles.add(role_name)
+                            status.setText("Installed")
+                            status.setStyleSheet("color: #00C8B0; font-size: 16px;")
+                            btn.setText("Uninstall")
+                            btn.setStyleSheet("background-color: #B00020; color: white; border-radius: 5px; font-size: 16px;")
+                        else:
+                            QMessageBox.critical(container, "Install Failed", f"Failed to install role: {msg}")
+                    btn.clicked.connect(install_role)
+                vbox.addWidget(btn)
+                return container
+            filtered_roles = {k: [r for r in v if search_text.lower() in r.lower()] for k, v in all_roles.items()}
+            for source_type, roles_list in filtered_roles.items():
+                for role_name in roles_list:
+                    grid.addWidget(add_role_widget(role_name, source_type), row, col)
+                    col += 1
+                    if col >= 3:
+                        col = 0
+                        row += 1
+            scroll_area.setWidget(scroll_content)
+            self.internal_window.layout().addWidget(scroll_area)
+        def on_search():
+            nonlocal search_text
+            search_text = search_field.text()
+            refresh_roles()
+        search_field.textChanged.connect(on_search)
+        refresh_roles()
 
     def display_manage_role(self, back_callback=None):
         """
