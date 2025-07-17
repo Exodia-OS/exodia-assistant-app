@@ -43,23 +43,43 @@ def load_role_from_yaml():
     except Exception:
         return None
 
-def update_role_from_system(role_name):
+def update_role_from_system(role_name, source_type):
     """
-    Update (copy) a role from the system directory to the user config directory.
-    Overwrites the user's role directory with the system version.
+    Update (copy) a role from the Exodia roles git repo to the user config directory.
     Args:
         role_name (str): The name of the role to update
+        source_type (str): 'official' or 'community'
     Returns:
         bool: True if successful, False otherwise
         str: Error message if failed, else empty string
     """
     try:
-        system_role_dir = f"/usr/share/exodia/exodia-assistant/app/roles/profiles/{role_name}"
+        repo_dir = os.path.expanduser("~/.config/exodia-roles-management/Exodia-OS-Roles")
+        if not os.path.exists(repo_dir):
+            return False, f"Roles repo not found: {repo_dir}"
+        # Pull latest changes
+        import subprocess
+        pull_proc = subprocess.run(["git", "pull"], cwd=repo_dir, capture_output=True, text=True)
+        if pull_proc.returncode != 0:
+            return False, f"Failed to update roles repo:\n{pull_proc.stderr}"
+        # Determine source dir
+        if source_type not in ("official", "community"):
+            return False, f"Invalid source_type: {source_type}"
+        source_dir = os.path.join(repo_dir, source_type, role_name)
+        if not os.path.exists(source_dir):
+            return False, f"Role '{role_name}' not found in {source_type} directory."
+        # Copy to user config
         user_role_dir = os.path.join(ROLES_PROFILES_DIR, role_name)
-        if not os.path.exists(system_role_dir):
-            return False, f"System role directory not found: {system_role_dir}"
+        import shutil
+        # Remove README.md if present in source
+        readme_path = os.path.join(source_dir, "README.md")
+        if os.path.exists(readme_path):
+            try:
+                os.remove(readme_path)
+            except Exception:
+                pass
         # Copy the directory, overwriting existing files
-        shutil.copytree(system_role_dir, user_role_dir, dirs_exist_ok=True)
+        shutil.copytree(source_dir, user_role_dir, dirs_exist_ok=True)
         return True, ""
     except Exception as e:
         return False, str(e)

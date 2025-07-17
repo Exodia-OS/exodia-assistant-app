@@ -103,7 +103,6 @@ class SettingWindow(QMainWindow):
                 # Load existing settings
                 with open(SETTINGS_FILE_PATH, 'r') as file:
                     settings = yaml.safe_load(file) or {}
-                    
                 # Load settings with defaults
                 defaults = getDefaultSettings()
                 self.is_auto_start = settings.get('auto-start', defaults['auto-start'])
@@ -111,14 +110,12 @@ class SettingWindow(QMainWindow):
                 self.font_size = settings.get('font_size', defaults['font_size'])
                 self.news_refresh_rate = settings.get('news_refresh_rate', defaults['news_refresh_rate'])
                 self.profile_picture_path = settings.get('profile_picture_path', defaults['profile_picture_path'])
-                
                 print(f"Settings loaded from: {SETTINGS_FILE_PATH}")
             else:
                 # Create default settings file
                 print(f"Settings file not found, creating default settings: {SETTINGS_FILE_PATH}")
                 self.initializeDefaultSettings()
                 self.saveSettings()
-                
             print(f"Settings loaded: auto-start={self.is_auto_start}, theme={self.theme}, font_size={self.font_size}")
         except Exception as e:
             print(f"Error loading settings: {e}")

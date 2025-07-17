@@ -57,7 +57,7 @@ def create_setup_environment_tab(self, tab_widget):
 
     # Subtitle + Update Role Button Row
     subtitle_row = QHBoxLayout()
-    subtitle_label = QLabel("Check   `/usr/share/exodia/exodia-assistant/app/roles/profiles/`   For New Roles and Role Updates")
+    subtitle_label = QLabel("Check   `~/.config/exodia-roles-management/Exodia-OS-Roles`   For New Roles and Role Updates")
     subtitle_label.setFont(self.predator_font)
     subtitle_label.setStyleSheet(f"""
         color: #8B9CB3;
@@ -87,13 +87,34 @@ def create_setup_environment_tab(self, tab_widget):
         }}
     """)
     def handle_update_role():
+        from PyQt5.QtWidgets import QProgressDialog, QApplication
+        import time
         selected_role = roles_utils.load_role_from_yaml() or "DevOps"
-        # Store the current back_callback if available
-        if hasattr(self, 'back_callback'):
-            back_callback = self.back_callback
+        repo_dir = os.path.expanduser("~/.config/exodia-roles-management/Exodia-OS-Roles")
+        official_dir = os.path.join(repo_dir, "official", selected_role)
+        community_dir = os.path.join(repo_dir, "community", selected_role)
+        # Determine source_type
+        if os.path.exists(official_dir):
+            source_type = "official"
+        elif os.path.exists(community_dir):
+            source_type = "community"
         else:
-            back_callback = None
-        success, msg = update_role_from_system(selected_role)
+            QMessageBox.critical(header_frame, "Update Failed", f"Role '{selected_role}' not found in official or community directories.")
+            return
+        # Show progress dialog
+        progress = QProgressDialog("Updating roles repo...", None, 0, 0, setup_tab)
+        progress.setWindowTitle("Update Role")
+        progress.setWindowModality(Qt.WindowModal)
+        progress.setMinimumDuration(0)
+        progress.setCancelButton(None)
+        progress.show()
+        QApplication.processEvents()
+        # Update role (git pull + copy)
+        success, msg = roles_utils.update_role_from_system(selected_role, source_type)
+        progress.setLabelText("Updating role files...")
+        QApplication.processEvents()
+        time.sleep(0.5)
+        progress.close()
         if success:
             QMessageBox.information(
                 header_frame,
@@ -101,14 +122,14 @@ def create_setup_environment_tab(self, tab_widget):
                 f"<span style='color:#00B0C8; font-weight:bold; font-size:15px'>{selected_role}</span> <span style='color:#B0B8C8; font-size:14px;'>Role has been</span> "
                 f"<span style='color:#00B0C8; font-weight:bold;'>successfully updated</span>!<br><br>"
                 f"<span style='color:#B0B8C8; font-size:14px;'>The latest files have been copied from:</span><br>"
-                f"<span style='color:#00C8B0;'><code>/usr/share/exodia/exodia-assistant/app/roles/profiles/{selected_role}/</code></span><br>"
+                f"<span style='color:#00C8B0;'><code>{source_type}/{selected_role}</code></span><br>"
                 f"<span style='color:#B0B8C8; font-size:14px;'>to your user config.</span><br><br>"
                 f"<i><span style='color:#FFD700;'>If you don't see changes, try closing and reopening this tab.</span></i>"
             )
             # Always preserve and pass the original back_callback
             if hasattr(self, 'internal_window') and self.internal_window:
-                self.back_callback = back_callback
-                self.display_manage_role(self.back_callback)
+                if hasattr(self, 'back_callback'):
+                    self.display_manage_role(self.back_callback)
         else:
             QMessageBox.critical(header_frame, "Update Failed", f"Failed to update role '{selected_role}':\n{msg}")
     update_role_btn.clicked.connect(handle_update_role)

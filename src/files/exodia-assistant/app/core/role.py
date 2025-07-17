@@ -819,14 +819,14 @@ class Role(QWidget):
                 content_label.setText(html_content)
             else:
                 content_label.setText(f"""
-                <div style=\"color: #00B0C8; line-height: 1.6; font-size: 18px; font-family: {font_family};\">
+                <div style="color: #00B0C8; line-height: 1.6; font-size: 18px; font-family: {font_family};">
                     <p>No hands-on exercises or practice content found for the selected role: {selected_role}</p>
                     <p>Expected path: {hands_on_html_path}</p>
                 </div>
                 """)
         else:
             content_label.setText(f"""
-            <div style=\"color: #00B0C8; line-height: 1.6; font-size: 18px; font-family: {font_family};\">
+            <div style="color: #00B0C8; line-height: 1.6; font-size: 18px; font-family: {font_family};">
                 <p>This tab provides hands-on exercises and practice for your selected role, including:</p>
                 <ul>
                     <li>Practical coding tasks</li>

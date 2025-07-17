@@ -39,8 +39,10 @@ CONFIG_DIR="/home/${USER}/.config/exodia-assistant"
 USR_DIR='/usr/share/exodia/exodia-assistant/roles/'
 FILE_NAME='role.yaml'
 PROFILES='profiles'
-EXODIA_ROLES_DIR='/opt/exodia-roles-management'
+EXODIA_ROLES_DIR="/home/${USER}/.config/exodia-roles-management"
 EXODIA_ROLES='https://github.com/Exodia-OS/Exodia-OS-Roles'
+EXODIA_REPO_NAME='Exodia-OS-Roles'
+
 ## Installing python Packages ##
 post_install() {
 
@@ -96,10 +98,13 @@ post_install() {
           chown ${USER}:${GROUB} ${EXODIA_ROLES_DIR}
           chown -R ${USER}:${GROUB} ${EXODIA_ROLES_DIR}
 
+          chown ${USER}:${GROUB} ${EXODIA_ROLES_DIR}/${EXODIA_REPO_NAME}
+          chown -R ${USER}:${GROUB} ${EXODIA_ROLES_DIR}/${EXODIA_REPO_NAME}
+
    else
 
       echo -e ${BYellow}"   ==> Updating Exodia Roles Repo from ${BPurple}${EXODIA_ROLES} ." ${RESET_COLOR}
-      cd ${EXODIA_ROLES_DIR}
+      cd ${EXODIA_ROLES_DIR}/${EXODIA_REPO_NAME}
       git pull
 
    fi
