@@ -151,7 +151,7 @@ def create_setup_environment_tab(self, tab_widget):
     toolbar_layout.setSpacing(15)
 
     # Select All Checkbox
-    select_all_checkbox = QCheckBox("Select All Tools")
+    select_all_checkbox = QCheckBox("Select All Tools ")
     select_all_checkbox.setFont(self.predator_font)
     select_all_checkbox.setStyleSheet(f"""
         QCheckBox {{
