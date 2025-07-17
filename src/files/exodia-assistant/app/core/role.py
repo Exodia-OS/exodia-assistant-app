@@ -457,31 +457,25 @@ class Role(QWidget):
                 if role_name in installed_roles:
                     btn.setText("Uninstall")
                     btn.setStyleSheet("background-color: #B00020; color: white; border-radius: 5px; font-size: 16px;")
-                    def uninstall_role():
-                        ok, msg = roles_utils.remove_role(role_name)
+                    def uninstall_role(role=role_name):
+                        ok, msg = roles_utils.remove_role(role)
                         if ok:
-                            installed_roles.discard(role_name)
-                            status.setText("Not Installed")
-                            status.setStyleSheet("color: #B0B8C8; font-size: 16px;")
-                            btn.setText("Install")
-                            btn.setStyleSheet("background-color: #00B0C8; color: white; border-radius: 5px; font-size: 16px;")
+                            installed_roles.discard(role)
+                            refresh_roles()
                         else:
                             QMessageBox.critical(container, "Uninstall Failed", f"Failed to uninstall role: {msg}")
-                    btn.clicked.connect(uninstall_role)
+                    btn.clicked.connect(lambda _, role=role_name: uninstall_role(role))
                 else:
                     btn.setText("Install")
                     btn.setStyleSheet("background-color: #00B0C8; color: white; border-radius: 5px; font-size: 16px;")
-                    def install_role():
-                        ok, msg = roles_utils.update_role_from_system(role_name, source_type)
+                    def install_role(role=role_name, source=source_type):
+                        ok, msg = roles_utils.update_role_from_system(role, source)
                         if ok:
-                            installed_roles.add(role_name)
-                            status.setText("Installed")
-                            status.setStyleSheet("color: #00C8B0; font-size: 16px;")
-                            btn.setText("Uninstall")
-                            btn.setStyleSheet("background-color: #B00020; color: white; border-radius: 5px; font-size: 16px;")
+                            installed_roles.add(role)
+                            refresh_roles()
                         else:
                             QMessageBox.critical(container, "Install Failed", f"Failed to install role: {msg}")
-                    btn.clicked.connect(install_role)
+                    btn.clicked.connect(lambda _, role=role_name, source=source_type: install_role(role, source))
                 vbox.addWidget(btn)
                 return container
             filtered_roles = {k: [r for r in v if search_text.lower() in r.lower()] for k, v in all_roles.items()}
