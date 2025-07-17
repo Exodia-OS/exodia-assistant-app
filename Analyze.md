@@ -7,6 +7,7 @@
 - **Settings UI Redesign**: The settings window was fully redesigned with section grouping, clear headings, tooltips, tab highlighting, Save/Apply/Restore Defaults buttons, confirmation/undo, live preview, theme switcher, font picker, enhanced profile picture handling, auto-save, search bar, keyboard navigation, accessibility options, and an About tab. The About tab displays Author, Version, and License info from `config.py`.
 - **General UI/UX Improvements**: Improved spacing, alignment, and modern design throughout the settings window. The tab bar now always shows all tabs without scrolling. The window and tab area sizes were increased for better usability. The close button was replaced with OK (save and close) and CANCEL (discard and close) buttons at the bottom.
 - **Maintainability & Extensibility**: All directory and config path logic now uses constants from `config.py`. Role environment setup logic uses `paru` as a fallback if `pacman` cannot find a package. Wiki and Keybinding tabs use directory paths from `config.py` for HTML content.
+- **Explore Role Overhaul**: The Explore Role tab now allows users to browse all official and community roles, install or uninstall them live (without leaving the tab), search/filter roles, and see which are installed. The UI updates instantly after each action, and the background color for the roles area is now `#0E1218` for improved clarity. Role tool configuration is now in TOML files, not YAML. The install/uninstall logic is robust and avoids stale state issues, providing a smoother experience.
 
 ---
 

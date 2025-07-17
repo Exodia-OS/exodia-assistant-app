@@ -12,6 +12,7 @@ Exodia Assistant is a comprehensive helper application for Exodia OS, providing 
 - Wiki and knowledge base
 - System tweaks and configuration
 - Role-based user profiles (tools now configured in TOML files)
+- Explore Role tab: browse, install, or uninstall official/community roles live, with instant UI refresh, search, and repo update. The roles area uses background color `#0E1218` for clarity.
 - Developer information
 - Custom UI/UX
 

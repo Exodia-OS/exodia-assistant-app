@@ -35,6 +35,8 @@ This document explains the core components of the Exodia Assistant App, their re
   - Loads HTML or dynamic content as needed
 
 ## Roles System
+- **Explore Role Tab**: Lets users browse all official and community roles, install/uninstall them live (without leaving the tab), search/filter roles, and see which are installed. The UI updates instantly after each action, and the background color for the roles area is now `#0E1218` for improved clarity.
+- Tool configuration for roles is now in TOML files, not YAML.
 - **Files:**
   - `roles/role.py`: Role display logic
   - `roles/roles_utils.py`: Role utilities

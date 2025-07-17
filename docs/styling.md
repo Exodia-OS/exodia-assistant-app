@@ -5,7 +5,8 @@ Consistent, modern design is key to the Exodia Assistant App. Follow these guide
 ## Colors
 - **Primary:** `#00B0C8` (cyan)
 - **Background:** `#151A21` (dark blue-gray)
-- Use accent colors sparingly for highlights.
+- **Role Area Background:** `#0E1218` (used for the Explore Role grid area)
+Use accent colors sparingly for highlights.
 
 ## Fonts
 - **Headings:** Custom "Predator" font (see `assets/fonts/`)

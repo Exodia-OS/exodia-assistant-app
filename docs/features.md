@@ -22,6 +22,7 @@ def show_my_section(self):
 2. **Add an `index.html`** file with the content for your role.
 3. **Add any additional resources** (images, TOML, etc.) needed by your role.
    - Tool configuration is now stored in a `tools.toml` file (not YAML).
+   - The "Explore Role" tab now allows you to browse all official and community roles, install or uninstall them live (without leaving the tab), search/filter roles, and see which are installed. The UI updates instantly after each action, and the background color for the roles area is now `#0E1218` for improved clarity.
 
 **Example Directory:**
 ```
