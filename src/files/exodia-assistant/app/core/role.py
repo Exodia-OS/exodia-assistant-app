@@ -412,82 +412,102 @@ class Role(QWidget):
             for i in reversed(range(self.internal_window.layout().count())):
                 item = self.internal_window.layout().itemAt(i)
                 widget = item.widget()
-                if isinstance(widget, QScrollArea):
+                if isinstance(widget, QScrollArea) or isinstance(widget, QWidget) and widget.objectName() == "roles_splitter":
                     widget.deleteLater()
-            # Create scroll area
-            scroll_area = QScrollArea()
-            scroll_area.setWidgetResizable(True)
-            scroll_area.setStyleSheet("""
-                QScrollArea { border: none; background-color: #151A21; }
-                QScrollBar:vertical { background: #151A21; width: 10px; }
-                QScrollBar::handle:vertical { background: #00B0C8; border-radius: 0px; }
-                QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { background: #00B0C8; }
-                QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: #151A21; }
-            """)
-            scroll_content = QWidget()
-            scroll_content.setStyleSheet("background-color: #0E1218;")
-            grid = QGridLayout(scroll_content)
-            grid.setContentsMargins(20, 20, 20, 20)
-            grid.setSpacing(20)
-            row = 0
-            col = 0
-            def add_role_widget(role_name, source_type):
-                container = QFrame()
-                container.setStyleSheet("background-color: #151A21; border-radius: 8px; border: 1px solid #00B0C8;")
-                vbox = QVBoxLayout(container)
-                vbox.setAlignment(Qt.AlignTop)
-                label = QLabel(f"{role_name} [{source_type.capitalize()}]")
-                label.setFont(self.predator_font)
-                label.setStyleSheet(f"color: #00B0C8; font-size: 18px; font-family: '{self.predator_font.family()}';")
-                label.setAlignment(Qt.AlignCenter)
-                vbox.addWidget(label)
-                status = QLabel()
-                status.setFont(self.predator_font)
-                status.setAlignment(Qt.AlignCenter)
-                if role_name in installed_roles:
-                    status.setText("Installed")
-                    status.setStyleSheet("color: #00C8B0; font-size: 16px;")
-                else:
-                    status.setText("Not Installed")
-                    status.setStyleSheet("color: #B0B8C8; font-size: 16px;")
-                vbox.addWidget(status)
-                btn = QPushButton()
-                btn.setFont(self.predator_font)
-                btn.setFixedHeight(40)
-                if role_name in installed_roles:
-                    btn.setText("Uninstall")
-                    btn.setStyleSheet("background-color: #B00020; color: white; border-radius: 5px; font-size: 16px;")
-                    def uninstall_role(role=role_name):
-                        ok, msg = roles_utils.remove_role(role)
-                        if ok:
-                            installed_roles.discard(role)
-                            refresh_roles()
-                        else:
-                            QMessageBox.critical(container, "Uninstall Failed", f"Failed to uninstall role: {msg}")
-                    btn.clicked.connect(lambda _, role=role_name: uninstall_role(role))
-                else:
-                    btn.setText("Install")
-                    btn.setStyleSheet("background-color: #00B0C8; color: white; border-radius: 5px; font-size: 16px;")
-                    def install_role(role=role_name, source=source_type):
-                        ok, msg = roles_utils.update_role_from_system(role, source)
-                        if ok:
-                            installed_roles.add(role)
-                            refresh_roles()
-                        else:
-                            QMessageBox.critical(container, "Install Failed", f"Failed to install role: {msg}")
-                    btn.clicked.connect(lambda _, role=role_name, source=source_type: install_role(role, source))
-                vbox.addWidget(btn)
-                return container
-            filtered_roles = {k: [r for r in v if search_text.lower() in r.lower()] for k, v in all_roles.items()}
-            for source_type, roles_list in filtered_roles.items():
+            # Splitter layout
+            splitter = QWidget()
+            splitter.setObjectName("roles_splitter")
+            splitter_layout = QHBoxLayout(splitter)
+            splitter_layout.setContentsMargins(0, 0, 0, 0)
+            splitter_layout.setSpacing(20)
+            # Helper to create a side (official/community)
+            def create_side(title, roles_list, source_type):
+                side_widget = QWidget()
+                side_widget.setStyleSheet("background-color: #0E1218;")
+                vbox = QVBoxLayout(side_widget)
+                vbox.setContentsMargins(10, 10, 10, 10)
+                vbox.setSpacing(10)
+                title_label = QLabel(title)
+                title_label.setFont(self.predator_font)
+                title_label.setStyleSheet(f"color: #00B0C8; font-size: 20px; font-family: '{self.predator_font.family()}';")
+                title_label.setAlignment(Qt.AlignCenter)
+                vbox.addWidget(title_label)
+                scroll_area = QScrollArea()
+                scroll_area.setWidgetResizable(True)
+                scroll_area.setStyleSheet("""
+                    QScrollArea { border: none; background-color: #0E1218; }
+                    QScrollBar:vertical { background: #151A21; width: 10px; }
+                    QScrollBar::handle:vertical { background: #00B0C8; border-radius: 0px; }
+                    QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { background: #00B0C8; }
+                    QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: #151A21; }
+                """)
+                scroll_content = QWidget()
+                grid = QGridLayout(scroll_content)
+                grid.setContentsMargins(10, 10, 10, 10)
+                grid.setSpacing(15)
+                row = 0
+                col = 0
                 for role_name in roles_list:
-                    grid.addWidget(add_role_widget(role_name, source_type), row, col)
+                    container = QFrame()
+                    container.setStyleSheet("background-color: #151A21; border-radius: 8px; border: 1px solid #00B0C8;")
+                    vbox2 = QVBoxLayout(container)
+                    vbox2.setAlignment(Qt.AlignTop)
+                    label = QLabel(f"{role_name}")
+                    label.setFont(self.predator_font)
+                    label.setStyleSheet(f"color: #00B0C8; font-size: 18px; font-family: '{self.predator_font.family()}';")
+                    label.setAlignment(Qt.AlignCenter)
+                    vbox2.addWidget(label)
+                    status = QLabel()
+                    status.setFont(self.predator_font)
+                    status.setAlignment(Qt.AlignCenter)
+                    if role_name in installed_roles:
+                        status.setText("Installed")
+                        status.setStyleSheet("color: #00C8B0; font-size: 16px;")
+                    else:
+                        status.setText("Not Installed")
+                        status.setStyleSheet("color: #B0B8C8; font-size: 16px;")
+                    vbox2.addWidget(status)
+                    btn = QPushButton()
+                    btn.setFont(self.predator_font)
+                    btn.setFixedHeight(40)
+                    if role_name in installed_roles:
+                        btn.setText("Uninstall")
+                        btn.setStyleSheet("background-color: #B00020; color: white; border-radius: 5px; font-size: 16px;")
+                        def uninstall_role(role=role_name):
+                            ok, msg = roles_utils.remove_role(role)
+                            if ok:
+                                installed_roles.discard(role)
+                                refresh_roles()
+                            else:
+                                QMessageBox.critical(container, "Uninstall Failed", f"Failed to uninstall role: {msg}")
+                        btn.clicked.connect(lambda _, role=role_name: uninstall_role(role))
+                    else:
+                        btn.setText("Install")
+                        btn.setStyleSheet("background-color: #00B0C8; color: white; border-radius: 5px; font-size: 16px;")
+                        def install_role(role=role_name, source=source_type):
+                            ok, msg = roles_utils.update_role_from_system(role, source)
+                            if ok:
+                                installed_roles.add(role)
+                                refresh_roles()
+                            else:
+                                QMessageBox.critical(container, "Install Failed", f"Failed to install role: {msg}")
+                        btn.clicked.connect(lambda _, role=role_name, source=source_type: install_role(role, source))
+                    vbox2.addWidget(btn)
+                    grid.addWidget(container, row, col)
                     col += 1
-                    if col >= 3:
+                    if col >= 1:
                         col = 0
                         row += 1
-            scroll_area.setWidget(scroll_content)
-            self.internal_window.layout().addWidget(scroll_area)
+                scroll_area.setWidget(scroll_content)
+                vbox.addWidget(scroll_area)
+                return side_widget
+            # Filtered roles
+            filtered_official = [r for r in all_roles['official'] if search_text.lower() in r.lower()]
+            filtered_community = [r for r in all_roles['community'] if search_text.lower() in r.lower()]
+            # Add both sides
+            splitter_layout.addWidget(create_side("Official Roles", filtered_official, "official"))
+            splitter_layout.addWidget(create_side("Community Roles", filtered_community, "community"))
+            self.internal_window.layout().addWidget(splitter)
         def on_search():
             nonlocal search_text
             search_text = search_field.text()
