@@ -18,7 +18,7 @@ from typing import Final
 # App Info #
 APP_NAME: Final[str]    = "ExodiaOS Assistant"
 APP_VERSION: Final[str] = "4.6"
-APP_RELEASE: Final[str] = "6"
+APP_RELEASE: Final[str] = "7"
 APP_AUTHOR: Final[str]  = "Mahmoud Mohammed,  @mmsaeed509"
 APP_URL: Final[str]     = "https://github.com/Exodia-OS/exodia-assistant-app"
 APP_LICENSE: Final[str] = "MIT License"
