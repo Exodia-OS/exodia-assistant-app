@@ -89,7 +89,7 @@ def create_setup_environment_tab(self, tab_widget):
     def handle_update_role():
         from PyQt5.QtWidgets import QProgressDialog, QApplication
         import time
-        selected_role = roles_utils.load_role_from_yaml() or "DevOps"
+        selected_role = roles_utils.load_role_from_yaml()
         repo_dir = os.path.expanduser("~/.config/exodia-roles-management/Exodia-OS-Roles")
         official_dir = os.path.join(repo_dir, "official", selected_role)
         community_dir = os.path.join(repo_dir, "community", selected_role)

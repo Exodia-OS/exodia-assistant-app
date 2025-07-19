@@ -8,7 +8,7 @@
 #####################################
 
 import os, sys
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton, QLabel, QHBoxLayout, QTabWidget, QFrame, QTextBrowser, QCheckBox, QGroupBox, QLineEdit, QGridLayout, QMessageBox, QApplication
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea, QPushButton, QLabel, QHBoxLayout, QTabWidget, QFrame, QTextBrowser, QCheckBox, QGroupBox, QLineEdit, QGridLayout, QMessageBox, QApplication, QDialog
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QDesktopServices
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -94,6 +94,20 @@ class Role(QWidget):
         # roles_dir = os.path.join(config_dir, "/profiles")
         roles_dir = ROLES_PROFILES_DIR
         os.makedirs(roles_dir, exist_ok=True)  # Ensure directory exists
+        available_roles = [d for d in os.listdir(roles_dir) if os.path.isdir(os.path.join(roles_dir, d))]
+        if not available_roles:
+            # Try to install the default role 'CS Student' from the official repo
+            from PyQt5.QtWidgets import QMessageBox
+            ok, msg = roles_utils.update_role_from_system('CS Student', 'official')
+            if ok:
+                # After installing, prompt the user to select a role
+                self.show_role_selection_window()
+            else:
+                QMessageBox.critical(self, "Default Role Install Failed", f"Failed to install the default role 'CS Student':\n{msg}")
+            # Re-check available roles after install attempt
+            available_roles = [d for d in os.listdir(roles_dir) if os.path.isdir(os.path.join(roles_dir, d))]
+            if not available_roles:
+                return "<div style='color: #B00020; font-size: 18px;'>No roles are installed and the default role could not be installed. Please check your roles repo.</div>"
 
         text = """<div style="font-family: {}; color: #00B0C8; line-height: 1.6; font-size: 18px; max-width: 800px; margin: auto; padding: 0 20px;">                    
                     <h4 style="color: #00C8B0; font-size: 20px; margin-bottom: 15px;"> Role Overview </h4>
@@ -477,6 +491,11 @@ class Role(QWidget):
                             ok, msg = roles_utils.remove_role(role)
                             if ok:
                                 installed_roles.discard(role)
+                                # Check if the uninstalled role was the currently selected one
+                                current_selected = roles_utils.load_role_from_yaml()
+                                if current_selected == role:
+                                    # Clear the role selection by setting it to null
+                                    roles_utils.clear_role_selection()
                                 refresh_roles()
                             else:
                                 QMessageBox.critical(container, "Uninstall Failed", f"Failed to uninstall role: {msg}")
@@ -571,7 +590,7 @@ class Role(QWidget):
         top_layout.addWidget(back_button, alignment=Qt.AlignLeft)
 
         # Add a title label
-        selected_role = roles_utils.load_role_from_yaml() or "DevOps"
+        selected_role = roles_utils.load_role_from_yaml()
         title_label = QLabel(f"Manage Your {selected_role} Role")
         title_label.setFont(self.predator_font)
         title_label.setStyleSheet(

@@ -1,0 +1,5 @@
+auto-start: true
+theme: dark
+font_size: 20
+news_refresh_rate: 60
+profile_picture_path: ~/.face

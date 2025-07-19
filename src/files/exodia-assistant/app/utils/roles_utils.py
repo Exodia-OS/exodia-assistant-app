@@ -29,13 +29,19 @@ def save_role_to_yaml(role_name):
     with open(ROLE_YAML_PATH, 'w') as yaml_file:
         yaml.dump(data, yaml_file, default_flow_style=False)
 
+def clear_role_selection():
+    """
+    Clear the role selection from the YAML file by setting selected_role to null.
+    """
+    os.makedirs(USER_CONFIG_DIR, exist_ok=True)  # Ensure directory exists
+    with open(ROLE_YAML_PATH, 'w') as yaml_file:
+        yaml.dump({"selected_role": None}, yaml_file, default_flow_style=False)
+
 def load_role_from_yaml():
     os.makedirs(USER_CONFIG_DIR, exist_ok=True)  # Ensure directory exists
-    # If the file does not exist, create it with default content
+    # If the file does not exist, return None (no default role)
     if not os.path.exists(ROLE_YAML_PATH):
-        with open(ROLE_YAML_PATH, 'w') as yaml_file:
-            yaml.dump({"selected_role": "DevOps"}, yaml_file, default_flow_style=False)
-        return "DevOps"
+        return None
     try:
         with open(ROLE_YAML_PATH, 'r') as yaml_file:
             data = yaml.safe_load(yaml_file)
@@ -312,6 +318,43 @@ class RoleSelectionWindow(QWidget):
             """)
         ok_button.clicked.connect(self.save_and_close)
 
+        # Unselect button
+        unselect_button = QPushButton("UNSELECT", self)
+        unselect_button.setFixedSize(100, 40)
+        unselect_button.setCursor(Qt.PointingHandCursor)  # Change cursor to hand when hovering
+        if self.predator_font:
+            unselect_button.setFont(self.predator_font)
+            unselect_button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: #8B0000;
+                    color: white;
+                    border-radius: 5px;
+                    font-family: '{self.predator_font.family()}';
+                }}
+                QPushButton:hover {{
+                    background-color: #A00000;
+                }}
+                QPushButton:pressed {{
+                    background-color: #6B0000;
+                }}
+            """)
+        else:
+            unselect_button.setStyleSheet("""
+                QPushButton {
+                    background-color: #8B0000;
+                    color: white;
+                    border-radius: 5px;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #A00000;
+                }
+                QPushButton:pressed {
+                    background-color: #6B0000;
+                }
+            """)
+        unselect_button.clicked.connect(self.unselect_and_close)
+
         # Cancel button
         cancel_button = QPushButton("CANCEL", self)
         cancel_button.setFixedSize(100, 40)
@@ -350,6 +393,7 @@ class RoleSelectionWindow(QWidget):
         cancel_button.clicked.connect(self.close)
 
         buttons_layout.addWidget(ok_button)
+        buttons_layout.addWidget(unselect_button)
         buttons_layout.addWidget(cancel_button)
 
         self.layout.addLayout(buttons_layout)
@@ -544,6 +588,13 @@ class RoleSelectionWindow(QWidget):
         """
         if self.selected_role:
             save_role_to_yaml(self.selected_role)
+        self.close()
+
+    def unselect_and_close(self):
+        """
+        Clear the role selection and close the window.
+        """
+        clear_role_selection()
         self.close()
 
     def paintEvent(self, event):
