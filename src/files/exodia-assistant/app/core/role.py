@@ -434,6 +434,15 @@ class Role(QWidget):
             splitter_layout = QHBoxLayout(splitter)
             splitter_layout.setContentsMargins(0, 0, 0, 0)
             splitter_layout.setSpacing(20)
+            
+            # Get all roles from official and community to identify local roles
+            all_repo_roles = set()
+            for role_list in all_roles.values():
+                all_repo_roles.update(role_list)
+            
+            # Identify local roles (in profiles but not in official/community)
+            local_roles = [role for role in installed_roles if role not in all_repo_roles]
+            
             # Helper to create a side (official/community)
             def create_side(title, roles_list, source_type):
                 side_widget = QWidget()
@@ -520,12 +529,86 @@ class Role(QWidget):
                 scroll_area.setWidget(scroll_content)
                 vbox.addWidget(scroll_area)
                 return side_widget
+            
+            # Helper to create local roles side (only uninstall option)
+            def create_local_side(title, roles_list):
+                side_widget = QWidget()
+                side_widget.setStyleSheet("background-color: #0E1218;")
+                vbox = QVBoxLayout(side_widget)
+                vbox.setContentsMargins(10, 10, 10, 10)
+                vbox.setSpacing(10)
+                title_label = QLabel(title)
+                title_label.setFont(self.predator_font)
+                title_label.setStyleSheet(f"color: #00B0C8; font-size: 20px; font-family: '{self.predator_font.family()}';")
+                title_label.setAlignment(Qt.AlignCenter)
+                vbox.addWidget(title_label)
+                scroll_area = QScrollArea()
+                scroll_area.setWidgetResizable(True)
+                scroll_area.setStyleSheet("""
+                    QScrollArea { border: none; background-color: #0E1218; }
+                    QScrollBar:vertical { background: #151A21; width: 10px; }
+                    QScrollBar::handle:vertical { background: #00B0C8; border-radius: 0px; }
+                    QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { background: #00B0C8; }
+                    QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: #151A21; }
+                """)
+                scroll_content = QWidget()
+                grid = QGridLayout(scroll_content)
+                grid.setContentsMargins(10, 10, 10, 10)
+                grid.setSpacing(15)
+                row = 0
+                col = 0
+                for role_name in roles_list:
+                    container = QFrame()
+                    container.setStyleSheet("background-color: #151A21; border-radius: 8px; border: 1px solid #00B0C8;")
+                    vbox2 = QVBoxLayout(container)
+                    vbox2.setAlignment(Qt.AlignTop)
+                    label = QLabel(f"{role_name}")
+                    label.setFont(self.predator_font)
+                    label.setStyleSheet(f"color: #00B0C8; font-size: 18px; font-family: '{self.predator_font.family()}';")
+                    label.setAlignment(Qt.AlignCenter)
+                    vbox2.addWidget(label)
+                    status = QLabel("Local Role")
+                    status.setFont(self.predator_font)
+                    status.setAlignment(Qt.AlignCenter)
+                    status.setStyleSheet("color: #FF8C00; font-size: 16px;")  # Orange color for local roles
+                    vbox2.addWidget(status)
+                    btn = QPushButton("Uninstall")
+                    btn.setFont(self.predator_font)
+                    btn.setFixedHeight(40)
+                    btn.setStyleSheet("background-color: #B00020; color: white; border-radius: 5px; font-size: 16px;")
+                    def uninstall_role(role=role_name):
+                        ok, msg = roles_utils.remove_role(role)
+                        if ok:
+                            installed_roles.discard(role)
+                            # Check if the uninstalled role was the currently selected one
+                            current_selected = roles_utils.load_role_from_yaml()
+                            if current_selected == role:
+                                # Clear the role selection by setting it to null
+                                roles_utils.clear_role_selection()
+                            refresh_roles()
+                        else:
+                            QMessageBox.critical(container, "Uninstall Failed", f"Failed to uninstall role: {msg}")
+                    btn.clicked.connect(lambda _, role=role_name: uninstall_role(role))
+                    vbox2.addWidget(btn)
+                    grid.addWidget(container, row, col)
+                    col += 1
+                    if col >= 1:
+                        col = 0
+                        row += 1
+                scroll_area.setWidget(scroll_content)
+                vbox.addWidget(scroll_area)
+                return side_widget
+            
             # Filtered roles
             filtered_official = [r for r in all_roles['official'] if search_text.lower() in r.lower()]
             filtered_community = [r for r in all_roles['community'] if search_text.lower() in r.lower()]
-            # Add both sides
+            filtered_local = [r for r in local_roles if search_text.lower() in r.lower()]
+            
+            # Add all three sides
             splitter_layout.addWidget(create_side("Official Roles", filtered_official, "official"))
             splitter_layout.addWidget(create_side("Community Roles", filtered_community, "community"))
+            if filtered_local:  # Only add local roles section if there are local roles
+                splitter_layout.addWidget(create_local_side("Local Roles", filtered_local))
             self.internal_window.layout().addWidget(splitter)
         def on_search():
             nonlocal search_text
