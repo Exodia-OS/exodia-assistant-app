@@ -74,7 +74,7 @@ post_install() {
           echo -e ${BBlue}"   ==> Creating Installing Directory" ${RESET_COLOR}
           mkdir -p ${EXODIA_ROLES_DIR}
 
-          echo -e ${BBlue}"   ==> Cloning Exodia Roles Repo from ${BPurple}${EXODIA_ROLES} ." ${RESET_COLOR}
+          echo -e ${BBlue}"   ==> Cloning ${BPurple}${EXODIA_ROLES} Repo to ${BPurple}${CONFIG_DIR} ." ${RESET_COLOR}
           cd ${EXODIA_ROLES_DIR}
           git clone ${EXODIA_ROLES}
 
