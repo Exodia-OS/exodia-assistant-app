@@ -16,6 +16,21 @@ from PyQt5.QtGui import QFont, QIcon
 from ..utils import roles_utils
 from config import USER_CONFIG_DIR, ROLES_PROFILES_DIR
 from ..utils.roles_utils import update_role_from_system
+import stat
+
+def run_script_or_command(cmd):
+    import subprocess, os
+    if not cmd or str(cmd).lower() == 'null':
+        return
+    cmd = cmd.strip()
+    if not cmd:
+        return
+    # If it's a script file, make it executable and run it
+    if os.path.isfile(cmd) and (cmd.endswith('.sh') or cmd.endswith('.py')):
+        os.chmod(cmd, os.stat(cmd).st_mode | stat.S_IEXEC)
+        subprocess.run([cmd], check=False)
+    else:
+        subprocess.run(["bash", "-c", cmd], check=False)
 
 def create_setup_environment_tab(self, tab_widget):
     """
@@ -413,12 +428,14 @@ def create_setup_environment_tab(self, tab_widget):
                             deps = [d.strip() for d in deps.split(',') if d.strip()]
                         if deps:
                             commands.append(f"sudo pacman -S --noconfirm {' '.join(deps)} || paru -S --noconfirm {' '.join(deps)}")
-                    if tool.get('pre-install'):
-                        pre_exec_commands = tool['pre-install'].split(',') if tool['pre-install'] else []
-                        for cmd in pre_exec_commands:
-                            cmd = cmd.strip()
-                            if cmd:
-                                commands.append(cmd)
+                    # Pre-install
+                    pre_install = tool.get('pre-install')
+                    if pre_install:
+                        if isinstance(pre_install, str):
+                            pre_install = [pre_install]
+                        for cmd in pre_install:
+                            run_script_or_command(cmd)
+                    # Install main package(s)
                     pkgs = tool.get('pkg', '')
                     if pkgs:
                         if pkgs.startswith("bash "):
@@ -426,12 +443,13 @@ def create_setup_environment_tab(self, tab_widget):
                         else:
                             package_list = [pkg.strip() for pkg in pkgs.split(',')]
                             commands.append(f"sudo pacman -S --noconfirm {' '.join(package_list)} || paru -S --noconfirm {' '.join(package_list)}")
-                    if tool.get('post-install'):
-                        post_exec_commands = tool['post-install'].split(',') if tool['post-install'] else []
-                        for cmd in post_exec_commands:
-                            cmd = cmd.strip()
-                            if cmd:
-                                commands.append(cmd)
+                    # Post-install
+                    post_install = tool.get('post-install')
+                    if post_install:
+                        if isinstance(post_install, str):
+                            post_install = [post_install]
+                        for cmd in post_install:
+                            run_script_or_command(cmd)
                     execute_in_alacritty(commands)
                     tool['status'] = 'Installed'
                     update_tools_yaml()
@@ -439,18 +457,20 @@ def create_setup_environment_tab(self, tab_widget):
                 # Function to uninstall a tool
                 def uninstall_tool(tool):
                     commands = []
-                    if tool.get('pre-remove'):
-                        pre_remove_commands = tool['pre-remove'].split(',') if tool['pre-remove'] else []
-                        for cmd in pre_remove_commands:
-                            cmd = cmd.strip()
-                            if cmd:
-                                commands.append(cmd)
-                    if tool.get('remove'):
-                        remove_commands = tool['remove'].split(',') if tool['remove'] else []
-                        for cmd in remove_commands:
-                            cmd = cmd.strip()
-                            if cmd:
-                                commands.append(cmd)
+                    # Pre-remove
+                    pre_remove = tool.get('pre-remove')
+                    if pre_remove:
+                        if isinstance(pre_remove, str):
+                            pre_remove = [pre_remove]
+                        for cmd in pre_remove:
+                            run_script_or_command(cmd)
+                    # Remove custom remove command
+                    remove_cmd = tool.get('remove')
+                    if remove_cmd:
+                        if isinstance(remove_cmd, str):
+                            remove_cmd = [remove_cmd]
+                        for cmd in remove_cmd:
+                            run_script_or_command(cmd)
                     else:
                         pkgs = tool.get('pkg', '')
                         if pkgs and not pkgs.startswith("bash "):
@@ -463,12 +483,13 @@ def create_setup_environment_tab(self, tab_widget):
                             deps = [d.strip() for d in deps.split(',') if d.strip()]
                         if deps:
                             commands.append(f"sudo pacman -R --noconfirm {' '.join(deps)} || paru -R --noconfirm {' '.join(deps)}")
-                    if tool.get('post-remove'):
-                        post_remove_commands = tool['post-remove'].split(',') if tool['post-remove'] else []
-                        for cmd in post_remove_commands:
-                            cmd = cmd.strip()
-                            if cmd:
-                                commands.append(cmd)
+                    # Post-remove
+                    post_remove = tool.get('post-remove')
+                    if post_remove:
+                        if isinstance(post_remove, str):
+                            post_remove = [post_remove]
+                        for cmd in post_remove:
+                            run_script_or_command(cmd)
                     execute_in_alacritty(commands)
                     tool['status'] = 'UnInstalled'
                     update_tools_yaml()

@@ -37,7 +37,9 @@ GID=`echo ${SUDO_GID}`
 GROUB=`cat /etc/group | grep ${GID} | cut -d: -f1 | head -1`
 CONFIG_DIR="/home/${USER}/.config/exodia-assistant"
 USR_DIR='/usr/share/exodia/exodia-assistant/roles/'
+BASE_DIR='/usr/share/exodia/exodia-assistant/'
 FILE_NAME='role.yaml'
+SETTINGS_FILE='settings.yaml'
 PROFILES='profiles'
 EXODIA_ROLES_DIR="/home/${USER}/.config/exodia-roles-management"
 EXODIA_ROLES='https://github.com/Exodia-OS/Exodia-OS-Roles'
@@ -46,42 +48,24 @@ EXODIA_REPO_NAME='Exodia-OS-Roles'
 ## Installing python Packages ##
 post_install() {
 
-   echo -e ${Green}"\n[*] Installing ${BPurple}role.yaml${Green} and ${BPurple}Profiles${Green} .\n" ${RESET_COLOR}
+   echo -e ${Green}"\n[*] Installing ${BPurple}${SETTINGS_FILE}${Green} .\n" ${RESET_COLOR}
    mkdir -p ${CONFIG_DIR}
 
-   if [ ! -f "${CONFIG_DIR}/${FILE_NAME}" ];
+   if [ ! -f "${CONFIG_DIR}/${SETTINGS_FILE}" ];
 
       then
 
-          echo -e ${BBlue}"   ==> Copying ${BPurple}${FILE_NAME} ${BBlue}to config directory." ${RESET_COLOR}
-          cp ${USR_DIR}/${FILE_NAME} ${CONFIG_DIR}
+          echo -e ${BBlue}"   ==> Copying ${BPurple}${SETTINGS_FILE} ${BBlue}to config directory." ${RESET_COLOR}
+          cp ${BASE_DIR}/${SETTINGS_FILE} ${CONFIG_DIR}
           echo -e ${BBlue}"   ==> Granting permissions to ${BPurple}${USER} ${BBlue}on config directory." ${RESET_COLOR}
-          chown ${USER}:${GROUB} ${CONFIG_DIR}/${FILE_NAME}
+          chown ${USER}:${GROUB} ${CONFIG_DIR}/${SETTINGS_FILE}
           chown -R ${USER}:${GROUB} ${CONFIG_DIR}
 
    else
 
-      echo -e ${Yellow}"   [!] ${FILE_NAME} already exists. Skipping copy." ${RESET_COLOR}
+      echo -e ${Yellow}"   [!] ${SETTINGS_FILE} already exists. Skipping copy." ${RESET_COLOR}
 
    fi
-
-   if [ ! -d "${CONFIG_DIR}/${PROFILES}" ];
-
-      then
-
-          echo -e ${BBlue}"   ==> Copying ${BPurple}${PROFILES} ${BBlue}to config directory." ${RESET_COLOR}
-          cp -r ${USR_DIR}/${PROFILES} ${CONFIG_DIR}
-          echo -e ${BBlue}"   ==> Granting permissions to ${BPurple}${USER} ${BBlue}on config directory." ${RESET_COLOR}
-          chown -R ${USER}:${GROUB} ${CONFIG_DIR}/${PROFILES}
-          chown -R ${USER}:${GROUB} ${CONFIG_DIR}
-
-   else
-
-      echo -e ${Yellow}"   [!] ${PROFILES} directory already exists. Skipping copy." ${RESET_COLOR}
-
-   fi
-
-   echo -e ${Green}"\n[+] Installing ${BPurple}Exodia Roles.\n" ${RESET_COLOR}
 
    if [ ! -d "${EXODIA_ROLES_DIR}" ];
 
