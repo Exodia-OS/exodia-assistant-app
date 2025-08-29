@@ -71,6 +71,11 @@ Navigate through the different sections using the side panel buttons. Use the se
   ```
 - Create a pull request
 
+## TODO
+
+- [ ] Enable logs
+- [ ] add logs button
+
 ## License
 
 This project is licensed under the GPL3 License—see the LICENSE file for details.

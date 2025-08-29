@@ -18,18 +18,48 @@ from config import USER_CONFIG_DIR, ROLES_PROFILES_DIR
 from ..utils.roles_utils import update_role_from_system
 import stat
 
-def run_script_or_command(cmd):
+def _normalize_script_path(cmd: str, base_dir: str) -> str:
+    import os
+    if not cmd:
+        return None
+    c = str(cmd).strip()
+    if not c:
+        return None
+    # Strip surrounding quotes
+    if (c.startswith('"') and c.endswith('"')) or (c.startswith("'") and c.endswith("'")):
+        c = c[1:-1]
+    # Unescape common escaped sequences (spaces)
+    c = c.replace('\\ ', ' ')
+    # Expand ~ and env vars for absolute-like inputs
+    if c.startswith('~') or c.startswith('$') or c.startswith('/'):
+        c_exp = os.path.expanduser(os.path.expandvars(c))
+        if os.path.isfile(c_exp):
+            return c_exp
+    # Resolve relative to tools.yaml dir (role_dir)
+    candidate = os.path.join(base_dir, c)
+    if os.path.isfile(candidate):
+        return candidate
+    return None
+
+def run_script_or_command(cmd, base_dir):
     import subprocess, os
     if not cmd or str(cmd).lower() == 'null':
         return
-    cmd = cmd.strip()
+    cmd = str(cmd).strip()
     if not cmd:
         return
-    # If it's a script file, make it executable and run it
-    if os.path.isfile(cmd) and (cmd.endswith('.sh') or cmd.endswith('.py')):
-        os.chmod(cmd, os.stat(cmd).st_mode | stat.S_IEXEC)
-        subprocess.run([cmd], check=False)
+    # Try to resolve to an absolute script path if it looks like a file
+    abs_path = _normalize_script_path(cmd, base_dir)
+    if abs_path is not None:
+        # Ensure executable and run with bash using absolute path
+        try:
+            st = os.stat(abs_path)
+            os.chmod(abs_path, st.st_mode | stat.S_IEXEC)
+        except Exception:
+            pass
+        subprocess.run(["bash", abs_path], check=False)
     else:
+        # Fallback: treat as shell command
         subprocess.run(["bash", "-c", cmd], check=False)
 
 def create_setup_environment_tab(self, tab_widget):
@@ -364,6 +394,20 @@ def create_setup_environment_tab(self, tab_widget):
                     
                     return True, None
 
+                # Helper to build an executable command from a script or raw command
+                def build_exec_cmd(cmd):
+                    if not cmd or str(cmd).lower() == 'null':
+                        return None
+                    c = str(cmd).strip()
+                    if not c:
+                        return None
+                    # Normalize to abs script path if it exists
+                    abs_path = _normalize_script_path(c, role_dir)
+                    if abs_path:
+                        return f'chmod +x "{abs_path}" && bash "{abs_path}"'
+                    # Fallback: treat as shell command
+                    return c
+
                 # Function to show an error message in the UI
                 def show_error_message(message, is_critical=False):
                     error_label = QLabel(message)
@@ -434,7 +478,7 @@ def create_setup_environment_tab(self, tab_widget):
                         if isinstance(pre_install, str):
                             pre_install = [pre_install]
                         for cmd in pre_install:
-                            run_script_or_command(cmd)
+                            run_script_or_command(cmd, role_dir)
                     # Install main package(s)
                     pkgs = tool.get('pkg', '')
                     if pkgs:
@@ -449,7 +493,7 @@ def create_setup_environment_tab(self, tab_widget):
                         if isinstance(post_install, str):
                             post_install = [post_install]
                         for cmd in post_install:
-                            run_script_or_command(cmd)
+                            run_script_or_command(cmd, role_dir)
                     execute_in_alacritty(commands)
                     tool['status'] = 'Installed'
                     update_tools_yaml()
@@ -463,14 +507,14 @@ def create_setup_environment_tab(self, tab_widget):
                         if isinstance(pre_remove, str):
                             pre_remove = [pre_remove]
                         for cmd in pre_remove:
-                            run_script_or_command(cmd)
+                            run_script_or_command(cmd, role_dir)
                     # Remove custom remove command
                     remove_cmd = tool.get('remove')
                     if remove_cmd:
                         if isinstance(remove_cmd, str):
                             remove_cmd = [remove_cmd]
                         for cmd in remove_cmd:
-                            run_script_or_command(cmd)
+                            run_script_or_command(cmd, role_dir)
                     else:
                         pkgs = tool.get('pkg', '')
                         if pkgs and not pkgs.startswith("bash "):
@@ -489,7 +533,7 @@ def create_setup_environment_tab(self, tab_widget):
                         if isinstance(post_remove, str):
                             post_remove = [post_remove]
                         for cmd in post_remove:
-                            run_script_or_command(cmd)
+                            run_script_or_command(cmd, role_dir)
                     execute_in_alacritty(commands)
                     tool['status'] = 'UnInstalled'
                     update_tools_yaml()
@@ -795,14 +839,7 @@ def create_setup_environment_tab(self, tab_widget):
                                     package_list = [pkg.strip() for pkg in tool['pkg'].split(',')]
                                     packages_to_install.extend(package_list)
 
-                        # 5. Post-install scripts
-                        for tool in tools_to_install:
-                            if tool.get('post-install'):
-                                post_install_commands = tool['post-install'].split(',') if isinstance(tool['post-install'], str) else tool['post-install']
-                                for cmd in post_install_commands:
-                                    cmd = cmd.strip()
-                                    if cmd:
-                                        commands.append(cmd)
+                        # 5. (deferred) Post-install scripts will be appended AFTER actual package installation
 
                         # 6. Pre-remove scripts
                         for tool in tools_to_uninstall:
@@ -811,7 +848,9 @@ def create_setup_environment_tab(self, tab_widget):
                                 for cmd in pre_remove_commands:
                                     cmd = cmd.strip()
                                     if cmd:
-                                        commands.append(cmd)
+                                        built = build_exec_cmd(cmd)
+                                        if built:
+                                            commands.append(built)
 
                         # 7. Collect packages to remove
                         for tool in tools_to_uninstall:
@@ -820,7 +859,9 @@ def create_setup_environment_tab(self, tab_widget):
                                 for cmd in remove_commands:
                                     cmd = cmd.strip()
                                     if cmd:
-                                        commands.append(cmd)
+                                        built = build_exec_cmd(cmd)
+                                        if built:
+                                            commands.append(built)
                             elif tool.get('pkg') and not tool['pkg'].startswith("bash "):
                                 package_list = [pkg.strip() for pkg in tool['pkg'].split(',')]
                                 packages_to_remove.extend(package_list)
@@ -833,23 +874,38 @@ def create_setup_environment_tab(self, tab_widget):
                                     deps = [d.strip() for d in deps.split(',') if d.strip()]
                                 dependencies_to_remove.extend(deps)
 
-                        # 9. Post-remove scripts
+                        # 9. (deferred) Post-remove scripts will be appended AFTER actual package removals
+
+                        # Add package installation command if there are packages to install
+                        if packages_to_install:
+                            commands.append(f"sudo pacman -S --noconfirm {' '.join(packages_to_install)} || paru -S --noconfirm {' '.join(packages_to_install)}")
+
+                        # Now append post-install scripts (after installation)
+                        for tool in tools_to_install:
+                            if tool.get('post-install'):
+                                post_install_commands = tool['post-install'].split(',') if isinstance(tool['post-install'], str) else tool['post-install']
+                                for cmd in post_install_commands:
+                                    cmd = cmd.strip()
+                                    if cmd:
+                                        built = build_exec_cmd(cmd)
+                                        if built:
+                                            commands.append(built)
+
+                        # Add package removal command if there are packages to remove (including dependencies)
+                        all_packages_to_remove = packages_to_remove + dependencies_to_remove
+                        if all_packages_to_remove:
+                            commands.append(f"sudo pacman -Rns --noconfirm {' '.join(all_packages_to_remove)} || paru -Rns --noconfirm {' '.join(all_packages_to_remove)}")
+
+                        # Now append post-remove scripts (after removal)
                         for tool in tools_to_uninstall:
                             if tool.get('post-remove'):
                                 post_remove_commands = tool['post-remove'].split(',') if isinstance(tool['post-remove'], str) else tool['post-remove']
                                 for cmd in post_remove_commands:
                                     cmd = cmd.strip()
                                     if cmd:
-                                        commands.append(cmd)
-
-                        # Add package installation command if there are packages to install
-                        if packages_to_install:
-                            commands.append(f"sudo pacman -S --noconfirm {' '.join(packages_to_install)} || paru -S --noconfirm {' '.join(packages_to_install)}")
-
-                        # Add package removal command if there are packages to remove (including dependencies)
-                        all_packages_to_remove = packages_to_remove + dependencies_to_remove
-                        if all_packages_to_remove:
-                            commands.append(f"sudo pacman -Rns --noconfirm {' '.join(all_packages_to_remove)} || paru -Rns --noconfirm {' '.join(all_packages_to_remove)}")
+                                        built = build_exec_cmd(cmd)
+                                        if built:
+                                            commands.append(built)
 
                         # Debug: Print commands being executed
                         print("Commands to execute:")
