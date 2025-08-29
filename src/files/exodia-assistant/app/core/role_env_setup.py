@@ -217,6 +217,9 @@ def create_setup_environment_tab(self, tab_widget):
         }}
     """)
     toolbar_layout.addWidget(select_all_checkbox)
+    
+    # Add a flag to prevent recursive updates for Select All
+    select_all_checkbox._updating_from_tools = False
 
     # Search Bar
     search_bar = QLineEdit()
@@ -599,6 +602,9 @@ def create_setup_environment_tab(self, tab_widget):
                     category_layout.addWidget(category_checkbox)
                     category_checkboxes[category] = category_checkbox
                     all_checkboxes[category] = category_checkbox
+                    
+                    # Add a flag to prevent recursive updates
+                    category_checkbox._updating_from_tools = False
 
                     # Create a grid layout for tools
                     tools_grid = QGridLayout()
@@ -730,13 +736,16 @@ def create_setup_environment_tab(self, tab_widget):
                                     background-color: #4A1C1C;
                                 """)
 
-                            # Update category checkboxes
-                            for cat, tools_checkboxes in category_tools_dict.items():
-                                cat_checkbox = category_checkboxes[cat]
-                                cat_checkbox.setChecked(all(cb.isChecked() for cb in tools_checkboxes))
+                            # Update only the category checkbox this tool belongs to
+                            cat_checkbox = category_checkboxes[category]
+                            cat_checkbox._updating_from_tools = True
+                            cat_checkbox.setChecked(all(cb.isChecked() for cb in category_tools_checkboxes))
+                            cat_checkbox._updating_from_tools = False
 
                             # Update the "Select All" checkbox
+                            select_all_checkbox._updating_from_tools = True
                             select_all_checkbox.setChecked(all(cb.isChecked() for cb in all_checkboxes.values()))
+                            select_all_checkbox._updating_from_tools = False
 
                             # Update tools count
                             update_tools_count()
@@ -751,20 +760,27 @@ def create_setup_environment_tab(self, tab_widget):
 
                     # Connect category checkbox
                     def toggle_category(checked, cat=category, tools_checkboxes=category_tools_checkboxes):
-                        for checkbox in tools_checkboxes:
-                            checkbox.setChecked(checked)
-                        update_tools_count()
+                        # Only update individual tools if this is a manual click (not from tool updates)
+                        if not category_checkbox._updating_from_tools:
+                            for checkbox in tools_checkboxes:
+                                checkbox.setChecked(checked)
+                            update_tools_count()
 
                     category_checkbox.toggled.connect(toggle_category)
                     category_checkbox.setChecked(all(cb.isChecked() for cb in category_tools_checkboxes))
 
+                    # Add a flag to prevent recursive updates
+                    category_checkbox._updating_from_tools = False
+
                     content_layout.addWidget(category_group)
 
-                # Connect Select All checkbox
+                # Connect Select All checkbox with proper logic
                 def toggle_all_tools(checked):
-                    for checkbox in all_checkboxes.values():
-                        checkbox.setChecked(checked)
-                    update_tools_count()
+                    # Only update individual tools if this is a manual click (not from tool updates)
+                    if not select_all_checkbox._updating_from_tools:
+                        for checkbox in all_checkboxes.values():
+                            checkbox.setChecked(checked)
+                        update_tools_count()
 
                 select_all_checkbox.toggled.connect(toggle_all_tools)
                 select_all_checkbox.setChecked(all(cb.isChecked() for cb in all_checkboxes.values()))
@@ -1010,10 +1026,14 @@ def create_setup_environment_tab(self, tab_widget):
                         # Update category checkboxes
                         for cat, tools_checkboxes in category_tools_dict.items():
                             cat_checkbox = category_checkboxes[cat]
+                            cat_checkbox._updating_from_tools = True
                             cat_checkbox.setChecked(all(cb.isChecked() for cb in tools_checkboxes))
+                            cat_checkbox._updating_from_tools = False
 
                         # Update the "Select All" checkbox
+                        select_all_checkbox._updating_from_tools = True
                         select_all_checkbox.setChecked(all(cb.isChecked() for cb in all_checkboxes.values()))
+                        select_all_checkbox._updating_from_tools = False
 
                         # Update the YAML file
                         update_tools_yaml()
